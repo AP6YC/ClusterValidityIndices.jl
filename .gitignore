@@ -1,6 +1,10 @@
 # IDE ignores
 .vscode/
 
+# Project ignores
+results/
+!**/.gitkeep
+
 # Julia package ignores
 *.jl.*.cov
 *.jl.cov

@@ -10,7 +10,7 @@
     n_cvis = length(cvis)
 
     # Grab all the data paths for testing
-    data_paths = readdir("../data/cvi", join=true)
+    data_paths = readdir("../data", join=true)
 
     # Initialize the data containers
     data, labels, n_samples = Dict(), Dict(), Dict()

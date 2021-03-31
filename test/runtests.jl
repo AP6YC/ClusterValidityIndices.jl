@@ -1,9 +1,5 @@
-using ClusterValidityIndices
-using Test
+using SafeTestsets
 
-include("test_utils.jl")
-
-@testset "ClusterValidityIndices.jl" begin
-    # Run all of the CVI tests
-    include("test_cvis.jl")
-end
+@safetestset "All Test Sets" begin
+    include("test_sets.jl")
+end # @safetestset "All Test Sets"
