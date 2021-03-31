@@ -8,6 +8,10 @@ include("CVI/CVI.jl")
 
 # Export all public names
 export
+
+    # Abstract types
+    AbstractCVI,
+
     # CVI
     XB,
     DB,
