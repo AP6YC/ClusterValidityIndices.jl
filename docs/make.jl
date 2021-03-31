@@ -1,7 +1,7 @@
-using Documenter, CVI
+using Documenter, ClusterValidityIndices
 
 makedocs(
-    modules=[CVI],
+    modules=[ClusterValidityIndices],
     format=Documenter.HTML(prettyurls = get(ENV, "CI", nothing) == "true"),
     # format=Documenter.HTML(),
     pages=[
@@ -13,12 +13,12 @@ makedocs(
             "Index" => "man/full-index.md"
         ]
     ],
-    repo="https://github.com/AP6YC/CVI.jl/blob/{commit}{path}#L{line}",
+    repo="https://github.com/AP6YC/ClusterValidityIndices.jl/blob/{commit}{path}#L{line}",
     sitename="AdaptiveResonance.jl",
     authors="Sasha Petrenko",
     # assets=String[],
 )
 
 deploydocs(
-    repo="github.com/AP6YC/CVI.jl.git",
+    repo="github.com/AP6YC/ClusterValidityIndices.jl.git",
 )
