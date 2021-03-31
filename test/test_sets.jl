@@ -21,7 +21,5 @@ end
 
     # Run scripts
     include("../examples/combined.jl")
-    include("../examples/db.jl")
-    include("../examples/ps.jl")
-    include("../examples/xb.jl")
+    include("../examples/cvi_example.jl")
 end

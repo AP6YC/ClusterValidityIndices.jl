@@ -31,23 +31,6 @@ function DataSplit(data_x::Array, data_y::Array, ratio::Real)
     return DataSplit(train_x, test_x, train_y, test_y)
 end # DataSplit(data_x::Array, data_y::Array, ratio::Real)
 
-# """
-#     tt_supervised(art::T, data::DataSplit) where {T<:AbstractART}
-
-# Train and test an ART module in a supervised manner on the dataset.
-# """
-# function tt_supervised(art::T, data::DataSplit) where {T<:AbstractART}
-#     # Train and classify
-#     train!(art, data.train_x, data.train_y)
-#     y_hat = classify(art, data.test_x)
-
-#     # Calculate performance
-#     perf = performance(y_hat, data.test_y)
-#     @info "Performance is $perf"
-
-#     return perf
-# end # tt_supervised(art::T, data::DataSplit) where {T<:AbstractART}
-
 """
     showtypetree(T, level=0)
 

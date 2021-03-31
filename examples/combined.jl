@@ -38,11 +38,12 @@ dpi = 300
 theme(:dark)
 
 # Plotting backend
-try
-    pyplot()        # PyPlot backend
-catch
-    gr()            # GR backend (default for Plots.jl)
-end
+pyplot()
+# try
+#     pyplot()        # PyPlot backend
+# catch
+#     gr()            # GR backend (default for Plots.jl)
+# end
 
 # --------------------------------------------------------------------------- #
 # SCRIPT CONFIGURATION

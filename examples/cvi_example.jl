@@ -1,8 +1,8 @@
 """
-    xb.jl
+    db.jl
 
 Description:
-    Example usage of the Xie-Beni CVI/ICVI.
+    Example usage of the Davies-Bouldin CVI/ICVI.
 
 Author:
     Sasha Petrenko <sap625@mst.edu>
@@ -42,11 +42,13 @@ dpi = 300
 theme(:dark)
 
 # Plotting backend
-try
-    pyplot()        # PyPlot backend
-catch
-    gr()            # GR backend (default for Plots.jl)
-end
+pyplot()
+# try
+#     pyplot()        # PyPlot backend
+# catch
+#     gr()            # GR backend (default for Plots.jl)
+# end
+
 # --------------------------------------------------------------------------- #
 # SCRIPT CONFIGURATION
 # --------------------------------------------------------------------------- #
@@ -73,7 +75,7 @@ data_name = splitext(basename(data_path))[1]
 # --------------------------------------------------------------------------- #
 
 # Instantiate the icvi with default options
-cvi_i = XB()
+cvi_i = DB()
 
 # Create some storage for our criterion values
 criterion_values_i = zeros(n_samples)
@@ -95,7 +97,7 @@ end
 # --------------------------------------------------------------------------- #
 
 # Instantiate the CVI, same as when done incrementally
-cvi_b = XB()
+cvi_b = DB()
 
 # Compute the parameters in batch
 param_batch!(cvi_b, data, labels)
@@ -112,7 +114,7 @@ evaluate!(cvi_b)
 # --------------------------------------------------------------------------- #
 
 # Instantiate the CVI as both in incremental and batch modes
-cvi_p = XB()
+cvi_p = DB()
 
 # Create storage for the criterion values at each timestep
 criterion_values_p = zeros(n_samples)
@@ -137,7 +139,7 @@ end
 p = plot(dpi=dpi, legend=:topleft)
 plot!(p, 1:n_samples, criterion_values_i, label="Incremental")
 plot!(p, 1:n_samples, criterion_values_p, label="Porcelain")
-title!("CVI: XB, Data: " * data_name)
+title!("CVI: DB, Data: " * basename(data_path))
 xlabel!("Sample Index")
 ylabel!("Criterion Value")
 
@@ -147,4 +149,4 @@ catch
 end
 
 # Save the image
-savefig("results/single_XB_" * data_name)
+savefig("results/single_DB_" * data_name)
