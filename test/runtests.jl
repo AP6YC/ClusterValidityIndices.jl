@@ -1,9 +1,9 @@
-using CVI
+using ClusterValidityIndices
 using Test
 
 include("test_utils.jl")
 
-@testset "CVI.jl" begin
+@testset "ClusterValidityIndices.jl" begin
     # Write your tests here.
     include("test_cvis.jl")
 end

@@ -1,6 +1,6 @@
-module CVI
+module ClusterValidityIndices
 
-using Statistics: median, mean
+using Statistics: mean
 
 abstract type AbstractCVI end
 
