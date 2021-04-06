@@ -2,7 +2,7 @@
 .vscode/
 
 # Project ignores
-results/
+results/*
 !**/.gitkeep
 
 # Julia package ignores

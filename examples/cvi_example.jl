@@ -149,4 +149,4 @@ catch
 end
 
 # Save the image
-savefig("results/single_DB_" * data_name)
+savefig("results/single_" * "_" * data_name)
