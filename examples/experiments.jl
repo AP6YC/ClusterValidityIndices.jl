@@ -116,11 +116,15 @@ function test_cvi(cvi::C, data::Array{M, 2}, labels::Array{N, 1}, data_name::Str
     title!("CVI: " * string(typeof(cvi)) * ", " * data_name)
     xlabel!("Sample Index")
     ylabel!("Criterion Value")
-    # display(p)
+    xlims!(1, n_samples)
+    ylims!(0, Inf)
+
     try
-        gui(p)
+        display(p)
+        println("\n")
     catch
     end
+
     # Save the image
     # savefig("results/single_" * string(typeof(cvi)) * "_" * data_name)
 

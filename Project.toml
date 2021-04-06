@@ -16,9 +16,9 @@ julia = "1"
 [extras]
 DelimitedFiles = "8bb1440f-4735-579b-a4ab-409b98df4dab"
 Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
-PyPlot = "d330b81b-6aea-500a-939a-2ce795aea3ee"
+UnicodePlots = "b8865327-cd53-5732-bb35-84acbb429228"
 SafeTestsets = "1bc83da4-3b8d-516f-aca4-4fe02f6d838f"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [targets]
-test = ["Test", "SafeTestsets", "DelimitedFiles", "Plots", "PyPlot"]
+test = ["Test", "SafeTestsets", "DelimitedFiles", "Plots", "UnicodePlots"]

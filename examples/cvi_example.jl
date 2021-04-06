@@ -42,12 +42,11 @@ dpi = 300
 theme(:dark)
 
 # Plotting backend
-pyplot()
-# try
-#     pyplot()        # PyPlot backend
-# catch
-#     gr()            # GR backend (default for Plots.jl)
-# end
+try
+    unicodeplots()  # Unicode plots for speed and CI compatibility
+catch
+    gr()            # GR backend (default for Plots.jl)
+end
 
 # --------------------------------------------------------------------------- #
 # SCRIPT CONFIGURATION
@@ -142,11 +141,14 @@ plot!(p, 1:n_samples, criterion_values_p, label="Porcelain")
 title!("CVI: DB, Data: " * basename(data_path))
 xlabel!("Sample Index")
 ylabel!("Criterion Value")
+xlims!(1, n_samples)
+ylims!(0, Inf)
 
 try
     display(p)
+    println("\n")
 catch
 end
 
 # Save the image
-savefig("results/single_" * "_" * data_name)
+# savefig("results/single_" * "_" * data_name)
