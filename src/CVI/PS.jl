@@ -21,7 +21,7 @@ using Statistics
 """
     PS
 
-The stateful information of the Xie-Beni CVI.
+The stateful information of the Partition Separation (PS) CVI.
 """
 mutable struct PS <: AbstractCVI
     dim::Int64
@@ -66,7 +66,7 @@ end
 """
     param_inc!(cvi::PS, sample::Array{T, 1}, label::I) where {T<:Real, I<:Int}
 
-Compute the PS CVI incrementally.
+Compute the Partition Separation (PS) CVI incrementally.
 """
 function param_inc!(cvi::PS, sample::Array{T, 1}, label::I) where {T<:Real, I<:Int}
     n_samples_new = cvi.n_samples + 1
@@ -123,7 +123,7 @@ end # param_inc!(cvi::PS, sample::Array{T, 1}, label::I) where {T<:Real, I<:Int}
 """
     param_batch!(cvi::PS, data::Array{T, 2}, labels::Array{I, 1}) where {T<:Real, I<:Int}
 
-Compute the PS CVI in batch.
+Compute the Partition Separation (PS) CVI in batch.
 """
 function param_batch!(cvi::PS, data::Array{T, 2}, labels::Array{I, 1}) where {T<:Real, I<:Int}
     cvi.dim, cvi.n_samples = size(data)
@@ -149,7 +149,7 @@ end # param_batch(cvi::PS, data::Array{Real, 2}, labels::Array{Real, 1})
 """
     evaluate!(cvi::PS)
 
-Compute the criterion value of the PS CVI.
+Compute the criterion value of the Partition Separation (PS) CVI.
 """
 function evaluate!(cvi::PS)
     if cvi.n_clusters > 1

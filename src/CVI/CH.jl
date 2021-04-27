@@ -27,7 +27,7 @@ using Statistics
 """
     CH
 
-The stateful information of the Xie-Beni CVI.
+The stateful information of the Calinski-Harabasz (CH) CVI.
 """
 mutable struct CH <: AbstractCVI
     dim::Int64
@@ -47,7 +47,7 @@ end # CH <: AbstractCVI
 """
     CH()
 
-Default constructor for the Xie-Beni (CH) Cluster Validity Index.
+Default constructor for the Calinski-Harabasz (CH) Cluster Validity Index.
 """
 function CH()
     CH(
@@ -78,7 +78,7 @@ end
 """
     param_inc!(cvi::CH, sample::Array{T, 1}, label::I) where {T<:Real, I<:Int}
 
-Compute the CH CVI incrementally.
+Compute the Calinski-Harabasz (CH) CVI incrementally.
 """
 function param_inc!(cvi::CH, sample::Array{T, 1}, label::I) where {T<:Real, I<:Int}
     n_samples_new = cvi.n_samples + 1
@@ -122,7 +122,7 @@ end # param_inc!(cvi::CH, sample::Array{T, 1}, label::I) where {T<:Real, I<:Int}
 """
     param_batch!(cvi::CH, data::Array{T, 2}, labels::Array{I, 1}) where {T<:Real, I<:Int}
 
-Compute the CH CVI in batch.
+Compute the Calinski-Harabasz (CH) CVI in batch.
 """
 function param_batch!(cvi::CH, data::Array{T, 2}, labels::Array{I, 1}) where {T<:Real, I<:Int}
     cvi.dim, cvi.n_samples = size(data)
@@ -148,7 +148,7 @@ end # param_batch(cvi::CH, data::Array{Real, 2}, labels::Array{Real, 1})
 """
     evaluate!(cvi::CH)
 
-Compute the criterion value of the CH CVI.
+Compute the criterion value of the Calinski-Harabasz (CH) CVI.
 """
 function evaluate!(cvi::CH)
     # Within group sum of scatters

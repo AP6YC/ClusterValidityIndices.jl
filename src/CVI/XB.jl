@@ -25,7 +25,7 @@ using Statistics
 """
     XB
 
-The stateful information of the Xie-Beni CVI.
+The stateful information of the Xie-Beni (XB) CVI.
 """
 mutable struct XB <: AbstractCVI
     dim::Int64
@@ -75,7 +75,7 @@ end
 """
     param_inc!(cvi::XB, sample::Array{T, 1}, label::I) where {T<:Real, I<:Int}
 
-Compute the XB CVI incrementally.
+Compute the Xie-Beni (XB) CVI incrementally.
 """
 function param_inc!(cvi::XB, sample::Array{T, 1}, label::I) where {T<:Real, I<:Int}
     n_samples_new = cvi.n_samples + 1
@@ -147,7 +147,7 @@ end # param_inc!(cvi::XB, sample::Array{T, 1}, label::I) where {T<:Real, I<:Int}
 """
     param_batch!(cvi::XB, data::Array{T, 2}, labels::Array{I, 1}) where {T<:Real, I<:Int}
 
-Compute the XB CVI in batch.
+Compute the Xie-Beni (XB) CVI in batch.
 """
 function param_batch!(cvi::XB, data::Array{T, 2}, labels::Array{I, 1}) where {T<:Real, I<:Int}
     cvi.dim, cvi.n_samples = size(data)
@@ -179,7 +179,7 @@ end # param_batch(cvi::XB, data::Array{Real, 2}, labels::Array{Real, 1})
 """
     evaluate!(cvi::XB)
 
-Compute the criterion value of the XB CVI.
+Compute the criterion value of the Xie-Beni (XB) CVI.
 """
 function evaluate!(cvi::XB)
     cvi.WGSS = sum(cvi.CP)

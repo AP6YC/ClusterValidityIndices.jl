@@ -1,8 +1,12 @@
 @testset "CVIs" begin
     @info "CVI Testing"
 
+    # Set the approximation CVI tolerance for all comparisons
+    tolerance = 1e-1
+
     # Construct the cvis
     cvis = [
+        cSIL(),
         CH(),
         XB(),
         DB(),
@@ -102,19 +106,27 @@
         for cx = 1:n_cvis
             # I to B
             @test isapprox(cvi_i[data_path][cx].criterion_value,
-                cvi_b[data_path][cx].criterion_value)
+                cvi_b[data_path][cx].criterion_value,
+                atol=tolerance
+            )
 
             # IP to BP
             @test isapprox(cvi_ip[data_path][cx].criterion_value,
-                cvi_bp[data_path][cx].criterion_value)
+                cvi_bp[data_path][cx].criterion_value,
+                atol=tolerance
+            )
 
             # I to IP
             @test isapprox(cvi_i[data_path][cx].criterion_value,
-                cvi_ip[data_path][cx].criterion_value)
+                cvi_ip[data_path][cx].criterion_value,
+                atol=tolerance
+            )
 
             # B to BP
             @test isapprox(cvi_b[data_path][cx].criterion_value,
-                cvi_bp[data_path][cx].criterion_value)
+                cvi_bp[data_path][cx].criterion_value,
+                atol=tolerance
+            )
         end
     end
 end

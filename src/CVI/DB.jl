@@ -25,7 +25,7 @@ using Statistics
 """
     DB
 
-The stateful information of the Xie-Beni CVI.
+The stateful information of the Davies-Bouldin (DB) CVI.
 """
 mutable struct DB <: AbstractCVI
     dim::Int64
@@ -45,7 +45,7 @@ end # DB <: AbstractCVI
 """
     DB()
 
-Default constructor for the Xie-Beni (DB) Cluster Validity Index.
+Default constructor for the Davies-Bouldin (DB) Cluster Validity Index.
 """
 function DB()
     DB(
@@ -76,7 +76,7 @@ end
 """
     param_inc!(cvi::DB, sample::Array{T, 1}, label::I) where {T<:Real, I<:Int}
 
-Compute the DB CVI incrementally.
+Compute the Davies-Bouldin (DB) CVI incrementally.
 """
 function param_inc!(cvi::DB, sample::Array{T, 1}, label::I) where {T<:Real, I<:Int}
     n_samples_new = cvi.n_samples + 1
@@ -152,7 +152,7 @@ end # param_inc!(cvi::DB, sample::Array{T, 1}, label::I) where {T<:Real, I<:Int}
 """
     param_batch!(cvi::DB, data::Array{T, 2}, labels::Array{I, 1}) where {T<:Real, I<:Int}
 
-Compute the DB CVI in batch.
+Compute the Davies-Bouldin (DB) CVI in batch.
 """
 function param_batch!(cvi::DB, data::Array{T, 2}, labels::Array{I, 1}) where {T<:Real, I<:Int}
     cvi.dim, cvi.n_samples = size(data)
@@ -185,7 +185,7 @@ end # param_batch(cvi::DB, data::Array{Real, 2}, labels::Array{Real, 1})
 """
     evaluate!(cvi::DB)
 
-Compute the criterion value of the DB CVI.
+Compute the criterion value of the Davies-Bouldin (DB) CVI.
 """
 function evaluate!(cvi::DB)
     cvi.R = zeros(cvi.n_clusters, cvi.n_clusters)

@@ -17,6 +17,7 @@ export
     DB,
     PS,
     CH,
+    cSIL,
     # CONN,
 
     # CVI functions
