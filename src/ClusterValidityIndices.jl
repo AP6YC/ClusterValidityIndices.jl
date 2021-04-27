@@ -12,11 +12,14 @@ export
     # Abstract types
     AbstractCVI,
 
-    # CVI
+    # CVI constructors
     XB,
     DB,
     PS,
+    CH,
     # CONN,
+
+    # CVI functions
     param_inc!,
     param_batch!,
     evaluate!,

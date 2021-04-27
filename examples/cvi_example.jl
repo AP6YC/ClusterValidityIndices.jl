@@ -28,6 +28,9 @@ using Plots
 #   The user config, such as data paths and plotting parameters
 # --------------------------------------------------------------------------- #
 
+# Select the CVI symbol that you wish to be tested
+s_cvi = CH;
+
 # Location of the data
 # NOTE: You can switch between the three partitions here
 #   To see how every CVI does with every partition, run `src/examples/combined.jl`
@@ -74,7 +77,7 @@ data_name = splitext(basename(data_path))[1]
 # --------------------------------------------------------------------------- #
 
 # Instantiate the icvi with default options
-cvi_i = DB()
+cvi_i = s_cvi()
 
 # Create some storage for our criterion values
 criterion_values_i = zeros(n_samples)
@@ -96,7 +99,7 @@ end
 # --------------------------------------------------------------------------- #
 
 # Instantiate the CVI, same as when done incrementally
-cvi_b = DB()
+cvi_b = s_cvi()
 
 # Compute the parameters in batch
 param_batch!(cvi_b, data, labels)
@@ -113,7 +116,7 @@ evaluate!(cvi_b)
 # --------------------------------------------------------------------------- #
 
 # Instantiate the CVI as both in incremental and batch modes
-cvi_p = DB()
+cvi_p = s_cvi()
 
 # Create storage for the criterion values at each timestep
 criterion_values_p = zeros(n_samples)

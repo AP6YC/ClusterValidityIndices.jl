@@ -3,6 +3,7 @@
 
     # Construct the cvis
     cvis = [
+        CH(),
         XB(),
         DB(),
         PS()
