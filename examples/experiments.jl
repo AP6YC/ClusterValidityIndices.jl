@@ -108,6 +108,7 @@ function test_cvi(cvi::C, data::Array{M, 2}, labels::Array{N, 1}, data_name::Str
     @info "Batch CVI value: $(cvi_b.criterion_value)"
     @info "Porcelain Incremental CVI value: $(criterion_values_p[end])"
     @info "Porcelain Batch CVI value: $(criterion_value_pb)"
+    println("\n")
 
     # Plot the two incremental trends ("manual" and porcelain) atop one another
     p = plot(dpi=dpi, reuse=false)

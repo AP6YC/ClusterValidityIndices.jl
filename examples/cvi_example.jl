@@ -136,6 +136,7 @@ end
 @info "Incremental CVI value: $(cvi_i.criterion_value)"
 @info "Batch CVI value: $(cvi_b.criterion_value)"
 @info "Porcelain Incremental CVI value: $(criterion_values_p[end])"
+println("\n")
 
 # Plot the two incremental trends ("manual" and porcelain) atop one another
 p = plot(dpi=dpi, legend=:topleft)

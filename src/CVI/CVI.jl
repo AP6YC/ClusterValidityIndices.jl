@@ -4,6 +4,7 @@ include("DB.jl")
 include("PS.jl")
 include("CH.jl")
 include("cSIL.jl")
+include("GD53.jl")
 
 """
     get_icvi!(cvi::T, x::Array{N, 1}, y::M) where {T<:AbstractCVI, N<:Real, M<:Int}

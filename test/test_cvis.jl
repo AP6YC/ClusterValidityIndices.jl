@@ -6,6 +6,7 @@
 
     # Construct the cvis
     cvis = [
+        GD53(),
         cSIL(),
         CH(),
         XB(),
