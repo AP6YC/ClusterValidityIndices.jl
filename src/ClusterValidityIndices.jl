@@ -19,6 +19,7 @@ export
     CH,
     cSIL,
     GD53,
+    GD43,
     # CONN,
 
     # CVI functions
