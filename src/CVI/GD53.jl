@@ -105,7 +105,7 @@ function param_inc!(cvi::GD53, sample::Array{T, 1}, label::I) where {T<:Real, I<
             D_new[1:cvi.n_clusters, 1:cvi.n_clusters] = cvi.D
             d_column_new = zeros(cvi.n_clusters + 1)
             for jx = 1:cvi.n_clusters
-                d_column_new[jx] = sum((v_new - cvi.v[:, jx]).^2)
+                d_column_new[jx] = (CP_new + cvi.CP[jx]) / (n_new + cvi.n[jx])
             end
             D_new[:, label] = d_column_new
             D_new[label, :] = transpose(d_column_new)
