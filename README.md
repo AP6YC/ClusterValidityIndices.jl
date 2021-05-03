@@ -8,7 +8,7 @@ A Julia package for Cluster Validity Indices (CVI) algorithms.
 
 | **Dependents** | **Date** | **Status** |
 |:--------------:|:--------:|:----------:|
-| [![deps](https://juliahub.com/docs/ClusterValidityIndices/deps.svg)](https://juliahub.com/ui/Packages/ClusterValidityIndices/Sm0We?t=2) | [![version](https://juliahub.com/docs/ClusterValidityIndices/version.svg)](https://juliahub.com/ui/Packages/ClusterValidityIndices/Sm0We) | [![pkgeval](https://juliahub.com/docs/ClusterValidityIndices/pkgeval.svg)](https://juliahub.com/ui/Packages/ClusterValidityIndices/Sm0We) |
+| [![deps](https://juliahub.com/docs/ClusterValidityIndices/deps.svg)](https://juliahub.com/ui/Packages/ClusterValidityIndices/Z19r6?t=2) | [![version](https://juliahub.com/docs/ClusterValidityIndices/version.svg)](https://juliahub.com/ui/Packages/ClusterValidityIndices/Z19r6) | [![pkgeval](https://juliahub.com/docs/ClusterValidityIndices/pkgeval.svg)](https://juliahub.com/ui/Packages/ClusterValidityIndices/Z19r6) |
 <!-- | [![Stable][docs-stable-img]][docs-stable-url] [![Dev][docs-dev-img]][docs-dev-url] | [![Build Status][travis-img]][travis-url] [![Build Status][appveyor-img]][appveyor-url] | [![Codecov][codecov-img]][codecov-url] [![Coveralls][coveralls-img]][coveralls-url] | -->
 
 [docs-stable-img]: https://img.shields.io/badge/docs-stable-blue.svg
@@ -56,6 +56,7 @@ Please read the [documentation](https://ap6yc.github.io/ClusterValidityIndices.j
     - [Criterion Values](#criterion-values)
     - [Porcelain](#porcelain)
   - [Authors](#authors)
+
 ## Outline
 
 This Julia project contains an outline of the conceptual usage of CVIs along with many example scripts.
@@ -109,6 +110,7 @@ ICVI-Examples
 ## Usage
 
 The usage of these CVIs requires an understanding of:
+
 - [Data](###Data) assumptions of the CVIs.
 - [How to instantiate](###Instantiation) the CVIs.
 - [Incremental vs. batch](###Incremental-vs.-Batch) evaluation.
