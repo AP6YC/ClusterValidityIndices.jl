@@ -4,12 +4,22 @@ A Julia package for Cluster Validity Indices (CVI) algorithms.
 
 | **Documentation**  | **Build Status** | **Coverage** |
 |:------------------:|:----------------:|:------------:|
-| [![Stable][docs-stable-img]][docs-stable-url] [![Dev][docs-dev-img]][docs-dev-url] | [![Build Status][ci-img]][ci-url] [![Build Status][appveyor-img]][appveyor-url] | [![Codecov][codecov-img]][codecov-url] [![Coveralls][coveralls-img]][coveralls-url] |
+| [![Stable][docs-stable-img]][docs-stable-url] | [![Build Status][ci-img]][ci-url] | [![Codecov][codecov-img]][codecov-url] |
+| [![Dev][docs-dev-img]][docs-dev-url] | [![Build Status][appveyor-img]][appveyor-url] | [![Coveralls][coveralls-img]][coveralls-url] |
 
 | **Dependents** | **Date** | **Status** |
 |:--------------:|:--------:|:----------:|
-| [![deps](https://juliahub.com/docs/ClusterValidityIndices/deps.svg)](https://juliahub.com/ui/Packages/ClusterValidityIndices/Z19r6?t=2) | [![version](https://juliahub.com/docs/ClusterValidityIndices/version.svg)](https://juliahub.com/ui/Packages/ClusterValidityIndices/Z19r6) | [![pkgeval](https://juliahub.com/docs/ClusterValidityIndices/pkgeval.svg)](https://juliahub.com/ui/Packages/ClusterValidityIndices/Z19r6) |
+| [![deps][deps-img]][deps-url] | [![version][version-img]][version-url] | [![pkgeval][pkgeval-img]][pkgeval-url] |
 <!-- | [![Stable][docs-stable-img]][docs-stable-url] [![Dev][docs-dev-img]][docs-dev-url] | [![Build Status][travis-img]][travis-url] [![Build Status][appveyor-img]][appveyor-url] | [![Codecov][codecov-img]][codecov-url] [![Coveralls][coveralls-img]][coveralls-url] | -->
+
+[deps-img]: https://juliahub.com/docs/ClusterValidityIndices/deps.svg
+[deps-url]: https://juliahub.com/ui/Packages/ClusterValidityIndices/Z19r6?t=2
+
+[version-img]: https://juliahub.com/docs/ClusterValidityIndices/version.svg
+[version-url]: https://juliahub.com/ui/Packages/ClusterValidityIndices/Z19r6
+
+[pkgeval-img]: https://juliahub.com/docs/ClusterValidityIndices/pkgeval.svg
+[pkgeval-url]: https://juliahub.com/ui/Packages/ClusterValidityIndices/Z19r6
 
 [docs-stable-img]: https://img.shields.io/badge/docs-stable-blue.svg
 [docs-stable-url]: https://AP6YC.github.io/ClusterValidityIndices.jl/stable

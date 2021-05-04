@@ -14,7 +14,7 @@ makedocs(
         ]
     ],
     repo="https://github.com/AP6YC/ClusterValidityIndices.jl/blob/{commit}{path}#L{line}",
-    sitename="AdaptiveResonance.jl",
+    sitename="ClusterValidityIndices.jl",
     authors="Sasha Petrenko",
     # assets=String[],
 )

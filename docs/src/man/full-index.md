@@ -5,5 +5,5 @@ Pages = ["lib/public.md"]
 ```
 
 ```@autodocs
-Modules = [CVI]
+Modules = [ClusterValidityIndices]
 ```
