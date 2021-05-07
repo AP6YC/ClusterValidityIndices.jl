@@ -13,7 +13,8 @@
         CH(),
         XB(),
         DB(),
-        PS()
+        PS(),
+        rCIP(),
     ]
     n_cvis = length(cvis)
 

@@ -275,7 +275,7 @@ For example, after loading the data you may get the criterion value at each step
 ```julia
 criterion_values = zeros(n_samples)
 for ix = 1:n_samples
-    criterion_values = get_icvi!(cvi, data[:, ix], labels[ix])
+    criterion_values[ix] = get_icvi!(cvi, data[:, ix], labels[ix])
 end
 ```
 

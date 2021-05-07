@@ -21,6 +21,7 @@ export
     GD53,
     GD43,
     WB,
+    rCIP,
     # CONN,
 
     # CVI functions

@@ -65,7 +65,6 @@ Please read the [documentation](https://ap6yc.github.io/ClusterValidityIndices.j
     - [Updating](#updating)
     - [Criterion Values](#criterion-values)
     - [Porcelain](#porcelain)
-  - [Authors](#authors)
 
 ## Outline
 
@@ -343,7 +342,7 @@ For example, after loading the data you may get the criterion value at each step
 ```julia
 criterion_values = zeros(n_samples)
 for ix = 1:n_samples
-    criterion_values = get_icvi!(cvi, data[:, ix], labels[ix])
+    criterion_values[ix] = get_icvi!(cvi, data[:, ix], labels[ix])
 end
 ```
 
@@ -352,7 +351,3 @@ or you may get the final criterion value in batch mode with
 ```julia
 criterion_value = get_cvi!(cvi, data, labels)
 ```
-
-## Authors
-
-- Sasha Petrenko <sap625@mst.edu>
