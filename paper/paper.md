@@ -15,7 +15,7 @@ tags:
 authors:
   - name: Sasha Petrenko^[Missouri University of Science and Technology]
     orcid: 0000-0003-2442-8901
-date: 31 March 2021
+date: 25 May 2021
 bibliography: paper.bib
 ---
 
@@ -35,30 +35,6 @@ There exist many CVIs in the literature, and their algorithmic and programmatic 
 Despite their utility in machine learning applications, however, there does not exist to date a unified repository of their implementations in Julia.
 Furthermore, new incremental variations of these algorithms are regularly developed in the literature without the ability to update the original implementations.
 The purpose of this package is to create a unified framework and repository of CVIs so as to fill the gap left by most metrics in this machine learning problem subset.
-
-<!-- # Citations -->
-
-<!-- Citations to entries in paper.bib should be in
-[rMarkdown](http://rmarkdown.rstudio.com/authoring_bibliographies_and_citations.html)
-format.
-
-If you want to cite a software repository URL (e.g. something on GitHub without a preferred
-citation) then you can do it with the example BibTeX entry below for @fidgit.
-
-For a quick reference, the following citation commands can be used:
-- `@author:2001`  ->  "Author et al. (2001)"
-- `[@author:2001]` -> "(Author et al., 2001)"
-- `[@author1:2001; @author2:2001]` -> "(Author1 et al., 2001; Author2 et al., 2002)" -->
-
-<!-- # Figures
-
-Figures can be included like this:
-![Caption for example figure.\label{fig:example}](../data/baboon.png)
-and referenced from text using \autoref{fig:example}.
-
-Figure sizes can be customized by adding an optional second parameter:
-![Caption for example figure.](../data/baboon.png){ width=20% } -->
-
 # Acknowledgements
 
 This package is developed and maintained with sponsorship by the Applied Computational Intelligence Laboratory (ACIL) of the Missouri University of Science and Technology.
