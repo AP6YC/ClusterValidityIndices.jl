@@ -103,11 +103,15 @@ The common code for all scripts is contained under `src/common.jl`, while the ex
 ## Structure
 
 ```console
-ICVI-Examples
+ClusterValidityIndices.jl
 ├── .github/workflows       // GitHub: workflows for testing and documentation.
 ├── data                    // Data: CI and example data location.
+├── docs                    // Docs: GitHub pages documentation files.
+├── examples                // Source: Example scripts for CVI usage.
+├── paper                   // Docs: JOSS paper and bib files.
+├── results                 // Data: Destination for example-generated files.
 ├── src                     // Source: scripts and common helper functions.
-│   └───examples            //      Example scripts for CVI usage.
+│   └─── CVI                //      All CVI and ICVI definitions
 ├── test                    // Test: unit, integration, and environment tests.
 ├── .gitignore              // Git: .gitignore for the whole project.
 ├── LICENSE                 // Doc: the license to the project.
