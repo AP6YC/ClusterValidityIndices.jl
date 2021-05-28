@@ -124,12 +124,12 @@ ClusterValidityIndices.jl
 
 The usage of these CVIs requires an understanding of:
 
-- [Data](###Data) assumptions of the CVIs.
-- [How to instantiate](###Instantiation) the CVIs.
-- [Incremental vs. batch](###Incremental-vs.-Batch) evaluation.
-- [Updating](###Updating) internal CVI parameters.
-- [Computing and extracting](###Criterion-Values) the criterion values.
-- [Porcelain functions](###Porcelain) that are available to simplify operation.
+- [Data](###data) assumptions of the CVIs.
+- [How to instantiate](###instantiation) the CVIs.
+- [Incremental vs. batch](###incremental-vs.-batch) evaluation.
+- [Updating](###updating) internal CVI parameters.
+- [Computing and extracting](###criterion-values) the criterion values.
+- [Porcelain functions](###porcelain) that are available to simplify operation.
 
 ### Data
 
