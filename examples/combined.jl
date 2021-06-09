@@ -18,8 +18,7 @@ Date:
 # ICVIs pulled from the ClusterValidityIndices package
 using ClusterValidityIndices
 
-# Quality of life packages for editing and fancy logging
-using ProgressBars
+# Quality of life packages for fancy logging and plotting
 using Logging
 using Plots
 
@@ -52,7 +51,7 @@ end
 LogLevel(Logging.Info)
 
 # Load the examples helper functions
-include("common.jl")
+include("../test/utils.jl")
 include("experiments.jl")
 
 # Construct the cvis

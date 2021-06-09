@@ -98,7 +98,7 @@ The data consists of 2000 samples of 2-element features with the clustering labe
 You can change which dataset is used in each script above.
 
 Lastly, there is a large experiment script `src/examples/combined.jl` that runs every CVI with all three datasets.
-The common code for all scripts is contained under `src/common.jl`, while the experiment subroutines referenced in these scripts are under `src/experiments.jl`, so feel free to modify them to further explore the behavior and usage of these CVIs.
+The common code for all scripts and tests is contained under `test/utils.jl`, while the experiment subroutines referenced in these scripts are under `src/experiments.jl`, so feel free to modify them to further explore the behavior and usage of these CVIs.
 
 ## Structure
 

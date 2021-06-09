@@ -5,7 +5,8 @@ using Logging
 # Set the log level
 LogLevel(Logging.Info)
 
-include("test_utils.jl")
+# Include the
+include("utils.jl")
 
 @testset "ClusterValidityIndices.jl" begin
     # Run all of the CVI tests
@@ -20,6 +21,5 @@ end
     @info "Switching working directory to top for running scripts" pwd()
 
     # Run scripts
-    include("../examples/combined.jl")
     include("../examples/cvi_example.jl")
 end

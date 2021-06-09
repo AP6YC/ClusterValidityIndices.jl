@@ -1,8 +1,8 @@
 """
-    db.jl
+    cvi_example.jl
 
 Description:
-    Example usage of the Davies-Bouldin CVI/ICVI.
+    Example usage of an arbitrary CVI/ICVI.
 
 Author:
     Sasha Petrenko <sap625@mst.edu>
@@ -59,7 +59,7 @@ end
 LogLevel(Logging.Info)
 
 # Load the examples helper functions
-include("common.jl")
+include("../test/utils.jl")
 
 # Load the training data
 data, labels = get_cvi_data(data_path)
