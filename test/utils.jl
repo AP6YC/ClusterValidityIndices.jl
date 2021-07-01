@@ -44,4 +44,3 @@ function get_bernoulli_subset(data::Array{N, 2}, labels::Array{M, 1}, p::Float64
     # Return the subset
     return data[:, subset], labels[subset]
 end # get_bernoulli_subset(data::Array{N, 2}, labels::Array{M, 1}) where {N<:Real, M<:Int}
-

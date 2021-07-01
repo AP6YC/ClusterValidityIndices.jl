@@ -21,7 +21,7 @@
     # Grab all the data paths for testing
     data_paths = readdir("../data", join=true)
 
-    # Initialize the data containers
+    # Initialize the results data containers
     data, labels, n_samples = Dict(), Dict(), Dict()
 
     # Sanitize all the data
