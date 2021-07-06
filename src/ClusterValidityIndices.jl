@@ -4,11 +4,14 @@ using Statistics: mean
 
 abstract type AbstractCVI end
 
-# All of the CVI modules
-include("CVI/CVI.jl")
+# Common structures
+include("common.jl")
 
 # CVI utility functions
 include("utils.jl")
+
+# All of the CVI modules
+include("CVI/CVI.jl")
 
 # Export all public names
 export

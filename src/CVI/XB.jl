@@ -28,18 +28,18 @@ using Statistics
 The stateful information of the Xie-Beni (XB) CVI.
 """
 mutable struct XB <: AbstractCVI
-    dim::Int64
-    n_samples::Int64
-    mu_data::Array{Float64, 1}  # dim
-    n::Array{Int64, 1}          # dim
-    v::Array{Float64, 2}        # dim x n_clusters
-    CP::Array{Float64, 1}       # dim
-    SEP::Float64
-    G::Array{Float64, 2}        # dim x n_clusters
-    D::Array{Float64, 2}        # n_clusters x n_clusters
-    WGSS::Float64
-    n_clusters::Int64
-    criterion_value::Float64
+    dim::Integer
+    n_samples::Integer
+    mu_data::RealVector     # dim
+    n::IntegerVector        # dim
+    v::RealMatrix           # dim x n_clusters
+    CP::RealVector          # dim
+    SEP::RealFP
+    G::RealMatrix           # dim x n_clusters
+    D::RealMatrix           # n_clusters x n_clusters
+    WGSS::RealFP
+    n_clusters::Integer
+    criterion_value::RealFP
 end # XB <: AbstractCVI
 
 """
@@ -51,33 +51,36 @@ function XB()
     XB(
         0,                              # dim
         0,                              # n_samples
-        Array{Float64, 1}(undef, 0),    # mu_data
-        Array{Int64, 1}(undef, 0),      # n
-        Array{Float64, 2}(undef, 0, 0), # v
-        Array{Float64, 1}(undef, 0),    # CP
+        Array{RealFP, 1}(undef, 0),     # mu_data
+        Array{Integer, 1}(undef, 0),    # n
+        Array{RealFP, 2}(undef, 0, 0),  # v
+        Array{RealFP, 1}(undef, 0),     # CP
         0.0,                            # SEP
-        Array{Float64, 2}(undef, 0, 0), # G
-        Array{Float64, 2}(undef, 0, 0), # D
+        Array{RealFP, 2}(undef, 0, 0),  # G
+        Array{RealFP, 2}(undef, 0, 0),  # D
         0.0,                            # WGSS
         0,                              # n_clusters
         0.0                             # criterion_value
     )
 end # XB()
 
+"""
+    setup!(cvi::XB, sample::Array{T, 1}) where {T<:Real}
+"""
 function setup!(cvi::XB, sample::Array{T, 1}) where {T<:Real}
     # Get the feature dimension
     cvi.dim = length(sample)
     # Initialize the 2-D arrays with the correct feature dimension
     cvi.v = Array{T, 2}(undef, cvi.dim, 0)
     cvi.G = Array{T, 2}(undef, cvi.dim, 0)
-end
+end # setup!(cvi::XB, sample::Array{T, 1}) where {T<:Real}
 
 """
-    param_inc!(cvi::XB, sample::Array{T, 1}, label::I) where {T<:Real, I<:Int}
+    param_inc!(cvi::XB, sample::RealVector, label::Integer)
 
 Compute the Xie-Beni (XB) CVI incrementally.
 """
-function param_inc!(cvi::XB, sample::Array{T, 1}, label::I) where {T<:Real, I<:Int}
+function param_inc!(cvi::XB, sample::RealVector, label::Integer)
     n_samples_new = cvi.n_samples + 1
     if isempty(cvi.mu_data)
         mu_data_new = sample
@@ -89,10 +92,10 @@ function param_inc!(cvi::XB, sample::Array{T, 1}, label::I) where {T<:Real, I<:I
     if label > cvi.n_clusters
         n_new = 1
         v_new = sample
-        CP_new = 0
+        CP_new = 0.0
         G_new = zeros(cvi.dim)
         if cvi.n_clusters == 0
-            D_new = 0
+            D_new = zeros(1, 1)
         else
             D_new = zeros(cvi.n_clusters + 1, cvi.n_clusters + 1)
             D_new[1:cvi.n_clusters, 1:cvi.n_clusters] = cvi.D
@@ -112,12 +115,6 @@ function param_inc!(cvi::XB, sample::Array{T, 1}, label::I) where {T<:Real, I<:I
         # Update 2-D parameters with appending and reassignment
         cvi.v = [cvi.v v_new]
         cvi.G = [cvi.G G_new]
-        # if D_new is a scalar, cast it as a 2-D array
-        if isempty(size(D_new))
-            place_holder = convert(T, D_new)
-            D_new = Array{T, 2}(undef, 1, 1)
-            D_new[1, 1] = place_holder
-        end
         cvi.D = D_new
     else
         n_new = cvi.n[label] + 1
@@ -125,7 +122,7 @@ function param_inc!(cvi::XB, sample::Array{T, 1}, label::I) where {T<:Real, I<:I
         delta_v = cvi.v[:, label] - v_new
         diff_x_v = sample .- v_new
         CP_new = cvi.CP[label] + transpose(diff_x_v)*diff_x_v + cvi.n[label]*transpose(delta_v)*delta_v + 2*transpose(delta_v)*cvi.G[:, label]
-        d_column_new = zeros(T, cvi.n_clusters)
+        d_column_new = zeros(cvi.n_clusters)
         for jx = 1:cvi.n_clusters
             if jx == label
                 continue
@@ -142,21 +139,21 @@ function param_inc!(cvi::XB, sample::Array{T, 1}, label::I) where {T<:Real, I<:I
     end
     cvi.n_samples = n_samples_new
     cvi.mu_data = mu_data_new
-end # param_inc!(cvi::XB, sample::Array{T, 1}, label::I) where {T<:Real, I<:Int}
+end # param_inc!(cvi::XB, sample::RealVector, label::Integer)
 
 """
-    param_batch!(cvi::XB, data::Array{T, 2}, labels::Array{I, 1}) where {T<:Real, I<:Int}
+    param_batch!(cvi::XB, data::RealMatrix, labels::IntegerVector)
 
 Compute the Xie-Beni (XB) CVI in batch.
 """
-function param_batch!(cvi::XB, data::Array{T, 2}, labels::Array{I, 1}) where {T<:Real, I<:Int}
+function param_batch!(cvi::XB, data::RealMatrix, labels::IntegerVector)
     cvi.dim, cvi.n_samples = size(data)
     # Take the average across all samples, but cast to 1-D vector
     cvi.mu_data = mean(data, dims=2)[:]
     # u = findfirst.(isequal.(unique(labels)), [labels])
     u = unique(labels)
     cvi.n_clusters = length(u)
-    cvi.n = zeros(cvi.n_clusters)
+    cvi.n = zeros(Integer, cvi.n_clusters)
     cvi.v = zeros(cvi.dim, cvi.n_clusters)
     cvi.CP = zeros(cvi.n_clusters)
     cvi.D = zeros(cvi.n_clusters, cvi.n_clusters)
@@ -174,7 +171,7 @@ function param_batch!(cvi::XB, data::Array{T, 2}, labels::Array{I, 1}) where {T<
         end
     end
     cvi.D = cvi.D + transpose(cvi.D)
-end # param_batch(cvi::XB, data::Array{Real, 2}, labels::Array{Real, 1})
+end # param_batch!(cvi::XB, data::RealMatrix, labels::IntegerVector)
 
 """
     evaluate!(cvi::XB)

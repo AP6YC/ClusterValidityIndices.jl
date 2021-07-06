@@ -28,18 +28,18 @@ using Statistics
 The stateful information of the Davies-Bouldin (DB) CVI.
 """
 mutable struct DB <: AbstractCVI
-    dim::Int64
-    n_samples::Int64
-    mu_data::Array{Float64, 1}  # dim
-    n::Array{Int64, 1}          # dim
-    v::Array{Float64, 2}        # dim x n_clusters
-    CP::Array{Float64, 1}       # dim
-    S::Array{Float64, 1}        # dim
-    R::Array{Float64, 2}        # dim x n_clusters
-    G::Array{Float64, 2}        # dim x n_clusters
-    D::Array{Float64, 2}        # n_clusters x n_clusters
-    n_clusters::Int64
-    criterion_value::Float64
+    dim::Integer
+    n_samples::Integer
+    mu_data::RealVector         # dim
+    n::IntegerVector            # dim
+    v::RealMatrix               # dim x n_clusters
+    CP::RealVector              # dim
+    S::RealVector               # dim
+    R::RealMatrix               # dim x n_clusters
+    G::RealMatrix               # dim x n_clusters
+    D::RealMatrix               # n_clusters x n_clusters
+    n_clusters::Integer
+    criterion_value::RealFP
 end # DB <: AbstractCVI
 
 """
@@ -51,34 +51,37 @@ function DB()
     DB(
         0,                              # dim
         0,                              # n_samples
-        Array{Float64, 1}(undef, 0),    # mu_data
-        Array{Int64, 1}(undef, 0),      # n
-        Array{Float64, 2}(undef, 0, 0), # v
-        Array{Float64, 1}(undef, 0),    # CP
-        Array{Float64, 1}(undef, 0),    # S
-        Array{Float64, 2}(undef, 0, 0), # R
-        Array{Float64, 2}(undef, 0, 0), # G
-        Array{Float64, 2}(undef, 0, 0), # D
+        Array{RealFP, 1}(undef, 0),     # mu_data
+        Array{Integer, 1}(undef, 0),    # n
+        Array{RealFP, 2}(undef, 0, 0),  # v
+        Array{RealFP, 1}(undef, 0),     # CP
+        Array{RealFP, 1}(undef, 0),     # S
+        Array{RealFP, 2}(undef, 0, 0),  # R
+        Array{RealFP, 2}(undef, 0, 0),  # G
+        Array{RealFP, 2}(undef, 0, 0),  # D
         0,                              # n_clusters
         0.0                             # criterion_value
     )
 end # DB()
 
-function setup!(cvi::DB, sample::Array{T, 1}) where {T<:Real}
+"""
+    setup!(cvi::DB, sample::Vector{T}) where {T<:RealFP}
+"""
+function setup!(cvi::DB, sample::Vector{T}) where {T<:RealFP}
     # Get the feature dimension
     cvi.dim = length(sample)
     # Initialize the augmenting 2-D arrays with the correct feature dimension
     # NOTE: R is emptied and calculated in evaluate!, so it is not defined here
     cvi.v = Array{T, 2}(undef, cvi.dim, 0)
     cvi.G = Array{T, 2}(undef, cvi.dim, 0)
-end
+end # setup!(cvi::DB, sample::Vector{T}) where {T<:RealFP}
 
 """
-    param_inc!(cvi::DB, sample::Array{T, 1}, label::I) where {T<:Real, I<:Int}
+    param_inc!(cvi::DB, sample::RealVector, label::Integer)
 
 Compute the Davies-Bouldin (DB) CVI incrementally.
 """
-function param_inc!(cvi::DB, sample::Array{T, 1}, label::I) where {T<:Real, I<:Int}
+function param_inc!(cvi::DB, sample::RealVector, label::Integer)
     n_samples_new = cvi.n_samples + 1
     if isempty(cvi.mu_data)
         mu_data_new = sample
@@ -90,11 +93,11 @@ function param_inc!(cvi::DB, sample::Array{T, 1}, label::I) where {T<:Real, I<:I
     if label > cvi.n_clusters
         n_new = 1
         v_new = sample
-        CP_new = 0
+        CP_new = 0.0
         G_new = zeros(cvi.dim)
-        S_new = 0
+        S_new = 0.0
         if cvi.n_clusters == 0
-            D_new = 0
+            D_new = zeros(1,1)
         else
             D_new = zeros(cvi.n_clusters + 1, cvi.n_clusters + 1)
             D_new[1:cvi.n_clusters, 1:cvi.n_clusters] = cvi.D
@@ -113,12 +116,6 @@ function param_inc!(cvi::DB, sample::Array{T, 1}, label::I) where {T<:Real, I<:I
         # Update 2-D parameters with appending and reassignment
         cvi.v = [cvi.v v_new]
         cvi.G = [cvi.G G_new]
-        # if D_new is a scalar, cast it as a 2-D array
-        if isempty(size(D_new))
-            place_holder = convert(T, D_new)
-            D_new = Array{T, 2}(undef, 1, 1)
-            D_new[1, 1] = place_holder
-        end
         cvi.D = D_new
     else
         n_new = cvi.n[label] + 1
@@ -128,7 +125,7 @@ function param_inc!(cvi::DB, sample::Array{T, 1}, label::I) where {T<:Real, I<:I
         CP_new = cvi.CP[label] + transpose(diff_x_v)*diff_x_v + cvi.n[label]*transpose(delta_v)*delta_v + 2*transpose(delta_v)*cvi.G[:, label]
         G_new = cvi.G[:, label] + diff_x_v + cvi.n[label].*delta_v
         S_new = CP_new / n_new
-        d_column_new = zeros(T, cvi.n_clusters)
+        d_column_new = zeros(cvi.n_clusters)
         for jx = 1:cvi.n_clusters
             # Skip the current label index
             if jx == label
@@ -147,21 +144,21 @@ function param_inc!(cvi::DB, sample::Array{T, 1}, label::I) where {T<:Real, I<:I
     end
     cvi.n_samples = n_samples_new
     cvi.mu_data = mu_data_new
-end # param_inc!(cvi::DB, sample::Array{T, 1}, label::I) where {T<:Real, I<:Int}
+end # param_inc!(cvi::DB, sample::RealVector, label::Integer)
 
 """
-    param_batch!(cvi::DB, data::Array{T, 2}, labels::Array{I, 1}) where {T<:Real, I<:Int}
+    param_batch!(cvi::DB, data::RealMatrix, labels::IntegerVector)
 
 Compute the Davies-Bouldin (DB) CVI in batch.
 """
-function param_batch!(cvi::DB, data::Array{T, 2}, labels::Array{I, 1}) where {T<:Real, I<:Int}
+function param_batch!(cvi::DB, data::RealMatrix, labels::IntegerVector)
     cvi.dim, cvi.n_samples = size(data)
     # Take the average across all samples, but cast to 1-D vector
     cvi.mu_data = mean(data, dims=2)[:]
     # u = findfirst.(isequal.(unique(labels)), [labels])
     u = unique(labels)
     cvi.n_clusters = length(u)
-    cvi.n = zeros(cvi.n_clusters)
+    cvi.n = zeros(Integer, cvi.n_clusters)
     cvi.v = zeros(cvi.dim, cvi.n_clusters)
     cvi.CP = zeros(cvi.n_clusters)
     cvi.D = zeros(cvi.n_clusters, cvi.n_clusters)
@@ -180,7 +177,7 @@ function param_batch!(cvi::DB, data::Array{T, 2}, labels::Array{I, 1}) where {T<
         end
     end
     cvi.D = cvi.D + transpose(cvi.D)
-end # param_batch(cvi::DB, data::Array{Real, 2}, labels::Array{Real, 1})
+end # function param_batch!(cvi::DB, data::RealMatrix, labels::IntegerVector)
 
 """
     evaluate!(cvi::DB)

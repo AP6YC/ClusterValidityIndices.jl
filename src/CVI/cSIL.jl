@@ -28,16 +28,16 @@ using Statistics
 The stateful information of the Centroid-based Silhouette (cSIL) CVI.
 """
 mutable struct cSIL <: AbstractCVI
-    dim::Int64
-    n_samples::Int64
-    n::Array{Int64, 1}              # dim
-    v::Array{Float64, 2}            # dim x n_clusters
-    CP::Array{Float64, 1}           # dim
-    G::Array{Float64, 2}            # dim x n_clusters
-    S::Array{Float64, 2}            # n_clusters x n_clusters
-    sil_coefs::Array{Float64, 1}    # dim
-    n_clusters::Int64
-    criterion_value::Float64
+    dim::Integer
+    n_samples::Integer
+    n::IntegerVector        # dim
+    v::RealMatrix           # dim x n_clusters
+    CP::RealVector          # dim
+    G::RealMatrix           # dim x n_clusters
+    S::RealMatrix           # n_clusters x n_clusters
+    sil_coefs::RealVector   # dim
+    n_clusters::Integer
+    criterion_value::RealFP
 end # cSIL <: AbstractCVI
 
 """
@@ -49,18 +49,21 @@ function cSIL()
     cSIL(
         0,                              # dim
         0,                              # n_samples
-        Array{Int64, 1}(undef, 0),      # n
-        Array{Float64, 2}(undef, 0, 0), # v
-        Array{Float64, 1}(undef, 0),    # CP
-        Array{Float64, 2}(undef, 0, 0), # G
-        Array{Float64, 2}(undef, 0, 0), # S
-        Array{Float64, 1}(undef, 0),    # sil_coefs
+        Array{Integer, 1}(undef, 0),    # n
+        Array{RealFP, 2}(undef, 0, 0),  # v
+        Array{RealFP, 1}(undef, 0),     # CP
+        Array{RealFP, 2}(undef, 0, 0),  # G
+        Array{RealFP, 2}(undef, 0, 0),  # S
+        Array{RealFP, 1}(undef, 0),     # sil_coefs
         0,                              # n_clusters
         0.0                             # criterion_value
     )
 end # cSIL()
 
-function setup!(cvi::cSIL, sample::Array{T, 1}) where {T<:Real}
+"""
+    setup!(cvi::cSIL, sample::Array{T, 1}) where {T<:RealFP}
+"""
+function setup!(cvi::cSIL, sample::Array{T, 1}) where {T<:RealFP}
     # Get the feature dimension
     cvi.dim = length(sample)
     # Initialize the augmenting 2-D arrays with the correct feature dimension
@@ -70,11 +73,11 @@ function setup!(cvi::cSIL, sample::Array{T, 1}) where {T<:Real}
 end
 
 """
-    param_inc!(cvi::cSIL, sample::Array{T, 1}, label::I) where {T<:Real, I<:Int}
+    param_inc!(cvi::cSIL, sample::RealVector, label::Integer)
 
 Compute the Centroid-based Silhouette (cSIL) CVI incrementally.
 """
-function param_inc!(cvi::cSIL, sample::Array{T, 1}, label::I) where {T<:Real, I<:Int}
+function param_inc!(cvi::cSIL, sample::RealVector, label::Integer)
     n_samples_new = cvi.n_samples + 1
     if cvi.n_samples == 0
         setup!(cvi, sample)
@@ -87,7 +90,8 @@ function param_inc!(cvi::cSIL, sample::Array{T, 1}, label::I) where {T<:Real, I<
         G_new = sample
         # Compute S_new
         if cvi.n_clusters == 0
-            S_new = 0
+            # S_new = 0.0
+            S_new = zeros(1,1)
         else
             S_new = zeros(cvi.n_clusters + 1, cvi.n_clusters + 1)
             S_new[1:cvi.n_clusters, 1:cvi.n_clusters] = cvi.S
@@ -114,12 +118,6 @@ function param_inc!(cvi::cSIL, sample::Array{T, 1}, label::I) where {T<:Real, I<
         # Update 2-D parameters with appending and reassignment
         cvi.v = [cvi.v v_new]
         cvi.G = [cvi.G G_new]
-        # If S_new is a scalar, cast it as a 2-D array
-        if isempty(size(S_new))
-            place_holder = convert(T, S_new)
-            S_new = Array{T, 2}(undef, 1, 1)
-            S_new[1, 1] = place_holder
-        end
         cvi.S = S_new
     else
         n_new = cvi.n[label] + 1
@@ -156,19 +154,19 @@ function param_inc!(cvi::cSIL, sample::Array{T, 1}, label::I) where {T<:Real, I<
         cvi.S[label, :] = S_row_new
     end
     cvi.n_samples = n_samples_new
-end # param_inc!(cvi::cSIL, sample::Array{T, 1}, label::I) where {T<:Real, I<:Int}
+end # param_inc!(cvi::cSIL, sample::RealVector, label::Integer)
 
 """
-    param_batch!(cvi::cSIL, data::Array{T, 2}, labels::Array{I, 1}) where {T<:Real, I<:Int}
+    param_batch!(cvi::cSIL, data::RealMatrix, labels::IntegerVector)
 
 Compute the Centroid-based Silhouette (cSIL) CVI in batch.
 """
-function param_batch!(cvi::cSIL, data::Array{T, 2}, labels::Array{I, 1}) where {T<:Real, I<:Int}
+function param_batch!(cvi::cSIL, data::RealMatrix, labels::IntegerVector)
     cvi.dim, cvi.n_samples = size(data)
     # u = findfirst.(isequal.(unique(labels)), [labels])
     u = unique(labels)
     cvi.n_clusters = length(u)
-    cvi.n = zeros(cvi.n_clusters)
+    cvi.n = zeros(Integer, cvi.n_clusters)
     cvi.v = zeros(cvi.dim, cvi.n_clusters)
     cvi.CP = zeros(cvi.n_clusters)
     cvi.S = zeros(cvi.n_clusters, cvi.n_clusters)
@@ -177,9 +175,7 @@ function param_batch!(cvi::cSIL, data::Array{T, 2}, labels::Array{I, 1}) where {
         subset = data[:, findall(x->x==u[ix], labels)]
         cvi.n[ix] = size(subset, 2)
         cvi.v[:, ix] = mean(subset, dims=2)
-        # # Compute CP in case of switching back to incremental mode
-        # diff_x_v = subset - cvi.v[:, ix] * ones(1, cvi.n[ix])
-        # cvi.CP[ix] = sum(diff_x_v.^2)
+        # Compute CP in case of switching back to incremental mode
         d_temp = (data - cvi.v[:, ix]*ones(1, cvi.n_samples)).^2
         D[:, ix] = transpose(sum(d_temp, dims=1))
     end
@@ -189,7 +185,7 @@ function param_batch!(cvi::cSIL, data::Array{T, 2}, labels::Array{I, 1}) where {
             cvi.S[ix, jx] = sum(D[subset_ind, ix]) / cvi.n[jx]
         end
     end
-end # param_batch(cvi::cSIL, data::Array{Real, 2}, labels::Array{Real, 1})
+end # param_batch!(cvi::cSIL, data::RealMatrix, labels::IntegerVector)
 
 """
     evaluate!(cvi::cSIL)
@@ -209,6 +205,6 @@ function evaluate!(cvi::cSIL)
         # cSIL index value
         cvi.criterion_value = sum(cvi.sil_coefs) / cvi.n_clusters
     else
-        cvi.criterion_value = 0
+        cvi.criterion_value = 0.0
     end
 end # evaluate(cvi::cSIL)

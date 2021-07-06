@@ -36,16 +36,16 @@ using LinearAlgebra
 The stateful information of the (Renyi's) representative Cross Information Potential (rCIP) CVI.
 """
 mutable struct rCIP <: AbstractCVI
-    dim::Int64
-    n_samples::Int64
-    n::Array{Int64, 1}              # dim
-    v::Array{Float64, 2}            # dim x n_clusters
-    sigma::Array{Float64, 3}        # dim x dim x n_clusters
-    constant::Float64
-    D::Array{Float64, 2}            # n_clusters x n_clusters
-    delta_term::Array{Float64, 2}   # dim x dim
-    n_clusters::Int64
-    criterion_value::Float64
+    dim::Integer
+    n_samples::Integer
+    n::IntegerVector            # dim
+    v::RealMatrix               # dim x n_clusters
+    sigma::Array{RealFP, 3}     # dim x dim x n_clusters
+    constant::RealFP
+    D::RealMatrix               # n_clusters x n_clusters
+    delta_term::RealMatrix      # dim x dim
+    n_clusters::Integer
+    criterion_value::RealFP
 end # rCIP <: AbstractCVI
 
 """
@@ -57,12 +57,12 @@ function rCIP()
     rCIP(
         0,                                  # dim
         0,                                  # n_samples
-        Array{Int64, 1}(undef, 0),          # n
-        Array{Float64, 2}(undef, 0, 0),     # v
-        Array{Float64, 3}(undef, 0, 0, 0),  # sigma
+        Array{Integer, 1}(undef, 0),          # n
+        Array{RealFP, 2}(undef, 0, 0),     # v
+        Array{RealFP, 3}(undef, 0, 0, 0),  # sigma
         0.0,                                # constant
-        Array{Float64, 2}(undef, 0, 0),     # D
-        Array{Float64, 2}(undef, 0, 0),     # delta_term
+        Array{RealFP, 2}(undef, 0, 0),     # D
+        Array{RealFP, 2}(undef, 0, 0),     # delta_term
         0,                                  # n_clusters
         0.0                                 # criterion_value
     )
@@ -81,11 +81,11 @@ function setup!(cvi::rCIP, sample::Array{T, 1}) where {T<:Real}
 end
 
 """
-    param_inc!(cvi::rCIP, sample::Array{T, 1}, label::I) where {T<:Real, I<:Int}
+    param_inc!(cvi::rCIP, sample::RealVector, label::Integer)
 
 Compute the (Renyi's) representative Cross Information Potential (rCIP) CVI incrementally.
 """
-function param_inc!(cvi::rCIP, sample::Array{T, 1}, label::I) where {T<:Real, I<:Int}
+function param_inc!(cvi::rCIP, sample::RealVector, label::Integer)
     n_samples_new = cvi.n_samples + 1
     if isempty(cvi.v)
         setup!(cvi, sample)
@@ -97,7 +97,7 @@ function param_inc!(cvi::rCIP, sample::Array{T, 1}, label::I) where {T<:Real, I<
         v_new = sample
         sigma_new = cvi.delta_term
         if cvi.n_clusters == 0
-            D_new = 0
+            D_new = zeros(1, 1)
         else
             D_new = zeros(cvi.n_clusters + 1, cvi.n_clusters + 1)
             D_new[1:cvi.n_clusters, 1:cvi.n_clusters] = cvi.D
@@ -116,12 +116,6 @@ function param_inc!(cvi::rCIP, sample::Array{T, 1}, label::I) where {T<:Real, I<
         push!(cvi.n, n_new)
         # Update 2-D parameters with appending and reassignment
         cvi.v = [cvi.v v_new]
-        # if D_new is a scalar, cast it as a 2-D array
-        if isempty(size(D_new))
-            place_holder = convert(T, D_new)
-            D_new = Array{T, 2}(undef, 1, 1)
-            D_new[1, 1] = place_holder
-        end
         cvi.D = D_new
         cvi.sigma = cat(cvi.sigma, sigma_new, dims=3)
     else
@@ -134,7 +128,7 @@ function param_inc!(cvi::rCIP, sample::Array{T, 1}, label::I) where {T<:Real, I<
         else
             sigma_new = cvi.delta_term
         end
-        d_column_new = zeros(T, cvi.n_clusters)
+        d_column_new = zeros(cvi.n_clusters)
         for jx = 1:cvi.n_clusters
             if jx == label
                 continue
@@ -151,14 +145,14 @@ function param_inc!(cvi::rCIP, sample::Array{T, 1}, label::I) where {T<:Real, I<
         cvi.D[label, :] = transpose(d_column_new)
     end
     cvi.n_samples = n_samples_new
-end # param_inc!(cvi::rCIP, sample::Array{T, 1}, label::I) where {T<:Real, I<:Int}
+end # param_inc!(cvi::rCIP, sample::RealVector, label::Integer)
 
 """
-    param_batch!(cvi::rCIP, data::Array{T, 2}, labels::Array{I, 1}) where {T<:Real, I<:Int}
+    param_batch!(cvi::rCIP, data::RealMatrix, labels::IntegerVector)
 
 Compute the (Renyi's) representative Cross Information Potential (rCIP) CVI in batch.
 """
-function param_batch!(cvi::rCIP, data::Array{T, 2}, labels::Array{I, 1}) where {T<:Real, I<:Int}
+function param_batch!(cvi::rCIP, data::RealMatrix, labels::IntegerVector)
     cvi.dim, cvi.n_samples = size(data)
     cvi.constant = 1/sqrt((2*pi)^cvi.dim)
     # Calculate the delta term
@@ -169,7 +163,7 @@ function param_batch!(cvi::rCIP, data::Array{T, 2}, labels::Array{I, 1}) where {
     # Take the average across all samples, but cast to 1-D vector
     u = unique(labels)
     cvi.n_clusters = length(u)
-    cvi.n = zeros(cvi.n_clusters)
+    cvi.n = zeros(Integer, cvi.n_clusters)
     cvi.v = zeros(cvi.dim, cvi.n_clusters)
     cvi.sigma = zeros(cvi.dim, cvi.dim, cvi.n_clusters)
     cvi.D = zeros(cvi.n_clusters, cvi.n_clusters)
@@ -179,12 +173,6 @@ function param_batch!(cvi::rCIP, data::Array{T, 2}, labels::Array{I, 1}) where {
         cvi.n[ix] = size(subset, 2)
         cvi.v[1:cvi.dim, ix] = mean(subset, dims=2)
         if cvi.n[ix] > 1
-            @info size(cvi.v[:, ix])
-            @info size(transpose(cvi.v[:, ix]))
-            @info size(cvi.v[:,ix] * transpose(cvi.v[:,ix]))
-            @info size(subset*transpose(subset))
-            @info size(subset)
-            @info size(cvi.delta_term)
             cvi.sigma[:,:,ix] = (1/(cvi.n[ix] - 1)) *
                 ((subset*transpose(subset)) - cvi.n[ix].*cvi.v[:,ix]*transpose(cvi.v[:,ix])) +
                 cvi.delta_term
@@ -200,7 +188,7 @@ function param_batch!(cvi::rCIP, data::Array{T, 2}, labels::Array{I, 1}) where {
         end
     end
     cvi.D = cvi.D + transpose(cvi.D)
-end # param_batch(cvi::rCIP, data::Array{Real, 2}, labels::Array{Real, 1})
+end # param_batch!(cvi::rCIP, data::RealMatrix, labels::IntegerVector)
 
 """
     evaluate!(cvi::rCIP)
@@ -210,6 +198,10 @@ Compute the criterion value of the (Renyi's) representative Cross Information Po
 function evaluate!(cvi::rCIP)
     # Assume a symmetric dimension
     dim = size(cvi.D)[1]
-    values = [cvi.D[i,j] for i = 1:dim, j=1:dim if j > i]
-    cvi.criterion_value = sum(values)
+    if dim > 1
+        values = [cvi.D[i,j] for i = 1:dim, j=1:dim if j > i]
+        cvi.criterion_value = sum(values)
+    else
+        cvi.criterion_value = 0.0
+    end
 end # evaluate(cvi::rCIP)

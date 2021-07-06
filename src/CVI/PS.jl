@@ -24,16 +24,16 @@ using Statistics
 The stateful information of the Partition Separation (PS) CVI.
 """
 mutable struct PS <: AbstractCVI
-    dim::Int64
-    n_samples::Int64
-    n::Array{Int64, 1}          # dim
-    v::Array{Float64, 2}        # dim x n_clusters
-    D::Array{Float64, 2}        # n_clusters x n_clusters
-    v_bar::Array{Float64, 1}    # dim
-    beta_t::Float64
-    PS_i::Array{Float64, 1}     # n_clusters
-    n_clusters::Int64
-    criterion_value::Float64
+    dim::Integer
+    n_samples::Integer
+    n::IntegerVector        # dim
+    v::RealMatrix           # dim x n_clusters
+    D::RealMatrix           # n_clusters x n_clusters
+    v_bar::RealVector       # dim
+    beta_t::RealFP
+    PS_i::RealVector        # n_clusters
+    n_clusters::Integer
+    criterion_value::RealFP
 end # PS <: AbstractCVI
 
 """
@@ -45,30 +45,33 @@ function PS()
     PS(
         0,                              # dim
         0,                              # n_samples
-        Array{Int64, 1}(undef, 0),      # n
-        Array{Float64, 2}(undef, 0, 0), # v
-        Array{Float64, 2}(undef, 0, 0), # D
-        Array{Float64, 1}(undef, 0),    # v_bar
+        Array{Integer, 1}(undef, 0),    # n
+        Array{RealFP, 2}(undef, 0, 0),  # v
+        Array{RealFP, 2}(undef, 0, 0),  # D
+        Array{RealFP, 1}(undef, 0),     # v_bar
         0.0,                            # beta_t
-        Array{Float64, 1}(undef, 0),    # PS_i
+        Array{RealFP, 1}(undef, 0),     # PS_i
         0,                              # n_clusters
         0.0                             # criterion_value
     )
 end # PS()
 
+"""
+    setup!(cvi::PS, sample::Array{T, 1}) where {T<:Real}
+"""
 function setup!(cvi::PS, sample::Array{T, 1}) where {T<:Real}
     # Get the feature dimension
     cvi.dim = length(sample)
     # Initialize the 2-D arrays with the correct feature dimension
     cvi.v = Array{T, 2}(undef, cvi.dim, 0)
-end
+end # setup!(cvi::PS, sample::Array{T, 1}) where {T<:Real}
 
 """
-    param_inc!(cvi::PS, sample::Array{T, 1}, label::I) where {T<:Real, I<:Int}
+    param_inc!(cvi::PS, sample::RealVector, label::Integer)
 
 Compute the Partition Separation (PS) CVI incrementally.
 """
-function param_inc!(cvi::PS, sample::Array{T, 1}, label::I) where {T<:Real, I<:Int}
+function param_inc!(cvi::PS, sample::RealVector, label::Integer)
     n_samples_new = cvi.n_samples + 1
     if isempty(cvi.v)
         setup!(cvi, sample)
@@ -78,7 +81,7 @@ function param_inc!(cvi::PS, sample::Array{T, 1}, label::I) where {T<:Real, I<:I
         n_new = 1
         v_new = sample
         if cvi.n_clusters == 0
-            D_new = 0
+            D_new = zeros(1, 1)
         else
             D_new = zeros(cvi.n_clusters + 1, cvi.n_clusters + 1)
             D_new[1:cvi.n_clusters, 1:cvi.n_clusters] = cvi.D
@@ -94,17 +97,11 @@ function param_inc!(cvi::PS, sample::Array{T, 1}, label::I) where {T<:Real, I<:I
         push!(cvi.n, n_new)
         # Update 2-D parameters with appending and reassignment
         cvi.v = [cvi.v v_new]
-        # if D_new is a scalar, cast it as a 2-D array
-        if isempty(size(D_new))
-            place_holder = convert(T, D_new)
-            D_new = Array{T, 2}(undef, 1, 1)
-            D_new[1, 1] = place_holder
-        end
         cvi.D = D_new
     else
         n_new = cvi.n[label] + 1
         v_new = (1 - 1/n_new) .* cvi.v[:, label] + (1/n_new) .* sample
-        d_column_new = zeros(T, cvi.n_clusters)
+        d_column_new = zeros(cvi.n_clusters)
         for jx = 1:cvi.n_clusters
             if jx == label
                 continue
@@ -118,19 +115,19 @@ function param_inc!(cvi::PS, sample::Array{T, 1}, label::I) where {T<:Real, I<:I
         cvi.D[label, :] = transpose(d_column_new)
     end
     cvi.n_samples = n_samples_new
-end # param_inc!(cvi::PS, sample::Array{T, 1}, label::I) where {T<:Real, I<:Int}
+end # param_inc!(cvi::PS, sample::RealVector, label::Integer)
 
 """
-    param_batch!(cvi::PS, data::Array{T, 2}, labels::Array{I, 1}) where {T<:Real, I<:Int}
+    param_batch!(cvi::PS, data::RealMatrix, labels::IntegerVector)
 
 Compute the Partition Separation (PS) CVI in batch.
 """
-function param_batch!(cvi::PS, data::Array{T, 2}, labels::Array{I, 1}) where {T<:Real, I<:Int}
+function param_batch!(cvi::PS, data::RealMatrix, labels::IntegerVector)
     cvi.dim, cvi.n_samples = size(data)
     # Take the average across all samples, but cast to 1-D vector
     u = unique(labels)
     cvi.n_clusters = length(u)
-    cvi.n = zeros(cvi.n_clusters)
+    cvi.n = zeros(Integer, cvi.n_clusters)
     cvi.v = zeros(cvi.dim, cvi.n_clusters)
     cvi.D = zeros(cvi.n_clusters, cvi.n_clusters)
     for ix = 1:cvi.n_clusters
@@ -144,7 +141,7 @@ function param_batch!(cvi::PS, data::Array{T, 2}, labels::Array{I, 1}) where {T<
         end
     end
     cvi.D = cvi.D + transpose(cvi.D)
-end # param_batch(cvi::PS, data::Array{Real, 2}, labels::Array{Real, 1})
+end # param_batch!(cvi::PS, data::RealMatrix, labels::IntegerVector)
 
 """
     evaluate!(cvi::PS)
@@ -154,7 +151,7 @@ Compute the criterion value of the Partition Separation (PS) CVI.
 function evaluate!(cvi::PS)
     if cvi.n_clusters > 1
         cvi.v_bar = vec(mean(cvi.v, dims=2))
-        cvi.beta_t = 0
+        cvi.beta_t = 0.0
         cvi.PS_i = zeros(cvi.n_clusters)
         for ix = 1:cvi.n_clusters
             delta_v = cvi.v[:, ix] - cvi.v_bar

@@ -1,22 +1,22 @@
 """
-    sort_cvi_data(data::Array{N, 2}, labels::Array{M, 1}) where {N<:Real, M<:Int}
+    sort_cvi_data(data::RealMatrix, labels::IntegerVector)
 
 Sorts the CVI data by the label index, assuring that clusters are provided incrementally.
 """
-function sort_cvi_data(data::Array{N, 2}, labels::Array{M, 1}) where {N<:Real, M<:Int}
+function sort_cvi_data(data::RealMatrix, labels::IntegerVector)
     index = sortperm(labels)
     data = data[:, index]
     labels = labels[index]
 
     return data, labels
-end # sort_cvi_data(data::Array{N, 2}, labels::Array{M, 1}) where {N<:Real, M<:Int}
+end # sort_cvi_data(data::RealMatrix, labels::IntegerVector)
 
 """
-    relabel_cvi_data(labels::Array{M, 1}) where {M<:Int}
+    relabel_cvi_data(labels::IntegerVector)
 
 Relabels the vector to present new labels in incremental order.
 """
-function relabel_cvi_data(labels::Array{M, 1}) where {M<:Int}
+function relabel_cvi_data(labels::IntegerVector)
     # Get the unique labels and their order of appearance
     unique_labels = unique(labels)
     n_unique_labels = length(unique_labels)
@@ -35,4 +35,4 @@ function relabel_cvi_data(labels::Array{M, 1}) where {M<:Int}
     end
 
     return new_labels
-end # relabel_cvi_data(labels::Array{M, 1}) where {M<:Int}
+end # relabel_cvi_data(labels::IntegerVector)

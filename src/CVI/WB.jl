@@ -34,18 +34,18 @@ using Statistics
 The stateful information of the WB-Index (WB) CVI.
 """
 mutable struct WB <: AbstractCVI
-    dim::Int64
-    n_samples::Int64
-    mu::Array{Float64, 1}       # dim
-    n::Array{Int64, 1}          # dim
-    v::Array{Float64, 2}        # dim x n_clusters
-    CP::Array{Float64, 1}       # dim
-    SEP::Array{Float64, 1}      # dim
-    G::Array{Float64, 2}        # dim x n_clusters
-    BGSS::Float64
-    WGSS::Float64
-    n_clusters::Int64
-    criterion_value::Float64
+    dim::Integer
+    n_samples::Integer
+    mu::RealVector          # dim
+    n::IntegerVector        # dim
+    v::RealMatrix           # dim x n_clusters
+    CP::RealVector          # dim
+    SEP::RealVector         # dim
+    G::RealMatrix           # dim x n_clusters
+    BGSS::RealFP
+    WGSS::RealFP
+    n_clusters::Integer
+    criterion_value::RealFP
 end # WB <: AbstractCVI
 
 """
@@ -57,12 +57,12 @@ function WB()
     WB(
         0,                              # dim
         0,                              # n_samples
-        Array{Float64, 1}(undef, 0),    # mu
-        Array{Int64, 1}(undef, 0),      # n
-        Array{Float64, 2}(undef, 0, 0), # v
-        Array{Float64, 1}(undef, 0),    # CP
-        Array{Float64, 1}(undef, 0),    # SEP
-        Array{Float64, 2}(undef, 0, 0), # G
+        Array{RealFP, 1}(undef, 0),     # mu
+        Array{Integer, 1}(undef, 0),    # n
+        Array{RealFP, 2}(undef, 0, 0),  # v
+        Array{RealFP, 1}(undef, 0),     # CP
+        Array{RealFP, 1}(undef, 0),     # SEP
+        Array{RealFP, 2}(undef, 0, 0),  # G
         0.0,                            # BGSS
         0.0,                            # WGSS
         0,                              # n_clusters
@@ -70,6 +70,9 @@ function WB()
     )
 end # WB()
 
+"""
+    setup!(cvi::WB, sample::Array{T, 1}) where {T<:Real}
+"""
 function setup!(cvi::WB, sample::Array{T, 1}) where {T<:Real}
     # Get the feature dimension
     cvi.dim = length(sample)
@@ -77,14 +80,14 @@ function setup!(cvi::WB, sample::Array{T, 1}) where {T<:Real}
     # NOTE: R is emptied and calculated in evaluate!, so it is not defined here
     cvi.v = Array{T, 2}(undef, cvi.dim, 0)
     cvi.G = Array{T, 2}(undef, cvi.dim, 0)
-end
+end # setup!(cvi::WB, sample::Array{T, 1}) where {T<:Real}
 
 """
-    param_inc!(cvi::WB, sample::Array{T, 1}, label::I) where {T<:Real, I<:Int}
+    param_inc!(cvi::WB, sample::RealVector, label::Integer)
 
 Compute the WB-Index (WB) CVI incrementally.
 """
-function param_inc!(cvi::WB, sample::Array{T, 1}, label::I) where {T<:Real, I<:Int}
+function param_inc!(cvi::WB, sample::RealVector, label::Integer)
     n_samples_new = cvi.n_samples + 1
     if isempty(cvi.mu)
         mu_new = sample
@@ -96,7 +99,7 @@ function param_inc!(cvi::WB, sample::Array{T, 1}, label::I) where {T<:Real, I<:I
     if label > cvi.n_clusters
         n_new = 1
         v_new = sample
-        CP_new = 0
+        CP_new = 0.0
         G_new = zeros(cvi.dim)
         # Update 1-D parameters with a push
         cvi.n_clusters += 1
@@ -121,21 +124,21 @@ function param_inc!(cvi::WB, sample::Array{T, 1}, label::I) where {T<:Real, I<:I
     cvi.n_samples = n_samples_new
     cvi.mu = mu_new
     cvi.SEP = [cvi.n[ix] * sum((cvi.v[:, ix] - cvi.mu).^2) for ix=1:cvi.n_clusters]
-end # param_inc!(cvi::WB, sample::Array{T, 1}, label::I) where {T<:Real, I<:Int}
+end # param_inc!(cvi::WB, sample::RealVector, label::Integer)
 
 """
-    param_batch!(cvi::WB, data::Array{T, 2}, labels::Array{I, 1}) where {T<:Real, I<:Int}
+    param_batch!(cvi::WB, data::RealMatrix, labels::IntegerVector)
 
 Compute the WB-Index (WB) CVI in batch.
 """
-function param_batch!(cvi::WB, data::Array{T, 2}, labels::Array{I, 1}) where {T<:Real, I<:Int}
+function param_batch!(cvi::WB, data::RealMatrix, labels::IntegerVector)
     cvi.dim, cvi.n_samples = size(data)
     # Take the average across all samples, but cast to 1-D vector
     cvi.mu = mean(data, dims=2)[:]
     # u = findfirst.(isequal.(unique(labels)), [labels])
     u = unique(labels)
     cvi.n_clusters = length(u)
-    cvi.n = zeros(cvi.n_clusters)
+    cvi.n = zeros(Integer, cvi.n_clusters)
     cvi.v = zeros(cvi.dim, cvi.n_clusters)
     cvi.CP = zeros(cvi.n_clusters)
     cvi.SEP = zeros(cvi.n_clusters)
@@ -147,7 +150,7 @@ function param_batch!(cvi::WB, data::Array{T, 2}, labels::Array{I, 1}) where {T<
         cvi.CP[ix] = sum(diff_x_v.^2)
         cvi.SEP[ix] = cvi.n[ix] * sum((cvi.v[:, ix] - cvi.mu).^2);
     end
-end # param_batch(cvi::WB, data::Array{Real, 2}, labels::Array{Real, 1})
+end # param_batch!(cvi::WB, data::RealMatrix, labels::IntegerVector)
 
 """
     evaluate!(cvi::WB)
