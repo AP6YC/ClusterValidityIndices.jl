@@ -56,6 +56,7 @@ Please read the [documentation](https://ap6yc.github.io/ClusterValidityIndices.j
 - [ClusterValidityIndices](#clustervalidityindices)
   - [Table of Contents](#table-of-contents)
   - [Outline](#outline)
+  - [Implemented CVI/ICVIs](#implemented-cviicvis)
   - [Quickstart](#quickstart)
   - [Structure](#structure)
   - [Usage](#usage)
@@ -69,8 +70,23 @@ Please read the [documentation](https://ap6yc.github.io/ClusterValidityIndices.j
 ## Outline
 
 This Julia project contains an outline of the conceptual usage of CVIs along with many example scripts.
-[Quickstart](##Quickstart) provides an overview of how to use this project, while [Structure](##Structure) outlines the project file structure, giving context to the locations of every component of the project.
-[Usage](##Usage) outlines the general syntax and workflow of the ICVIs, while [Authors](##Authors) gives credit to the author(s).
+This outline begins with [a list of CVIs](#implemented-cviicvis) that are implemented in the lastest version of the project.
+[Quickstart](#quickstart) provides an overview of how to use this project, while [Structure](#structure) outlines the project file structure, giving context to the locations of every component of the project.
+[Usage](#usage) outlines the general syntax and workflow of the ICVIs.
+
+## Implemented CVI/ICVIs
+
+This project has implementations of the following CVIs in both batch and incremental variants:
+
+- **CH**: Calinski-Harabasz
+- **cSIL**: Centroid-based Silhouette
+- **DB**: Davies-Bouldin
+- **GD43**: Generalized Dunn's Index 43
+- **GD53**: Generalized Dunn's Index 53
+- **PS**: Partition Separation
+- **rCIP**: (Renyi's) representative Cross Information Potential
+- **WB**: WB-index
+- **XB**: Xie-Beni
 
 ## Quickstart
 
