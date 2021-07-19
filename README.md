@@ -140,12 +140,12 @@ ClusterValidityIndices.jl
 
 The usage of these CVIs requires an understanding of:
 
-- [Data](###data) assumptions of the CVIs.
-- [How to instantiate](###instantiation) the CVIs.
-- [Incremental vs. batch](###incremental-vs.-batch) evaluation.
-- [Updating](###updating) internal CVI parameters.
-- [Computing and extracting](###criterion-values) the criterion values.
-- [Porcelain functions](###porcelain) that are available to simplify operation.
+- [Data](#data) assumptions of the CVIs.
+- [How to instantiate](#instantiation) the CVIs.
+- [Incremental vs. batch](#incremental-vs-batch) evaluation.
+- [Updating](#updating) internal CVI parameters.
+- [Computing and extracting](#criterion-values) the criterion values.
+- [Porcelain functions](#porcelain) that are available to simplify operation.
 
 ### Data
 
@@ -166,7 +166,7 @@ You may repeat previously seen label indices, but skipping label indices (e.g., 
 In this project, this is ameliorated with the function
 
 ```julia
-relabel_cvi_data(labels::Array{M, 1}) where {M<:Int}
+relabel_cvi_data(labels::Array{M, 1}) where {M<:Integer}
 ```
 
 For example,
@@ -180,7 +180,7 @@ labels = relabel_cvi_data(labels)
 Alternatively, you may pairwise sort the entirety of the data with
 
 ```julia
-sort_cvi_data(data::Array{N, 2}, labels::Array{M, 1}) where {N<:Real, M<:Int}
+sort_cvi_data(data::Array{N, 2}, labels::Array{M, 1}) where {N<:Real, M<:Integer}
 ```
 
 **NOTE*** `sort_cvi_data` reorders the input data as well, which will lead to different ICVI results than with `relabel_cvi_data`.
@@ -241,9 +241,9 @@ More concretely, they are
 
 ```julia
 # Incremental updating
-param_inc!(cvi::C, sample::Array{T, 1}, label::I) where {C<:AbstractCVI, T<:Real, I<:Int}
+param_inc!(cvi::C, sample::Array{T, 1}, label::I) where {C<:AbstractCVI, T<:Real, I<:Integer}
 # Batch updating
-param_batch!(cvi::C, data::Array{T, 2}, labels::Array{I, 1}) where {C<:AbstractCVI, T<:Real, I<:Int}
+param_batch!(cvi::C, data::Array{T, 2}, labels::Array{I, 1}) where {C<:AbstractCVI, T<:Real, I<:Integer}
 ```
 
 Every CVI is a subtype of the abstract type `AbstractCVI`.
@@ -352,9 +352,9 @@ Exactly as in the usage for updating the parameters, the functions take the cvi,
 
 ```julia
 # Incremental
-get_icvi!(cvi::C, x::Array{N, 1}, y::M) where {C<:AbstractCVI, N<:Real, M<:Int}
+get_icvi!(cvi::C, x::Array{N, 1}, y::M) where {C<:AbstractCVI, N<:Real, M<:Integer}
 # Batch
-get_cvi!(cvi::C, x::Array{N, 2}, y::Array{M, 1}) where {C<:AbstractCVI, N<:Real, M<:Int}
+get_cvi!(cvi::C, x::Array{N, 2}, y::Array{M, 1}) where {C<:AbstractCVI, N<:Real, M<:Integer}
 ```
 
 For example, after loading the data you may get the criterion value at each step with
