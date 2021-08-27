@@ -68,7 +68,10 @@ function rCIP()
     )
 end # rCIP()
 
-function setup!(cvi::rCIP, sample::Array{T, 1}) where {T<:Real}
+"""
+    setup!(cvi::rCIP, sample::Vector{T}) where {T<:RealFP}
+"""
+function setup!(cvi::rCIP, sample::Vector{T}) where {T<:RealFP}
     # Get the feature dimension
     cvi.dim = length(sample)
     # Initialize the 2-D and 3-D arrays with the correct feature dimension
@@ -78,7 +81,7 @@ function setup!(cvi::rCIP, sample::Array{T, 1}) where {T<:Real}
     epsilon = 12
     delta = 10^(-epsilon/cvi.dim)
     cvi.delta_term = Matrix{Float64}(LinearAlgebra.I, cvi.dim, cvi.dim).*delta
-end
+end # setup!(cvi::rCIP, sample::Vector{T}) where {T<:RealFP}
 
 """
     param_inc!(cvi::rCIP, sample::RealVector, label::Integer)

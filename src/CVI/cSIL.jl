@@ -61,16 +61,16 @@ function cSIL()
 end # cSIL()
 
 """
-    setup!(cvi::cSIL, sample::Array{T, 1}) where {T<:RealFP}
+    setup!(cvi::cSIL, sample::Vector{T}) where {T<:RealFP}
 """
-function setup!(cvi::cSIL, sample::Array{T, 1}) where {T<:RealFP}
+function setup!(cvi::cSIL, sample::Vector{T}) where {T<:RealFP}
     # Get the feature dimension
     cvi.dim = length(sample)
     # Initialize the augmenting 2-D arrays with the correct feature dimension
     # NOTE: R is emptied and calculated in evaluate!, so it is not defined here
     cvi.v = Array{T, 2}(undef, cvi.dim, 0)
     cvi.G = Array{T, 2}(undef, cvi.dim, 0)
-end
+end # setup!(cvi::cSIL, sample::Vector{T}) where {T<:RealFP}
 
 """
     param_inc!(cvi::cSIL, sample::RealVector, label::Integer)

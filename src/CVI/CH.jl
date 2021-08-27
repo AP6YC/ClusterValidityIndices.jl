@@ -66,14 +66,17 @@ function CH()
     )
 end # CH()
 
-function setup!(cvi::CH, sample::Array{T, 1}) where {T<:Real}
+"""
+    setup!(cvi::CH, sample::Vector{T}) where {T<:Real}
+"""
+function setup!(cvi::CH, sample::Vector{T}) where {T<:Real}
     # Get the feature dimension
     cvi.dim = length(sample)
     # Initialize the augmenting 2-D arrays with the correct feature dimension
     # NOTE: R is emptied and calculated in evaluate!, so it is not defined here
     cvi.v = Array{T, 2}(undef, cvi.dim, 0)
     cvi.G = Array{T, 2}(undef, cvi.dim, 0)
-end # setup!(cvi::CH, sample::Array{T, 1}) where {T<:Real}
+end # setup!(cvi::CH, sample::Vector{T}) where {T<:Real}
 
 """
     param_inc!(cvi::CH, sample::RealVector, label::Integer)

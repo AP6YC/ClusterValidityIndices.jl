@@ -57,14 +57,14 @@ function PS()
 end # PS()
 
 """
-    setup!(cvi::PS, sample::Array{T, 1}) where {T<:Real}
+    setup!(cvi::PS, sample::Vector{T}) where {T<:RealFP}
 """
-function setup!(cvi::PS, sample::Array{T, 1}) where {T<:Real}
+function setup!(cvi::PS, sample::Vector{T}) where {T<:RealFP}
     # Get the feature dimension
     cvi.dim = length(sample)
     # Initialize the 2-D arrays with the correct feature dimension
     cvi.v = Array{T, 2}(undef, cvi.dim, 0)
-end # setup!(cvi::PS, sample::Array{T, 1}) where {T<:Real}
+end # setup!(cvi::PS, sample::Vector{T}) where {T<:RealFP}
 
 """
     param_inc!(cvi::PS, sample::RealVector, label::Integer)
