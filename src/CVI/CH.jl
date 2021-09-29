@@ -30,6 +30,7 @@ using Statistics
 The stateful information of the Calinski-Harabasz (CH) CVI.
 """
 mutable struct CH <: AbstractCVI
+    label_map::LabelMap
     dim::Integer
     n_samples::Integer
     mu::RealVector      # dim
@@ -51,6 +52,7 @@ Default constructor for the Calinski-Harabasz (CH) Cluster Validity Index.
 """
 function CH()
     CH(
+        LabelMap(),                     # label_map
         0,                              # dim
         0,                              # n_samples
         Array{RealFP, 1}(undef, 0),     # mu
@@ -84,6 +86,9 @@ end # setup!(cvi::CH, sample::Vector{T}) where {T<:Real}
 Compute the Calinski-Harabasz (CH) CVI incrementally.
 """
 function param_inc!(cvi::CH, sample::RealVector, label::Integer)
+    # Get the internal label
+    i_label = get_internal_label!(cvi.label_map, label)
+
     n_samples_new = cvi.n_samples + 1
     if isempty(cvi.mu)
         mu_new = sample
@@ -92,7 +97,7 @@ function param_inc!(cvi::CH, sample::RealVector, label::Integer)
         mu_new = (1 - 1/n_samples_new) .* cvi.mu + (1/n_samples_new) .* sample
     end
 
-    if label > cvi.n_clusters
+    if i_label > cvi.n_clusters
         n_new = 1
         v_new = sample
         CP_new = 0.0
@@ -105,17 +110,17 @@ function param_inc!(cvi::CH, sample::RealVector, label::Integer)
         cvi.v = [cvi.v v_new]
         cvi.G = [cvi.G G_new]
     else
-        n_new = cvi.n[label] + 1
-        v_new = (1 - 1/n_new) .* cvi.v[:, label] + (1/n_new) .* sample
-        delta_v = cvi.v[:, label] - v_new
+        n_new = cvi.n[i_label] + 1
+        v_new = (1 - 1/n_new) .* cvi.v[:, i_label] + (1/n_new) .* sample
+        delta_v = cvi.v[:, i_label] - v_new
         diff_x_v = sample .- v_new
-        CP_new = cvi.CP[label] + transpose(diff_x_v)*diff_x_v + cvi.n[label]*transpose(delta_v)*delta_v + 2*transpose(delta_v)*cvi.G[:, label]
-        G_new = cvi.G[:, label] + diff_x_v + cvi.n[label].*delta_v
+        CP_new = cvi.CP[i_label] + transpose(diff_x_v)*diff_x_v + cvi.n[i_label]*transpose(delta_v)*delta_v + 2*transpose(delta_v)*cvi.G[:, i_label]
+        G_new = cvi.G[:, i_label] + diff_x_v + cvi.n[i_label].*delta_v
         # Update parameters
-        cvi.n[label] = n_new
-        cvi.v[:, label] = v_new
-        cvi.CP[label] = CP_new
-        cvi.G[:, label] = G_new
+        cvi.n[i_label] = n_new
+        cvi.v[:, i_label] = v_new
+        cvi.CP[i_label] = CP_new
+        cvi.G[:, i_label] = G_new
     end
     cvi.n_samples = n_samples_new
     cvi.mu = mu_new
