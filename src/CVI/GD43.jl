@@ -34,6 +34,7 @@ using LinearAlgebra
 The stateful information of the Generalized Dunn's Index 43 (GD43) CVI.
 """
 mutable struct GD43 <: AbstractCVI
+    label_map::LabelMap
     dim::Integer
     n_samples::Integer
     mu_data::RealVector     # dim
@@ -55,6 +56,7 @@ Default constructor for the Generalized Dunn's Index 43 (GD43) Cluster Validity 
 """
 function GD43()
     GD43(
+        LabelMap(),                     # label_map
         0,                              # dim
         0,                              # n_samples
         Array{RealFP, 1}(undef, 0),     # mu_data
@@ -88,6 +90,9 @@ end # setup!(cvi::GD43, sample::Vector{T}) where {T<:RealFP}
 Compute the Generalized Dunn's Index 43 (GD43) CVI incrementally.
 """
 function param_inc!(cvi::GD43, sample::RealVector, label::Integer)
+    # Get the internal label
+    i_label = get_internal_label!(cvi.label_map, label)
+
     n_samples_new = cvi.n_samples + 1
     if isempty(cvi.mu_data)
         mu_data_new = sample
@@ -96,7 +101,7 @@ function param_inc!(cvi::GD43, sample::RealVector, label::Integer)
         mu_data_new = (1 - 1/n_samples_new) .* cvi.mu_data + (1/n_samples_new) .* sample
     end
 
-    if label > cvi.n_clusters
+    if i_label > cvi.n_clusters
         n_new = 1
         v_new = sample
         CP_new = 0.0
@@ -110,8 +115,8 @@ function param_inc!(cvi::GD43, sample::RealVector, label::Integer)
             for jx = 1:cvi.n_clusters
                 d_column_new[jx] = sqrt(sum((v_new - cvi.v[:, jx]).^2))
             end
-            D_new[:, label] = d_column_new
-            D_new[label, :] = transpose(d_column_new)
+            D_new[:, i_label] = d_column_new
+            D_new[i_label, :] = transpose(d_column_new)
         end
         # Update 1-D parameters with a push
         cvi.n_clusters += 1
@@ -122,27 +127,27 @@ function param_inc!(cvi::GD43, sample::RealVector, label::Integer)
         cvi.G = [cvi.G G_new]
         cvi.D = D_new
     else
-        n_new = cvi.n[label] + 1
-        v_new = (1 - 1/n_new) .* cvi.v[:, label] + (1/n_new) .* sample
-        delta_v = cvi.v[:, label] - v_new
+        n_new = cvi.n[i_label] + 1
+        v_new = (1 - 1/n_new) .* cvi.v[:, i_label] + (1/n_new) .* sample
+        delta_v = cvi.v[:, i_label] - v_new
         diff_x_v = sample .- v_new
-        CP_new = cvi.CP[label] + transpose(diff_x_v)*diff_x_v + cvi.n[label]*transpose(delta_v)*delta_v + 2*transpose(delta_v)*cvi.G[:, label]
-        G_new = cvi.G[:, label] + diff_x_v + cvi.n[label].*delta_v
+        CP_new = cvi.CP[i_label] + transpose(diff_x_v)*diff_x_v + cvi.n[i_label]*transpose(delta_v)*delta_v + 2*transpose(delta_v)*cvi.G[:, i_label]
+        G_new = cvi.G[:, i_label] + diff_x_v + cvi.n[i_label].*delta_v
         d_column_new = zeros(cvi.n_clusters)
         for jx = 1:cvi.n_clusters
-            # Skip the current label index
-            if jx == label
+            # Skip the current i_label index
+            if jx == i_label
                 continue
             end
             d_column_new[jx] = sqrt(sum((v_new - cvi.v[:, jx]).^2))
         end
         # Update parameters
-        cvi.n[label] = n_new
-        cvi.v[:, label] = v_new
-        cvi.CP[label] = CP_new
-        cvi.G[:, label] = G_new
-        cvi.D[:, label] = d_column_new
-        cvi.D[label, :] = transpose(d_column_new)
+        cvi.n[i_label] = n_new
+        cvi.v[:, i_label] = v_new
+        cvi.CP[i_label] = CP_new
+        cvi.G[:, i_label] = G_new
+        cvi.D[:, i_label] = d_column_new
+        cvi.D[i_label, :] = transpose(d_column_new)
     end
     cvi.n_samples = n_samples_new
     cvi.mu_data = mu_data_new

@@ -24,6 +24,7 @@ using Statistics
 The stateful information of the Partition Separation (PS) CVI.
 """
 mutable struct PS <: AbstractCVI
+    label_map::LabelMap
     dim::Integer
     n_samples::Integer
     n::IntegerVector        # dim
@@ -43,6 +44,7 @@ Default constructor for the Partition Separation (PS) Cluster Validity Index.
 """
 function PS()
     PS(
+        LabelMap(),                     # label_map
         0,                              # dim
         0,                              # n_samples
         Array{Integer, 1}(undef, 0),    # n
@@ -72,12 +74,15 @@ end # setup!(cvi::PS, sample::Vector{T}) where {T<:RealFP}
 Compute the Partition Separation (PS) CVI incrementally.
 """
 function param_inc!(cvi::PS, sample::RealVector, label::Integer)
+    # Get the internal label
+    i_label = get_internal_label!(cvi.label_map, label)
+
     n_samples_new = cvi.n_samples + 1
     if isempty(cvi.v)
         setup!(cvi, sample)
     end
 
-    if label > cvi.n_clusters
+    if i_label > cvi.n_clusters
         n_new = 1
         v_new = sample
         if cvi.n_clusters == 0
@@ -89,8 +94,8 @@ function param_inc!(cvi::PS, sample::RealVector, label::Integer)
             for jx = 1:cvi.n_clusters
                 d_column_new[jx] = sum((v_new - cvi.v[:, jx]).^2)
             end
-            D_new[:, label] = d_column_new
-            D_new[label, :] = transpose(d_column_new)
+            D_new[:, i_label] = d_column_new
+            D_new[i_label, :] = transpose(d_column_new)
         end
         # Update 1-D parameters with a push
         cvi.n_clusters += 1
@@ -99,20 +104,20 @@ function param_inc!(cvi::PS, sample::RealVector, label::Integer)
         cvi.v = [cvi.v v_new]
         cvi.D = D_new
     else
-        n_new = cvi.n[label] + 1
-        v_new = (1 - 1/n_new) .* cvi.v[:, label] + (1/n_new) .* sample
+        n_new = cvi.n[i_label] + 1
+        v_new = (1 - 1/n_new) .* cvi.v[:, i_label] + (1/n_new) .* sample
         d_column_new = zeros(cvi.n_clusters)
         for jx = 1:cvi.n_clusters
-            if jx == label
+            if jx == i_label
                 continue
             end
             d_column_new[jx] = sum((v_new - cvi.v[:, jx]).^2)
         end
         # Update parameters
-        cvi.n[label] = n_new
-        cvi.v[:, label] = v_new
-        cvi.D[:, label] = d_column_new
-        cvi.D[label, :] = transpose(d_column_new)
+        cvi.n[i_label] = n_new
+        cvi.v[:, i_label] = v_new
+        cvi.D[:, i_label] = d_column_new
+        cvi.D[i_label, :] = transpose(d_column_new)
     end
     cvi.n_samples = n_samples_new
 end # param_inc!(cvi::PS, sample::RealVector, label::Integer)

@@ -30,6 +30,32 @@ end
     @test is_monotonic
 end
 
+@testset "Label Map" begin
+    @info "Label Map Testing"
+
+    # Create the ICVI
+    cvi = CH()
+
+    # Load the sample data
+    data_paths = readdir("../data", join=true)
+    local_data, local_labels = get_cvi_data(data_paths[1])
+
+    # Permute the data
+    n_data = length(local_labels)
+    indices = randperm(n_data)
+    local_data = local_data[:, indices]
+    local_labels = local_labels[indices]
+
+    # Incrementally compute the ICVI
+    for ix = 1:length(local_labels)
+        sample = local_data[:, ix]
+        label = local_labels[ix]
+        _ = get_icvi!(cvi, sample, label)
+    end
+
+    @info "Task map: " cvi.label_map
+end
+
 @testset "Example Scripts" begin
     # Switch to the top for execution because our scripts point to the datasets
     # relative to themselves, not relative to the test dir

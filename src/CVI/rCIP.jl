@@ -36,6 +36,7 @@ using LinearAlgebra
 The stateful information of the (Renyi's) representative Cross Information Potential (rCIP) CVI.
 """
 mutable struct rCIP <: AbstractCVI
+    label_map::LabelMap
     dim::Integer
     n_samples::Integer
     n::IntegerVector            # dim
@@ -55,14 +56,15 @@ Default constructor for the (Renyi's) representative Cross Information Potential
 """
 function rCIP()
     rCIP(
+        LabelMap(),                         # label_map
         0,                                  # dim
         0,                                  # n_samples
-        Array{Integer, 1}(undef, 0),          # n
-        Array{RealFP, 2}(undef, 0, 0),     # v
-        Array{RealFP, 3}(undef, 0, 0, 0),  # sigma
+        Array{Integer, 1}(undef, 0),        # n
+        Array{RealFP, 2}(undef, 0, 0),      # v
+        Array{RealFP, 3}(undef, 0, 0, 0),   # sigma
         0.0,                                # constant
-        Array{RealFP, 2}(undef, 0, 0),     # D
-        Array{RealFP, 2}(undef, 0, 0),     # delta_term
+        Array{RealFP, 2}(undef, 0, 0),      # D
+        Array{RealFP, 2}(undef, 0, 0),      # delta_term
         0,                                  # n_clusters
         0.0                                 # criterion_value
     )
@@ -89,13 +91,16 @@ end # setup!(cvi::rCIP, sample::Vector{T}) where {T<:RealFP}
 Compute the (Renyi's) representative Cross Information Potential (rCIP) CVI incrementally.
 """
 function param_inc!(cvi::rCIP, sample::RealVector, label::Integer)
+    # Get the internal label
+    i_label = get_internal_label!(cvi.label_map, label)
+
     n_samples_new = cvi.n_samples + 1
     if isempty(cvi.v)
         setup!(cvi, sample)
     end
     cvi.constant = 1/sqrt((2*pi)^cvi.dim)
 
-    if label > cvi.n_clusters
+    if i_label > cvi.n_clusters
         n_new = 1
         v_new = sample
         sigma_new = cvi.delta_term
@@ -111,8 +116,8 @@ function param_inc!(cvi::rCIP, sample::RealVector, label::Integer)
                 d_column_new[jx] = cvi.constant * (1/sqrt(det(sigma_q)))*exp(-0.5*transpose(diff_m)*inv(sigma_q)*diff_m)
                 # d_column_new[jx] = sum((v_new - cvi.v[:, jx]).^2)
             end
-            D_new[:, label] = d_column_new
-            D_new[label, :] = transpose(d_column_new)
+            D_new[:, i_label] = d_column_new
+            D_new[i_label, :] = transpose(d_column_new)
         end
         # Update 1-D parameters with a push
         cvi.n_clusters += 1
@@ -122,18 +127,18 @@ function param_inc!(cvi::rCIP, sample::RealVector, label::Integer)
         cvi.D = D_new
         cvi.sigma = cat(cvi.sigma, sigma_new, dims=3)
     else
-        n_new = cvi.n[label] + 1
-        v_new = (1 - 1/n_new) .* cvi.v[:, label] + (1/n_new) .* sample
-        diff_x_v = sample - cvi.v[:, label]
+        n_new = cvi.n[i_label] + 1
+        v_new = (1 - 1/n_new) .* cvi.v[:, i_label] + (1/n_new) .* sample
+        diff_x_v = sample - cvi.v[:, i_label]
         if n_new > 1
-            sigma_new = ((n_new - 2)/(n_new - 1))*(cvi.sigma[:,:,label] - cvi.delta_term) +
+            sigma_new = ((n_new - 2)/(n_new - 1))*(cvi.sigma[:,:,i_label] - cvi.delta_term) +
                 (1/n_new)*(diff_x_v*transpose(diff_x_v)) + cvi.delta_term
         else
             sigma_new = cvi.delta_term
         end
         d_column_new = zeros(cvi.n_clusters)
         for jx = 1:cvi.n_clusters
-            if jx == label
+            if jx == i_label
                 continue
             end
             diff_m = v_new - cvi.v[:, jx]
@@ -141,11 +146,11 @@ function param_inc!(cvi::rCIP, sample::RealVector, label::Integer)
             d_column_new[jx] = cvi.constant*(1/sqrt(det(sigma_q)))*exp(-0.5*transpose(diff_m)*inv(sigma_q)*diff_m)
         end
         # Update parameters
-        cvi.n[label] = n_new
-        cvi.v[:, label] = v_new
-        cvi.sigma[:,:,label] = sigma_new
-        cvi.D[:, label] = d_column_new
-        cvi.D[label, :] = transpose(d_column_new)
+        cvi.n[i_label] = n_new
+        cvi.v[:, i_label] = v_new
+        cvi.sigma[:,:,i_label] = sigma_new
+        cvi.D[:, i_label] = d_column_new
+        cvi.D[i_label, :] = transpose(d_column_new)
     end
     cvi.n_samples = n_samples_new
 end # param_inc!(cvi::rCIP, sample::RealVector, label::Integer)

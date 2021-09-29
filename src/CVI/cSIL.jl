@@ -28,6 +28,7 @@ using Statistics
 The stateful information of the Centroid-based Silhouette (cSIL) CVI.
 """
 mutable struct cSIL <: AbstractCVI
+    label_map::LabelMap
     dim::Integer
     n_samples::Integer
     n::IntegerVector        # dim
@@ -47,6 +48,7 @@ Default constructor for the Centroid-based Silhouette (cSIL) Cluster Validity In
 """
 function cSIL()
     cSIL(
+        LabelMap(),                     # label_map
         0,                              # dim
         0,                              # n_samples
         Array{Integer, 1}(undef, 0),    # n
@@ -78,12 +80,15 @@ end # setup!(cvi::cSIL, sample::Vector{T}) where {T<:RealFP}
 Compute the Centroid-based Silhouette (cSIL) CVI incrementally.
 """
 function param_inc!(cvi::cSIL, sample::RealVector, label::Integer)
+    # Get the internal label
+    i_label = get_internal_label!(cvi.label_map, label)
+
     n_samples_new = cvi.n_samples + 1
     if cvi.n_samples == 0
         setup!(cvi, sample)
     end
 
-    if label > cvi.n_clusters
+    if i_label > cvi.n_clusters
         n_new = 1
         v_new = sample
         CP_new = transpose(sample) * sample
@@ -106,10 +111,10 @@ function param_inc!(cvi::cSIL, sample::RealVector, label::Integer)
                 S_row_new[cl] = C / cvi.n[cl]
             end
             # Column "ind_minus" - F
-            S_col_new[label] = 0
-            S_row_new[label] = S_col_new[label]
-            S_new[:, label] = S_col_new
-            S_new[label, :] = S_row_new
+            S_col_new[i_label] = 0
+            S_row_new[i_label] = S_col_new[i_label]
+            S_new[:, i_label] = S_col_new
+            S_new[i_label, :] = S_row_new
         end
         # Update 1-D parameters with a push
         cvi.n_clusters += 1
@@ -120,21 +125,21 @@ function param_inc!(cvi::cSIL, sample::RealVector, label::Integer)
         cvi.G = [cvi.G G_new]
         cvi.S = S_new
     else
-        n_new = cvi.n[label] + 1
-        v_new = (1 - 1/n_new) .* cvi.v[:, label] + (1/n_new) .* sample
-        CP_new = cvi.CP[label] + (transpose(sample) * sample)
-        G_new = cvi.G[:, label] + sample
+        n_new = cvi.n[i_label] + 1
+        v_new = (1 - 1/n_new) .* cvi.v[:, i_label] + (1/n_new) .* sample
+        CP_new = cvi.CP[i_label] + (transpose(sample) * sample)
+        G_new = cvi.G[:, i_label] + sample
         # Compute S_new
         S_row_new = zeros(cvi.n_clusters)
         S_col_new = zeros(cvi.n_clusters)
         for cl = 1:cvi.n_clusters
-            # Skip the label iteration
-            if cl == label
+            # Skip the i_label iteration
+            if cl == i_label
                 continue
             end
             # Column "bmu_temp" - D_new
             diff_x_v = sample - cvi.v[:, cl]
-            C = cvi.CP[label] + (transpose(diff_x_v)*diff_x_v) + cvi.n[label]*(transpose(cvi.v[:, cl]) * cvi.v[:, cl]) - 2 * (transpose(G_new) * cvi.v[:, cl])
+            C = cvi.CP[i_label] + (transpose(diff_x_v)*diff_x_v) + cvi.n[i_label]*(transpose(cvi.v[:, cl]) * cvi.v[:, cl]) - 2 * (transpose(G_new) * cvi.v[:, cl])
             S_col_new[cl] = C / n_new
             # Row "bmu_temp" - E
             C = cvi.CP[cl] + cvi.n[cl] * (transpose(v_new)*v_new) - 2*(transpose(cvi.G[:, cl]) * v_new)
@@ -142,16 +147,16 @@ function param_inc!(cvi::cSIL, sample::RealVector, label::Integer)
         end
         # Column "ind_minus" - F
         diff_x_v = sample - v_new
-        C = cvi.CP[label] + (transpose(diff_x_v) * diff_x_v) + cvi.n[label] * (transpose(v_new) * v_new) - 2*(transpose(cvi.G[:, label])*v_new)
-        S_col_new[label] = C / n_new
-        S_row_new[label] = S_col_new[label]
+        C = cvi.CP[i_label] + (transpose(diff_x_v) * diff_x_v) + cvi.n[i_label] * (transpose(v_new) * v_new) - 2*(transpose(cvi.G[:, i_label])*v_new)
+        S_col_new[i_label] = C / n_new
+        S_row_new[i_label] = S_col_new[i_label]
         # Update parameters
-        cvi.n[label] = n_new
-        cvi.v[:, label] = v_new
-        cvi.CP[label] = CP_new
-        cvi.G[:, label] = G_new
-        cvi.S[:, label] = S_col_new
-        cvi.S[label, :] = S_row_new
+        cvi.n[i_label] = n_new
+        cvi.v[:, i_label] = v_new
+        cvi.CP[i_label] = CP_new
+        cvi.G[:, i_label] = G_new
+        cvi.S[:, i_label] = S_col_new
+        cvi.S[i_label, :] = S_row_new
     end
     cvi.n_samples = n_samples_new
 end # param_inc!(cvi::cSIL, sample::RealVector, label::Integer)
