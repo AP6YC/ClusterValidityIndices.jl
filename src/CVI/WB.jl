@@ -33,7 +33,7 @@ using Statistics
 
 The stateful information of the WB-Index (WB) CVI.
 """
-mutable struct WB <: AbstractCVI
+mutable struct WB <: CVI
     label_map::LabelMap
     dim::Integer
     n_samples::Integer
@@ -47,7 +47,7 @@ mutable struct WB <: AbstractCVI
     WGSS::Float
     n_clusters::Integer
     criterion_value::Float
-end # WB <: AbstractCVI
+end # WB <: CVI
 
 """
     WB()

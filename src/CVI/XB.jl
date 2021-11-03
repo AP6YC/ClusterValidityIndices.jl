@@ -27,7 +27,7 @@ using Statistics
 
 The stateful information of the Xie-Beni (XB) CVI.
 """
-mutable struct XB <: AbstractCVI
+mutable struct XB <: CVI
     label_map::LabelMap
     dim::Integer
     n_samples::Integer
@@ -41,7 +41,7 @@ mutable struct XB <: AbstractCVI
     WGSS::Float
     n_clusters::Integer
     criterion_value::Float
-end # XB <: AbstractCVI
+end # XB <: CVI
 
 """
     XB()

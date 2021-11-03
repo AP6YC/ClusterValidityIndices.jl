@@ -35,7 +35,7 @@ using LinearAlgebra
 
 The stateful information of the (Renyi's) representative Cross Information Potential (rCIP) CVI.
 """
-mutable struct rCIP <: AbstractCVI
+mutable struct rCIP <: CVI
     label_map::LabelMap
     dim::Integer
     n_samples::Integer
@@ -47,7 +47,7 @@ mutable struct rCIP <: AbstractCVI
     delta_term::RealMatrix      # dim x dim
     n_clusters::Integer
     criterion_value::Float
-end # rCIP <: AbstractCVI
+end # rCIP <: CVI
 
 """
     rCIP()

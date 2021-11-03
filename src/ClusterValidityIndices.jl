@@ -1,8 +1,7 @@
 module ClusterValidityIndices
 
+# Package dependencies
 using Statistics: mean
-
-abstract type AbstractCVI end
 
 # Common structures
 include("common.jl")
@@ -17,7 +16,7 @@ include("CVI/CVI.jl")
 export
 
     # Abstract types
-    AbstractCVI,
+    CVI,
 
     # CVI constructors
     XB,

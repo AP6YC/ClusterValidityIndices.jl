@@ -1,4 +1,11 @@
 """
+    utils.jl
+
+Description:
+    Common utility methods for the ClusterValidityIndices.jl package.
+"""
+
+"""
     sort_cvi_data(data::RealMatrix, labels::IntegerVector)
 
 Sorts the CVI data by the label index, assuring that clusters are provided incrementally.

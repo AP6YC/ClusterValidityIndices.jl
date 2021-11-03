@@ -27,7 +27,7 @@ using Statistics
 
 The stateful information of the Davies-Bouldin (DB) CVI.
 """
-mutable struct DB <: AbstractCVI
+mutable struct DB <: CVI
     label_map::LabelMap
     dim::Integer
     n_samples::Integer
@@ -41,7 +41,7 @@ mutable struct DB <: AbstractCVI
     D::RealMatrix               # n_clusters x n_clusters
     n_clusters::Integer
     criterion_value::Float
-end # DB <: AbstractCVI
+end # DB <: CVI
 
 """
     DB()

@@ -154,12 +154,12 @@ More concretely, they are
 
 ```julia
 # Incremental updating
-param_inc!(cvi::C, sample::Array{T, 1}, label::I) where {C<:AbstractCVI, T<:Real, I<:Int}
+param_inc!(cvi::C, sample::Array{T, 1}, label::I) where {C<:CVI, T<:Real, I<:Int}
 # Batch updating
-param_batch!(cvi::C, data::Array{T, 2}, labels::Array{I, 1}) where {C<:AbstractCVI, T<:Real, I<:Int}
+param_batch!(cvi::C, data::Array{T, 2}, labels::Array{I, 1}) where {C<:CVI, T<:Real, I<:Int}
 ```
 
-Every CVI is a subtype of the abstract type `AbstractCVI`.
+Every CVI is a subtype of the abstract type `CVI`.
 For example, we may instantiate and load our data
 
 ```julia
@@ -211,7 +211,7 @@ This is also provide granularity to the user that may only which to extract the 
 Because the criterion values only depend on the internal CVI parameters, they are computed (and internally stored) with
 
 ```julia
-evaluate!(cvi::C) where {C<:AbstractCVI}
+evaluate!(cvi::C) where {C<:CVI}
 ```
 
 To extract them, you must then simply grab the criterion value from the CVI struct with
@@ -265,9 +265,9 @@ Exactly as in the usage for updating the parameters, the functions take the cvi,
 
 ```julia
 # Incremental
-get_icvi!(cvi::C, x::Array{N, 1}, y::M) where {C<:AbstractCVI, N<:Real, M<:Int}
+get_icvi!(cvi::C, x::Array{N, 1}, y::M) where {C<:CVI, N<:Real, M<:Int}
 # Batch
-get_cvi!(cvi::C, x::Array{N, 2}, y::Array{M, 1}) where {C<:AbstractCVI, N<:Real, M<:Int}
+get_cvi!(cvi::C, x::Array{N, 2}, y::Array{M, 1}) where {C<:CVI, N<:Real, M<:Int}
 ```
 
 For example, after loading the data you may get the criterion value at each step with

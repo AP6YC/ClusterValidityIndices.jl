@@ -24,11 +24,11 @@ using Logging
 using Plots
 
 """
-    test_cvi(cvi::C, data::Array{M, 2}, labels::Array{N, 1}) where {C<:AbstractCVI, M<:Real, N<:Int}
+    test_cvi(cvi::C, data::Array{M, 2}, labels::Array{N, 1}) where {C<:CVI, M<:Real, N<:Int}
 
 Test the CVI on the data and labels in all configurations (incremental, batch, porcelain).
 """
-function test_cvi(cvi::C, data::Array{M, 2}, labels::Array{N, 1}, data_name::String) where {C<:AbstractCVI, M<:Real, N<:Int}
+function test_cvi(cvi::C, data::Array{M, 2}, labels::Array{N, 1}, data_name::String) where {C<:CVI, M<:Real, N<:Int}
     n_samples = length(labels)
 
     # ----------------------------------------------------------------------- #

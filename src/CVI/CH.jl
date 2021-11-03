@@ -29,7 +29,7 @@ using Statistics
 
 The stateful information of the Calinski-Harabasz (CH) CVI.
 """
-mutable struct CH <: AbstractCVI
+mutable struct CH <: CVI
     label_map::LabelMap
     dim::Integer
     n_samples::Integer
@@ -43,7 +43,7 @@ mutable struct CH <: AbstractCVI
     WGSS::Float
     n_clusters::Integer
     criterion_value::Float
-end # CH <: AbstractCVI
+end # CH <: CVI
 
 """
     CH()

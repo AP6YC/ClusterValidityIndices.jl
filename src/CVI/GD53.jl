@@ -33,7 +33,7 @@ using LinearAlgebra
 
 The stateful information of the Generalized Dunn's Index 53 (GD53) CVI.
 """
-mutable struct GD53 <: AbstractCVI
+mutable struct GD53 <: CVI
     label_map::LabelMap
     dim::Integer
     n_samples::Integer
@@ -47,7 +47,7 @@ mutable struct GD53 <: AbstractCVI
     intra::Float
     n_clusters::Integer
     criterion_value::Float
-end # GD53 <: AbstractCVI
+end # GD53 <: CVI
 
 """
     GD53()

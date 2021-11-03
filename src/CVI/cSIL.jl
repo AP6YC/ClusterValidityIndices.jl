@@ -27,7 +27,7 @@ using Statistics
 
 The stateful information of the Centroid-based Silhouette (cSIL) CVI.
 """
-mutable struct cSIL <: AbstractCVI
+mutable struct cSIL <: CVI
     label_map::LabelMap
     dim::Integer
     n_samples::Integer
@@ -39,7 +39,7 @@ mutable struct cSIL <: AbstractCVI
     sil_coefs::RealVector   # dim
     n_clusters::Integer
     criterion_value::Float
-end # cSIL <: AbstractCVI
+end # cSIL <: CVI
 
 """
     cSIL()

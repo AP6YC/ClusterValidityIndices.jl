@@ -243,7 +243,7 @@ param_inc!(cvi::C, sample::RealVector, label::Integer)
 param_batch!(cvi::C, data::RealMatrix, labels::IntegerVector)
 ```
 
-Every CVI is a subtype of the abstract type `AbstractCVI`.
+Every CVI is a subtype of the abstract type `CVI`.
 For example, we may instantiate and load our data
 
 ```julia
@@ -295,7 +295,7 @@ This is also provide granularity to the user that may only which to extract the 
 Because the criterion values only depend on the internal CVI parameters, they are computed (and internally stored) with
 
 ```julia
-evaluate!(cvi::C) where {C<:AbstractCVI}
+evaluate!(cvi::C) where {C<:CVI}
 ```
 
 To extract them, you must then simply grab the criterion value from the CVI struct with
@@ -336,22 +336,14 @@ criterion_value = cvi.criterion_value
 
 Taken from the `git` convention of calling low-level operations *plumbing* and high-level user-land functions *porcelain*, the package comes with a small set of *porcelain* function that do common operations all at once for the user.
 
-For example, you may compute, evalute, and return the criterion value all at once with the functions
-
-```julia
-# Incremental
-get_icvi!(...)
-# Batch
-get_cvi!(...)
-```
-
+For example, you may compute, evalute, and return the criterion value all at once with the functions `get_icvi!` and `get_cvi`.
 Exactly as in the usage for updating the parameters, the functions take the cvi, sample(s), and clustered label(s) as input:
 
 ```julia
 # Incremental
-get_icvi!(cvi::C, x::Array{N, 1}, y::M) where {C<:AbstractCVI, N<:Real, M<:Integer}
+get_icvi!(cvi::CVI, x::RealVector, y::Integer)
 # Batch
-get_cvi!(cvi::C, x::Array{N, 2}, y::Array{M, 1}) where {C<:AbstractCVI, N<:Real, M<:Integer}
+get_cvi!(cvi::CVI, x::RealMatrix, y::IntegerVector)
 ```
 
 For example, after loading the data you may get the criterion value at each step with

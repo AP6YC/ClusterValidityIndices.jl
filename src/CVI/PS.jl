@@ -23,7 +23,7 @@ using Statistics
 
 The stateful information of the Partition Separation (PS) CVI.
 """
-mutable struct PS <: AbstractCVI
+mutable struct PS <: CVI
     label_map::LabelMap
     dim::Integer
     n_samples::Integer
@@ -35,7 +35,7 @@ mutable struct PS <: AbstractCVI
     PS_i::RealVector        # n_clusters
     n_clusters::Integer
     criterion_value::Float
-end # PS <: AbstractCVI
+end # PS <: CVI
 
 """
     PS()

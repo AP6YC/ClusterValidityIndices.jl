@@ -1,3 +1,16 @@
+"""
+    common.jl
+
+Description:
+    All common types, aliases, structs, and methods for the ClusterValidityIndices.jl package.
+"""
+# -------------------------------------------
+# Abstract types
+# -------------------------------------------
+
+# Type for all CVIs
+abstract type CVI end
+
 # -------------------------------------------
 # Aliases
 # -------------------------------------------
@@ -34,11 +47,11 @@ const LabelMap = Dict{Int, Int}
 # -------------------------------------------
 
 """
-    get_icvi!(cvi::AbstractCVI, x::RealVector, y::Integer)
+    get_icvi!(cvi::CVI, x::RealVector, y::Integer)
 
 Porcelain: update and compute the criterion value incrementally and return it.
 """
-function get_icvi!(cvi::AbstractCVI, x::RealVector, y::Integer)
+function get_icvi!(cvi::CVI, x::RealVector, y::Integer)
     # Update the ICVI parameters
     param_inc!(cvi, x, y)
 
@@ -47,14 +60,14 @@ function get_icvi!(cvi::AbstractCVI, x::RealVector, y::Integer)
 
     # Return that value
     return cvi.criterion_value
-end # get_icvi!(cvi::AbstractCVI, x::RealVector, y::Integer)
+end # get_icvi!(cvi::CVI, x::RealVector, y::Integer)
 
 """
-    get_cvi!(cvi::AbstractCVI, x::RealMatrix, y::IntegerVector)
+    get_cvi!(cvi::CVI, x::RealMatrix, y::IntegerVector)
 
 Porcelain: update compute the criterion value in batch and return it.
 """
-function get_cvi!(cvi::AbstractCVI, x::RealMatrix, y::IntegerVector)
+function get_cvi!(cvi::CVI, x::RealMatrix, y::IntegerVector)
     # Update the CVI parameters in batch
     param_batch!(cvi, x, y)
 
@@ -63,7 +76,7 @@ function get_cvi!(cvi::AbstractCVI, x::RealMatrix, y::IntegerVector)
 
     # Return that value
     return cvi.criterion_value
-end # get_cvi!(cvi::AbstractCVI, x::RealMatrix, y::IntegerVector)
+end # get_cvi!(cvi::CVI, x::RealMatrix, y::IntegerVector)
 
 """
     get_internal_label!(label_map::LabelMap, label::Int)
