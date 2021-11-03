@@ -6,11 +6,8 @@ A Julia package for Cluster Validity Indices (CVI) algorithms.
 |:------------------:|:----------------:|:------------:|
 | [![Stable][docs-stable-img]][docs-stable-url] | [![Build Status][ci-img]][ci-url] | [![Codecov][codecov-img]][codecov-url] |
 | [![Dev][docs-dev-img]][docs-dev-url] | [![Build Status][appveyor-img]][appveyor-url] | [![Coveralls][coveralls-img]][coveralls-url] |
-
 | **Dependents** | **Date** | **Status** |
-|:--------------:|:--------:|:----------:|
 | [![deps][deps-img]][deps-url] | [![version][version-img]][version-url] | [![pkgeval][pkgeval-img]][pkgeval-url] |
-<!-- | [![Stable][docs-stable-img]][docs-stable-url] [![Dev][docs-dev-img]][docs-dev-url] | [![Build Status][travis-img]][travis-url] [![Build Status][appveyor-img]][appveyor-url] | [![Codecov][codecov-img]][codecov-url] [![Coveralls][coveralls-img]][coveralls-url] | -->
 
 [deps-img]: https://juliahub.com/docs/ClusterValidityIndices/deps.svg
 [deps-url]: https://juliahub.com/ui/Packages/ClusterValidityIndices/Z19r6?t=2
@@ -29,8 +26,6 @@ A Julia package for Cluster Validity Indices (CVI) algorithms.
 
 [ci-img]: https://github.com/AP6YC/ClusterValidityIndices.jl/workflows/CI/badge.svg
 [ci-url]: https://github.com/AP6YC/ClusterValidityIndices.jl/actions?query=workflow%3ACI
-<!-- [travis-img]: https://travis-ci.com/AP6YC/ClusterValidityIndices.jl.svg?branch=master -->
-<!-- [travis-url]: https://travis-ci.com/AP6YC/ClusterValidityIndices.jl -->
 
 [appveyor-img]: https://ci.appveyor.com/api/projects/status/github/AP6YC/ClusterValidityIndices.jl?svg=true
 [appveyor-url]: https://ci.appveyor.com/project/AP6YC/ClusterValidityIndices-jl
@@ -43,11 +38,6 @@ A Julia package for Cluster Validity Indices (CVI) algorithms.
 
 [issues-url]: https://github.com/AP6YC/ClusterValidityIndices.jl/issues
 [contrib-url]: https://juliadocs.github.io/Documenter.jl/dev/contributing/
-[discourse-tag-url]: https://discourse.julialang.org/tags/documenter
-[gitter-url]: https://gitter.im/juliadocs/users
-
-This package is developed and maintained by [Sasha Petrenko](https://github.com/AP6YC) with sponsorship by the [Applied Computational Intelligence Laboratory (ACIL)](https://acil.mst.edu/). This project is supported by grants from the [Night Vision Electronic Sensors Directorate](https://c5isr.ccdc.army.mil/inside_c5isr_center/nvesd/), the [DARPA Lifelong Learning Machines (L2M) program](https://www.darpa.mil/program/lifelong-learning-machines), [Teledyne Technologies](http://www.teledyne.com/), and the [National Science Foundation](https://www.nsf.gov/).
-The material, findings, and conclusions here do not necessarily reflect the views of these entities.
 
 Please read the [documentation](https://ap6yc.github.io/ClusterValidityIndices.jl/dev/) for detailed usage and tutorials.
 
@@ -66,6 +56,9 @@ Please read the [documentation](https://ap6yc.github.io/ClusterValidityIndices.j
     - [Updating](#updating)
     - [Criterion Values](#criterion-values)
     - [Porcelain](#porcelain)
+  - [Acknowledgements](#acknowledgements)
+    - [Authors](#authors)
+  - [License](#license)
 
 ## Outline
 
@@ -371,3 +364,16 @@ or you may get the final criterion value in batch mode with
 ```julia
 criterion_value = get_cvi!(cvi, data, labels)
 ```
+
+## Acknowledgements
+
+### Authors
+
+This package is developed and maintained by [Sasha Petrenko](https://github.com/AP6YC) with sponsorship by the [Applied Computational Intelligence Laboratory (ACIL)](https://acil.mst.edu/). This project is supported by grants from the [Night Vision Electronic Sensors Directorate](https://c5isr.ccdc.army.mil/inside_c5isr_center/nvesd/), the [DARPA Lifelong Learning Machines (L2M) program](https://www.darpa.mil/program/lifelong-learning-machines), [Teledyne Technologies](http://www.teledyne.com/), and the [National Science Foundation](https://www.nsf.gov/).
+The material, findings, and conclusions here do not necessarily reflect the views of these entities.
+
+The users [@rMassimiliano](https://github.com/rMassimiliano) and [@malmaud](https://github.com/malmaud) have graciously contributed their time with reviews and feedback that has greatly improved the project.
+
+## License
+
+This software is openly maintained by the ACIL of the Missouri University of Science and Technology under the [MIT License](LICENSE).
