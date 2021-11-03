@@ -41,12 +41,12 @@ mutable struct rCIP <: AbstractCVI
     n_samples::Integer
     n::IntegerVector            # dim
     v::RealMatrix               # dim x n_clusters
-    sigma::Array{RealFP, 3}     # dim x dim x n_clusters
-    constant::RealFP
+    sigma::Array{Float, 3}     # dim x dim x n_clusters
+    constant::Float
     D::RealMatrix               # n_clusters x n_clusters
     delta_term::RealMatrix      # dim x dim
     n_clusters::Integer
-    criterion_value::RealFP
+    criterion_value::Float
 end # rCIP <: AbstractCVI
 
 """
@@ -60,11 +60,11 @@ function rCIP()
         0,                                  # dim
         0,                                  # n_samples
         Array{Integer, 1}(undef, 0),        # n
-        Array{RealFP, 2}(undef, 0, 0),      # v
-        Array{RealFP, 3}(undef, 0, 0, 0),   # sigma
+        Array{Float, 2}(undef, 0, 0),       # v
+        Array{Float, 3}(undef, 0, 0, 0),    # sigma
         0.0,                                # constant
-        Array{RealFP, 2}(undef, 0, 0),      # D
-        Array{RealFP, 2}(undef, 0, 0),      # delta_term
+        Array{Float, 2}(undef, 0, 0),       # D
+        Array{Float, 2}(undef, 0, 0),       # delta_term
         0,                                  # n_clusters
         0.0                                 # criterion_value
     )

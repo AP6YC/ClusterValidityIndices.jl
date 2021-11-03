@@ -35,12 +35,12 @@ mutable struct XB <: AbstractCVI
     n::IntegerVector        # dim
     v::RealMatrix           # dim x n_clusters
     CP::RealVector          # dim
-    SEP::RealFP
+    SEP::Float
     G::RealMatrix           # dim x n_clusters
     D::RealMatrix           # n_clusters x n_clusters
-    WGSS::RealFP
+    WGSS::Float
     n_clusters::Integer
-    criterion_value::RealFP
+    criterion_value::Float
 end # XB <: AbstractCVI
 
 """
@@ -53,13 +53,13 @@ function XB()
         LabelMap(),                     # label_map
         0,                              # dim
         0,                              # n_samples
-        Array{RealFP, 1}(undef, 0),     # mu_data
+        Array{Float, 1}(undef, 0),      # mu_data
         Array{Integer, 1}(undef, 0),    # n
-        Array{RealFP, 2}(undef, 0, 0),  # v
-        Array{RealFP, 1}(undef, 0),     # CP
+        Array{Float, 2}(undef, 0, 0),   # v
+        Array{Float, 1}(undef, 0),      # CP
         0.0,                            # SEP
-        Array{RealFP, 2}(undef, 0, 0),  # G
-        Array{RealFP, 2}(undef, 0, 0),  # D
+        Array{Float, 2}(undef, 0, 0),   # G
+        Array{Float, 2}(undef, 0, 0),   # D
         0.0,                            # WGSS
         0,                              # n_clusters
         0.0                             # criterion_value

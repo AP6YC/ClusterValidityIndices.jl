@@ -43,10 +43,10 @@ mutable struct GD53 <: AbstractCVI
     CP::RealVector          # dim
     G::RealMatrix           # dim x n_clusters
     D::RealMatrix           # n_clusters x n_clusters
-    inter::RealFP
-    intra::RealFP
+    inter::Float
+    intra::Float
     n_clusters::Integer
-    criterion_value::RealFP
+    criterion_value::Float
 end # GD53 <: AbstractCVI
 
 """
@@ -59,12 +59,12 @@ function GD53()
         LabelMap(),                     # label_map
         0,                              # dim
         0,                              # n_samples
-        Array{RealFP, 1}(undef, 0),     # mu_data
+        Array{Float, 1}(undef, 0),      # mu_data
         Array{Integer, 1}(undef, 0),    # n
-        Array{RealFP, 2}(undef, 0, 0),  # v
-        Array{RealFP, 1}(undef, 0),     # CP
-        Array{RealFP, 2}(undef, 0, 0),  # G
-        Array{RealFP, 2}(undef, 0, 0),  # D
+        Array{Float, 2}(undef, 0, 0),   # v
+        Array{Float, 1}(undef, 0),      # CP
+        Array{Float, 2}(undef, 0, 0),   # G
+        Array{Float, 2}(undef, 0, 0),   # D
         0.0,                            # inter
         0.0,                            # intra
         0,                              # n_clusters

@@ -40,7 +40,7 @@ mutable struct DB <: AbstractCVI
     G::RealMatrix               # dim x n_clusters
     D::RealMatrix               # n_clusters x n_clusters
     n_clusters::Integer
-    criterion_value::RealFP
+    criterion_value::Float
 end # DB <: AbstractCVI
 
 """
@@ -53,14 +53,14 @@ function DB()
         LabelMap(),                     # label_map
         0,                              # dim
         0,                              # n_samples
-        Array{RealFP, 1}(undef, 0),     # mu_data
+        Array{Float, 1}(undef, 0),      # mu_data
         Array{Integer, 1}(undef, 0),    # n
-        Array{RealFP, 2}(undef, 0, 0),  # v
-        Array{RealFP, 1}(undef, 0),     # CP
-        Array{RealFP, 1}(undef, 0),     # S
-        Array{RealFP, 2}(undef, 0, 0),  # R
-        Array{RealFP, 2}(undef, 0, 0),  # G
-        Array{RealFP, 2}(undef, 0, 0),  # D
+        Array{Float, 2}(undef, 0, 0),   # v
+        Array{Float, 1}(undef, 0),      # CP
+        Array{Float, 1}(undef, 0),      # S
+        Array{Float, 2}(undef, 0, 0),   # R
+        Array{Float, 2}(undef, 0, 0),   # G
+        Array{Float, 2}(undef, 0, 0),   # D
         0,                              # n_clusters
         0.0                             # criterion_value
     )

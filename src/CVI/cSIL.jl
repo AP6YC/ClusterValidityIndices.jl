@@ -38,7 +38,7 @@ mutable struct cSIL <: AbstractCVI
     S::RealMatrix           # n_clusters x n_clusters
     sil_coefs::RealVector   # dim
     n_clusters::Integer
-    criterion_value::RealFP
+    criterion_value::Float
 end # cSIL <: AbstractCVI
 
 """
@@ -52,11 +52,11 @@ function cSIL()
         0,                              # dim
         0,                              # n_samples
         Array{Integer, 1}(undef, 0),    # n
-        Array{RealFP, 2}(undef, 0, 0),  # v
-        Array{RealFP, 1}(undef, 0),     # CP
-        Array{RealFP, 2}(undef, 0, 0),  # G
-        Array{RealFP, 2}(undef, 0, 0),  # S
-        Array{RealFP, 1}(undef, 0),     # sil_coefs
+        Array{Float, 2}(undef, 0, 0),   # v
+        Array{Float, 1}(undef, 0),      # CP
+        Array{Float, 2}(undef, 0, 0),   # G
+        Array{Float, 2}(undef, 0, 0),   # S
+        Array{Float, 1}(undef, 0),      # sil_coefs
         0,                              # n_clusters
         0.0                             # criterion_value
     )

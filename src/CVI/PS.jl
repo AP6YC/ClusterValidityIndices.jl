@@ -31,10 +31,10 @@ mutable struct PS <: AbstractCVI
     v::RealMatrix           # dim x n_clusters
     D::RealMatrix           # n_clusters x n_clusters
     v_bar::RealVector       # dim
-    beta_t::RealFP
+    beta_t::Float
     PS_i::RealVector        # n_clusters
     n_clusters::Integer
-    criterion_value::RealFP
+    criterion_value::Float
 end # PS <: AbstractCVI
 
 """
@@ -48,11 +48,11 @@ function PS()
         0,                              # dim
         0,                              # n_samples
         Array{Integer, 1}(undef, 0),    # n
-        Array{RealFP, 2}(undef, 0, 0),  # v
-        Array{RealFP, 2}(undef, 0, 0),  # D
-        Array{RealFP, 1}(undef, 0),     # v_bar
+        Array{Float, 2}(undef, 0, 0),   # v
+        Array{Float, 2}(undef, 0, 0),   # D
+        Array{Float, 1}(undef, 0),      # v_bar
         0.0,                            # beta_t
-        Array{RealFP, 1}(undef, 0),     # PS_i
+        Array{Float, 1}(undef, 0),      # PS_i
         0,                              # n_clusters
         0.0                             # criterion_value
     )
