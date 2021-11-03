@@ -16,8 +16,6 @@ Victoria, Australia, 2001, pp. 89-92, vol.1.
 Recognit., vol. 41, no. 3, pp. 995–1011, 2008.
 """
 
-using Statistics
-
 """
     PS
 

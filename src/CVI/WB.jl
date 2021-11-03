@@ -26,8 +26,6 @@ cluster validity indices for performance monitoring of streaming data clustering
 Int. J. Intell. Syst., pp. 1–23, 2018.
 """
 
-using Statistics
-
 """
     WB
 

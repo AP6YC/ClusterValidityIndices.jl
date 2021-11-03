@@ -2,6 +2,7 @@ module ClusterValidityIndices
 
 # Package dependencies
 using Statistics: mean
+using LinearAlgebra
 
 # Common structures
 include("common.jl")

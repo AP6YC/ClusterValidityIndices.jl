@@ -25,9 +25,6 @@ Trans. Syst., Man, and Cybern., vol. 28, no. 3, pp. 301–315, Jun. 1998.
 
 """
 
-using Statistics
-using LinearAlgebra
-
 """
     GD43
 

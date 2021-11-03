@@ -20,8 +20,6 @@ Scalable Uncertainty Management, E. Hüllermeier, S. Link, T. Fober et al.,
 Eds. Berlin, Heidelberg: Springer, 2012, pp. 406–419.
 """
 
-using Statistics
-
 """
     cSIL
 

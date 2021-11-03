@@ -27,9 +27,6 @@ vol. 40, no. 10, pp. 4190–4205, Aug. 2013.
 John Wiley & Sons, 2000.
 """
 
-using Statistics
-using LinearAlgebra
-
 """
     rCIP
 
