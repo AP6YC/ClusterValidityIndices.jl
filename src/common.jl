@@ -23,6 +23,9 @@ const IntegerMatrix{T<:Integer} = AbstractArray{T, 2}
 # Specifically floating-point aliases
 const RealFP = Union{Float32, Float64}
 
+# System's largest native floating point variable
+const Float = (Sys.WORD_SIZE == 64 ? Float64 : Float32)
+
 # Internal label mapping for incremental CVIs
 const LabelMap = Dict{Int, Int}
 
@@ -31,11 +34,11 @@ const LabelMap = Dict{Int, Int}
 # -------------------------------------------
 
 """
-    get_icvi!(cvi::T, x::Array{N, 1}, y::M) where {T<:AbstractCVI, N<:Real, M<:Int}
+    get_icvi!(cvi::AbstractCVI, x::RealVector, y::Integer)
 
 Porcelain: update and compute the criterion value incrementally and return it.
 """
-function get_icvi!(cvi::T, x::Array{N, 1}, y::M) where {T<:AbstractCVI, N<:Real, M<:Int}
+function get_icvi!(cvi::AbstractCVI, x::RealVector, y::Integer)
     # Update the ICVI parameters
     param_inc!(cvi, x, y)
 
@@ -44,14 +47,14 @@ function get_icvi!(cvi::T, x::Array{N, 1}, y::M) where {T<:AbstractCVI, N<:Real,
 
     # Return that value
     return cvi.criterion_value
-end # get_icvi!(cvi::T, x::Array{N, 1}, y::M) where {T<:AbstractCVI, N<:Real, M<:Int}
+end # get_icvi!(cvi::AbstractCVI, x::RealVector, y::Integer)
 
 """
-    get_cvi!(cvi::T, x::Array{N, 2}, y::Array{M, 1}) where {T<:AbstractCVI, N<:Real, M<:Int}
+    get_cvi!(cvi::AbstractCVI, x::RealMatrix, y::IntegerVector)
 
 Porcelain: update compute the criterion value in batch and return it.
 """
-function get_cvi!(cvi::T, x::Array{N, 2}, y::Array{M, 1}) where {T<:AbstractCVI, N<:Real, M<:Int}
+function get_cvi!(cvi::AbstractCVI, x::RealMatrix, y::IntegerVector)
     # Update the CVI parameters in batch
     param_batch!(cvi, x, y)
 
@@ -60,7 +63,7 @@ function get_cvi!(cvi::T, x::Array{N, 2}, y::Array{M, 1}) where {T<:AbstractCVI,
 
     # Return that value
     return cvi.criterion_value
-end # get_cvi!(cvi::T, x::Array{N, 2}, y::Array{M, 1}) where {T<:AbstractCVI, N<:Real, M<:Int}
+end # get_cvi!(cvi::AbstractCVI, x::RealMatrix, y::IntegerVector)
 
 """
     get_internal_label!(label_map::LabelMap, label::Int)

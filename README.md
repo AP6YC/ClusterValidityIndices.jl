@@ -238,9 +238,9 @@ More concretely, they are
 
 ```julia
 # Incremental updating
-param_inc!(cvi::C, sample::Array{T, 1}, label::I) where {C<:AbstractCVI, T<:Real, I<:Integer}
+param_inc!(cvi::C, sample::RealVector, label::Integer)
 # Batch updating
-param_batch!(cvi::C, data::Array{T, 2}, labels::Array{I, 1}) where {C<:AbstractCVI, T<:Real, I<:Integer}
+param_batch!(cvi::C, data::RealMatrix, labels::IntegerVector)
 ```
 
 Every CVI is a subtype of the abstract type `AbstractCVI`.
