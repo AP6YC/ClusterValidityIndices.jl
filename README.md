@@ -37,7 +37,7 @@ A Julia package for Cluster Validity Indices (CVI) algorithms.
 [coveralls-url]: https://coveralls.io/github/AP6YC/ClusterValidityIndices.jl?branch=master
 
 [issues-url]: https://github.com/AP6YC/ClusterValidityIndices.jl/issues
-[contrib-url]: https://juliadocs.github.io/Documenter.jl/dev/contributing/
+[contrib-url]: https://ap6yc.github.io/ClusterValidityIndices.jl/dev/man/contributing/
 
 Please read the [documentation](https://ap6yc.github.io/ClusterValidityIndices.jl/dev/) for detailed usage and tutorials.
 
@@ -46,6 +46,7 @@ Please read the [documentation](https://ap6yc.github.io/ClusterValidityIndices.j
 - [ClusterValidityIndices](#clustervalidityindices)
   - [Table of Contents](#table-of-contents)
   - [Overview](#overview)
+  - [Contributing](#contributing)
   - [Installation](#installation)
   - [Quickstart](#quickstart)
     - [Examples](#examples)
@@ -72,6 +73,20 @@ This Julia package contains an outline of the conceptual usage of CVIs along wit
 This outline begins with [a list of CVIs](#implemented-cviicvis) that are implemented in the lastest version of the project.
 [Quickstart](#quickstart) provides an overview of how to use this project, while [Structure](#structure) outlines the project file structure, giving context to the locations of every component of the project.
 [Usage](#usage) outlines the general syntax and workflow of the CVIs/ICVIs.
+
+## Contributing
+
+If you have a question or concern, please raise an [issue][issues-url].
+For more details on how to work with the project, propose changes, or even contribute code, please see the [Developer Notes][contrib-url] in the project's documentation.
+
+In summary:
+
+1. Questions and requested changes should all be made in the [issues][issues-url] page.
+These are preferred because they are publicly viewable and could assist or educate others with similar issues or questions.
+2. For changes, this project accepts pull requests (PRs) from `feature/<my-feature>` branches onto the `develop` branch using the [GitFlow](https://nvie.com/posts/a-successful-git-branching-model/) methodology.
+If unit tests pass and the changes are beneficial, these PRs are merged into `develop` and eventually folded into versioned releases.
+3. The project follows the [Semantic Versioning](https://semver.org/) convention of `major.minor.patch` incremental versioning numbers.
+Patch versions are for bug fixes, minor versions are for backward-compatible changes, and major versions are for new and incompatible usage changes.
 
 ## Installation
 
