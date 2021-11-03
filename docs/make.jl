@@ -1,8 +1,11 @@
-using Documenter, ClusterValidityIndices
+using Documenter
+using ClusterValidityIndices
 
 makedocs(
     modules=[ClusterValidityIndices],
-    format=Documenter.HTML(prettyurls = get(ENV, "CI", nothing) == "true"),
+    format=Documenter.HTML(
+        prettyurls = get(ENV, "CI", nothing) == "true",
+    ),
     # format=Documenter.HTML(),
     pages=[
         "Home" => "index.md",
@@ -21,4 +24,5 @@ makedocs(
 
 deploydocs(
     repo="github.com/AP6YC/ClusterValidityIndices.jl.git",
+    devbranch="develop",
 )
