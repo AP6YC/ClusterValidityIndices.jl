@@ -45,7 +45,7 @@ Please read the [documentation](https://ap6yc.github.io/ClusterValidityIndices.j
 
 - [ClusterValidityIndices](#clustervalidityindices)
   - [Table of Contents](#table-of-contents)
-  - [Outline](#outline)
+  - [Overview](#overview)
   - [Implemented CVI/ICVIs](#implemented-cviicvis)
   - [Quickstart](#quickstart)
   - [Structure](#structure)
@@ -60,9 +60,13 @@ Please read the [documentation](https://ap6yc.github.io/ClusterValidityIndices.j
     - [Authors](#authors)
   - [License](#license)
 
-## Outline
+## Overview
 
-This Julia project contains an outline of the conceptual usage of CVIs along with many example scripts.
+Cluster Validity Indices (CVIs) are designed to be metrics of performance for unsupervised clustering algorithms.
+In the absense of supervisory labels (i.e., ground truth), clustering algorithms - or any truly unsupervised learning algorithms - have no way to definitively know the stability of their learning and accuracy of their performance.
+As a result, CVIs exist to provide metrics of partitioning stability/validity through the use of only the original data samples and the cluster labels prescribed by the clustering algorithm.
+
+This Julia package contains an outline of the conceptual usage of CVIs along with many example scripts.
 This outline begins with [a list of CVIs](#implemented-cviicvis) that are implemented in the lastest version of the project.
 [Quickstart](#quickstart) provides an overview of how to use this project, while [Structure](#structure) outlines the project file structure, giving context to the locations of every component of the project.
 [Usage](#usage) outlines the general syntax and workflow of the ICVIs.
@@ -176,7 +180,7 @@ Alternatively, you may pairwise sort the entirety of the data with
 sort_cvi_data(data::Array{N, 2}, labels::Array{M, 1}) where {N<:Real, M<:Integer}
 ```
 
-**NOTE*** `sort_cvi_data` reorders the input data as well, which will lead to different ICVI results than with `relabel_cvi_data`.
+**NOTE** `sort_cvi_data` reorders the input data as well, which will lead to different ICVI results than with `relabel_cvi_data`.
 
 ### Instantiation
 
