@@ -46,8 +46,10 @@ Please read the [documentation](https://ap6yc.github.io/ClusterValidityIndices.j
 - [ClusterValidityIndices](#clustervalidityindices)
   - [Table of Contents](#table-of-contents)
   - [Overview](#overview)
-  - [Implemented CVI/ICVIs](#implemented-cviicvis)
+  - [Installation](#installation)
   - [Quickstart](#quickstart)
+    - [Examples](#examples)
+  - [Implemented CVI/ICVIs](#implemented-cviicvis)
   - [Structure](#structure)
   - [Usage](#usage)
     - [Data](#data)
@@ -69,26 +71,67 @@ As a result, CVIs exist to provide metrics of partitioning stability/validity th
 This Julia package contains an outline of the conceptual usage of CVIs along with many example scripts.
 This outline begins with [a list of CVIs](#implemented-cviicvis) that are implemented in the lastest version of the project.
 [Quickstart](#quickstart) provides an overview of how to use this project, while [Structure](#structure) outlines the project file structure, giving context to the locations of every component of the project.
-[Usage](#usage) outlines the general syntax and workflow of the ICVIs.
+[Usage](#usage) outlines the general syntax and workflow of the CVIs/ICVIs.
 
-## Implemented CVI/ICVIs
+## Installation
 
-This project has implementations of the following CVIs in both batch and incremental variants:
+This project is distributed as a Julia package, available on [JuliaHub](https://juliahub.com/).
+Its usage follows the usual Julia package installation procedure, interactively:
 
-- **CH**: Calinski-Harabasz
-- **cSIL**: Centroid-based Silhouette
-- **DB**: Davies-Bouldin
-- **GD43**: Generalized Dunn's Index 43
-- **GD53**: Generalized Dunn's Index 53
-- **PS**: Partition Separation
-- **rCIP**: (Renyi's) representative Cross Information Potential
-- **WB**: WB-index
-- **XB**: Xie-Beni
+```julia
+] add ClusterValidityIndices
+```
+
+or programmatically:
+
+```julia
+using Pkg
+Pkg.add("ClusterValidityIndices")
+```
+
+You may also add the package directly from GitHub to get the latest changes between releases:
+
+```julia
+] add https://github.com/AP6YC/ClusterValidityIndices.jl
+```
 
 ## Quickstart
 
 This section provides a quick overview of how to use the project.
-For more detailed code usage, please see [Usage](##Usage).
+For more detailed code usage, please see [Usage](#usage).
+
+First, assume that you have a dataset of features/data and labels prescribed by some clustering algorithm:
+
+```julia
+data_file = "path/to/data.csv"
+data, labels = get_cvi_data(data_file)
+```
+
+All CVIs in this package are acronymed (see [Implemented Modules](#implemented-cviicvis)).
+You can create a new CVI structure with a default constructor:
+
+```julia
+# Davies-Bouldin (DB)
+my_cvi = DB()
+```
+
+The output of CVIs are called *criterion values*, and they can be computed incremental with `get_icvi`
+
+```julia
+n_samples = length(labels)
+criterion_values = zeros(n_samples)
+for i = 1:n_samples
+    criterion_values[i] = get_icvi(data[:, i], labels[i])
+end
+```
+
+or in batch with `get_cvi`
+
+```julia
+criterion_value = get_cvi(data, labels)
+```
+
+### Examples
 
 This project has several example scripts to demonstrate the functionality of CVIs in the ClusterValidityIndices.jl package.
 In `ICVI-Examples/src/examples/`, the scripts `db.jl`, `ps.jl`, and `xb.jl` demonstrate usage of the Davies-Boudin (DB), Partition Separation (PS), and Xie-Beni (XB) metrics, respectively.
@@ -112,6 +155,20 @@ You can change which dataset is used in each script above.
 
 Lastly, there is a large experiment script `src/examples/combined.jl` that runs every CVI with all three datasets.
 The common code for all scripts and tests is contained under `test/utils.jl`, while the experiment subroutines referenced in these scripts are under `src/experiments.jl`, so feel free to modify them to further explore the behavior and usage of these CVIs.
+
+## Implemented CVI/ICVIs
+
+This project has implementations of the following CVIs in both batch and incremental variants:
+
+- **CH**: Calinski-Harabasz
+- **cSIL**: Centroid-based Silhouette
+- **DB**: Davies-Bouldin
+- **GD43**: Generalized Dunn's Index 43
+- **GD53**: Generalized Dunn's Index 53
+- **PS**: Partition Separation
+- **rCIP**: (Renyi's) representative Cross Information Potential
+- **WB**: WB-index
+- **XB**: Xie-Beni
 
 ## Structure
 
