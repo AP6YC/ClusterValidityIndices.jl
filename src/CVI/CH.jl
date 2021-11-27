@@ -22,14 +22,12 @@ cluster validity indices for performance monitoring of streaming data clustering
 Int. J. Intell. Syst., pp. 1–23, 2018.
 """
 
-using Statistics
-
 """
     CH
 
 The stateful information of the Calinski-Harabasz (CH) CVI.
 """
-mutable struct CH <: AbstractCVI
+mutable struct CH <: CVI
     label_map::LabelMap
     dim::Integer
     n_samples::Integer
@@ -39,11 +37,11 @@ mutable struct CH <: AbstractCVI
     CP::RealVector      # dim
     SEP::RealVector     # dim
     G::RealMatrix       # dim x n_clusters
-    BGSS::RealFP
-    WGSS::RealFP
+    BGSS::Float
+    WGSS::Float
     n_clusters::Integer
-    criterion_value::RealFP
-end # CH <: AbstractCVI
+    criterion_value::Float
+end # CH <: CVI
 
 """
     CH()
@@ -55,12 +53,12 @@ function CH()
         LabelMap(),                     # label_map
         0,                              # dim
         0,                              # n_samples
-        Array{RealFP, 1}(undef, 0),     # mu
+        Array{Float, 1}(undef, 0),      # mu
         Array{Integer, 1}(undef, 0),    # n
-        Array{RealFP, 2}(undef, 0, 0),  # v
-        Array{RealFP, 1}(undef, 0),     # CP
-        Array{RealFP, 1}(undef, 0),     # SEP
-        Array{RealFP, 2}(undef, 0, 0),  # G
+        Array{Float, 2}(undef, 0, 0),   # v
+        Array{Float, 1}(undef, 0),      # CP
+        Array{Float, 1}(undef, 0),      # SEP
+        Array{Float, 2}(undef, 0, 0),   # G
         0.0,                            # BGSS
         0.0,                            # WGSS
         0,                              # n_clusters
@@ -69,9 +67,9 @@ function CH()
 end # CH()
 
 """
-    setup!(cvi::CH, sample::Vector{T}) where {T<:Real}
+    setup!(cvi::CH, sample::Vector{T}) where {T<:RealFP}
 """
-function setup!(cvi::CH, sample::Vector{T}) where {T<:Real}
+function setup!(cvi::CH, sample::Vector{T}) where {T<:RealFP}
     # Get the feature dimension
     cvi.dim = length(sample)
     # Initialize the augmenting 2-D arrays with the correct feature dimension

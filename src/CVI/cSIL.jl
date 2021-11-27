@@ -20,14 +20,12 @@ Scalable Uncertainty Management, E. Hüllermeier, S. Link, T. Fober et al.,
 Eds. Berlin, Heidelberg: Springer, 2012, pp. 406–419.
 """
 
-using Statistics
-
 """
     cSIL
 
 The stateful information of the Centroid-based Silhouette (cSIL) CVI.
 """
-mutable struct cSIL <: AbstractCVI
+mutable struct cSIL <: CVI
     label_map::LabelMap
     dim::Integer
     n_samples::Integer
@@ -38,8 +36,8 @@ mutable struct cSIL <: AbstractCVI
     S::RealMatrix           # n_clusters x n_clusters
     sil_coefs::RealVector   # dim
     n_clusters::Integer
-    criterion_value::RealFP
-end # cSIL <: AbstractCVI
+    criterion_value::Float
+end # cSIL <: CVI
 
 """
     cSIL()
@@ -52,11 +50,11 @@ function cSIL()
         0,                              # dim
         0,                              # n_samples
         Array{Integer, 1}(undef, 0),    # n
-        Array{RealFP, 2}(undef, 0, 0),  # v
-        Array{RealFP, 1}(undef, 0),     # CP
-        Array{RealFP, 2}(undef, 0, 0),  # G
-        Array{RealFP, 2}(undef, 0, 0),  # S
-        Array{RealFP, 1}(undef, 0),     # sil_coefs
+        Array{Float, 2}(undef, 0, 0),   # v
+        Array{Float, 1}(undef, 0),      # CP
+        Array{Float, 2}(undef, 0, 0),   # G
+        Array{Float, 2}(undef, 0, 0),   # S
+        Array{Float, 1}(undef, 0),      # sil_coefs
         0,                              # n_clusters
         0.0                             # criterion_value
     )
