@@ -22,6 +22,14 @@ cluster validity indices for performance monitoring of streaming data clustering
 Int. J. Intell. Syst., pp. 1–23, 2018.
 """
 
+const common_string = """
+
+# Arguments
+- `cvi::CVI`: the CVI object.
+- `sample::RealVector`: a vector of features used in clustering the sample.
+- `label::Integer`: the cluster label prescribed to the sample by the clustering algorithm.
+"""
+
 """
     CH
 
@@ -84,11 +92,13 @@ function setup!(cvi::CH, sample::Vector{T}) where {T<:RealFP}
     cvi.G = Array{T, 2}(undef, cvi.dim, 0)
 end # setup!(cvi::CH, sample::Vector{T}) where {T<:Real}
 
+@doc string(
 """
     param_inc!(cvi::CH, sample::RealVector, label::Integer)
 
 Compute the Calinski-Harabasz (CH) CVI incrementally.
 """
+, common_string)
 function param_inc!(cvi::CH, sample::RealVector, label::Integer)
     # Get the internal label
     i_label = get_internal_label!(cvi.label_map, label)

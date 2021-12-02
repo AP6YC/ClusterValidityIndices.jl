@@ -95,3 +95,15 @@ function get_internal_label!(label_map::LabelMap, label::Int)
 
     return internal_label
 end # get_internal_label!(label_map::LabelMap, label::Int)
+
+
+# -------------------------------------------
+# Common Documentation
+# -------------------------------------------
+
+@doc raw"""
+    param_inc!(cvi::CVI, sample::RealVector, label::Integer)
+
+asdf
+"""
+param_inc!(cvi::CVI, sample::RealVector, label::Integer)
