@@ -80,11 +80,6 @@ function setup!(cvi::XB, sample::Vector{T}) where {T<:RealFP}
     cvi.G = Array{T, 2}(undef, cvi.dim, 0)
 end # setup!(cvi::XB, sample::Vector{T}) where {T<:RealFP}
 
-"""
-    param_inc!(cvi::XB, sample::RealVector, label::Integer)
-
-Compute the Xie-Beni (XB) CVI incrementally.
-"""
 function param_inc!(cvi::XB, sample::RealVector, label::Integer)
     # Get the internal label
     i_label = get_internal_label!(cvi.label_map, label)
@@ -149,11 +144,6 @@ function param_inc!(cvi::XB, sample::RealVector, label::Integer)
     cvi.mu_data = mu_data_new
 end # param_inc!(cvi::XB, sample::RealVector, label::Integer)
 
-"""
-    param_batch!(cvi::XB, data::RealMatrix, labels::IntegerVector)
-
-Compute the Xie-Beni (XB) CVI in batch.
-"""
 function param_batch!(cvi::XB, data::RealMatrix, labels::IntegerVector)
     cvi.dim, cvi.n_samples = size(data)
     # Take the average across all samples, but cast to 1-D vector
@@ -181,11 +171,6 @@ function param_batch!(cvi::XB, data::RealMatrix, labels::IntegerVector)
     cvi.D = cvi.D + transpose(cvi.D)
 end # param_batch!(cvi::XB, data::RealMatrix, labels::IntegerVector)
 
-"""
-    evaluate!(cvi::XB)
-
-Compute the criterion value of the Xie-Beni (XB) CVI.
-"""
 function evaluate!(cvi::XB)
     cvi.WGSS = sum(cvi.CP)
     if cvi.n_clusters > 1

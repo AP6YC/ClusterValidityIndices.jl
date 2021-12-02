@@ -81,11 +81,6 @@ function setup!(cvi::DB, sample::Vector{T}) where {T<:RealFP}
     cvi.G = Array{T, 2}(undef, cvi.dim, 0)
 end # setup!(cvi::DB, sample::Vector{T}) where {T<:RealFP}
 
-"""
-    param_inc!(cvi::DB, sample::RealVector, label::Integer)
-
-Compute the Davies-Bouldin (DB) CVI incrementally.
-"""
 function param_inc!(cvi::DB, sample::RealVector, label::Integer)
     # Get the internal label
     i_label = get_internal_label!(cvi.label_map, label)
@@ -154,11 +149,6 @@ function param_inc!(cvi::DB, sample::RealVector, label::Integer)
     cvi.mu_data = mu_data_new
 end # param_inc!(cvi::DB, sample::RealVector, label::Integer)
 
-"""
-    param_batch!(cvi::DB, data::RealMatrix, labels::IntegerVector)
-
-Compute the Davies-Bouldin (DB) CVI in batch.
-"""
 function param_batch!(cvi::DB, data::RealMatrix, labels::IntegerVector)
     cvi.dim, cvi.n_samples = size(data)
     # Take the average across all samples, but cast to 1-D vector
@@ -187,11 +177,6 @@ function param_batch!(cvi::DB, data::RealMatrix, labels::IntegerVector)
     cvi.D = cvi.D + transpose(cvi.D)
 end # function param_batch!(cvi::DB, data::RealMatrix, labels::IntegerVector)
 
-"""
-    evaluate!(cvi::DB)
-
-Compute the criterion value of the Davies-Bouldin (DB) CVI.
-"""
 function evaluate!(cvi::DB)
     cvi.R = zeros(cvi.n_clusters, cvi.n_clusters)
     for ix = 1:(cvi.n_clusters - 1)

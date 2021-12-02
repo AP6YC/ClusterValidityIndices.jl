@@ -4,6 +4,7 @@
 Description:
     All common types, aliases, structs, and methods for the ClusterValidityIndices.jl package.
 """
+
 # -------------------------------------------
 # Abstract types
 # -------------------------------------------
@@ -96,7 +97,6 @@ function get_internal_label!(label_map::LabelMap, label::Int)
     return internal_label
 end # get_internal_label!(label_map::LabelMap, label::Int)
 
-
 # -------------------------------------------
 # Common Documentation
 # -------------------------------------------
@@ -104,6 +104,20 @@ end # get_internal_label!(label_map::LabelMap, label::Int)
 @doc raw"""
     param_inc!(cvi::CVI, sample::RealVector, label::Integer)
 
-asdf
+Compute the CVI parameters incrementally.
 """
 param_inc!(cvi::CVI, sample::RealVector, label::Integer)
+
+@doc raw"""
+    param_batch!(cvi::CVI, data::RealMatrix, labels::IntegerVector)
+
+Compute the CVI parameters in batch.
+"""
+param_batch!(cvi::CVI, data::RealMatrix, labels::IntegerVector)
+
+@doc raw"""
+    evaluate!(cvi::CVI)
+
+Compute the criterion value of the CVI.
+"""
+evaluate!(cvi::CVI)

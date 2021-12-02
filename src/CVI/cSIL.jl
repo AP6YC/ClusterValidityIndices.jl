@@ -77,11 +77,6 @@ function setup!(cvi::cSIL, sample::Vector{T}) where {T<:RealFP}
     cvi.G = Array{T, 2}(undef, cvi.dim, 0)
 end # setup!(cvi::cSIL, sample::Vector{T}) where {T<:RealFP}
 
-"""
-    param_inc!(cvi::cSIL, sample::RealVector, label::Integer)
-
-Compute the Centroid-based Silhouette (cSIL) CVI incrementally.
-"""
 function param_inc!(cvi::cSIL, sample::RealVector, label::Integer)
     # Get the internal label
     i_label = get_internal_label!(cvi.label_map, label)
@@ -164,11 +159,6 @@ function param_inc!(cvi::cSIL, sample::RealVector, label::Integer)
     cvi.n_samples = n_samples_new
 end # param_inc!(cvi::cSIL, sample::RealVector, label::Integer)
 
-"""
-    param_batch!(cvi::cSIL, data::RealMatrix, labels::IntegerVector)
-
-Compute the Centroid-based Silhouette (cSIL) CVI in batch.
-"""
 function param_batch!(cvi::cSIL, data::RealMatrix, labels::IntegerVector)
     cvi.dim, cvi.n_samples = size(data)
     # u = findfirst.(isequal.(unique(labels)), [labels])
@@ -195,11 +185,6 @@ function param_batch!(cvi::cSIL, data::RealMatrix, labels::IntegerVector)
     end
 end # param_batch!(cvi::cSIL, data::RealMatrix, labels::IntegerVector)
 
-"""
-    evaluate!(cvi::cSIL)
-
-Compute the criterion value of the Centroid-based Silhouette (cSIL) CVI.
-"""
 function evaluate!(cvi::cSIL)
     cvi.sil_coefs = zeros(cvi.n_clusters)
     if !isempty(cvi.S) && cvi.n_clusters > 1

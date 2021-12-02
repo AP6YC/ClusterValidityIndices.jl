@@ -90,11 +90,6 @@ function setup!(cvi::rCIP, sample::Vector{T}) where {T<:RealFP}
     cvi.delta_term = Matrix{Float64}(LinearAlgebra.I, cvi.dim, cvi.dim).*delta
 end # setup!(cvi::rCIP, sample::Vector{T}) where {T<:RealFP}
 
-"""
-    param_inc!(cvi::rCIP, sample::RealVector, label::Integer)
-
-Compute the (Renyi's) representative Cross Information Potential (rCIP) CVI incrementally.
-"""
 function param_inc!(cvi::rCIP, sample::RealVector, label::Integer)
     # Get the internal label
     i_label = get_internal_label!(cvi.label_map, label)
@@ -160,11 +155,6 @@ function param_inc!(cvi::rCIP, sample::RealVector, label::Integer)
     cvi.n_samples = n_samples_new
 end # param_inc!(cvi::rCIP, sample::RealVector, label::Integer)
 
-"""
-    param_batch!(cvi::rCIP, data::RealMatrix, labels::IntegerVector)
-
-Compute the (Renyi's) representative Cross Information Potential (rCIP) CVI in batch.
-"""
 function param_batch!(cvi::rCIP, data::RealMatrix, labels::IntegerVector)
     cvi.dim, cvi.n_samples = size(data)
     cvi.constant = 1/sqrt((2*pi)^cvi.dim)
@@ -203,11 +193,6 @@ function param_batch!(cvi::rCIP, data::RealMatrix, labels::IntegerVector)
     cvi.D = cvi.D + transpose(cvi.D)
 end # param_batch!(cvi::rCIP, data::RealMatrix, labels::IntegerVector)
 
-"""
-    evaluate!(cvi::rCIP)
-
-Compute the criterion value of the (Renyi's) representative Cross Information Potential (rCIP) CVI.
-"""
 function evaluate!(cvi::rCIP)
     # Assume a symmetric dimension
     dim = size(cvi.D)[1]

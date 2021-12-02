@@ -92,13 +92,6 @@ function setup!(cvi::CH, sample::Vector{T}) where {T<:RealFP}
     cvi.G = Array{T, 2}(undef, cvi.dim, 0)
 end # setup!(cvi::CH, sample::Vector{T}) where {T<:Real}
 
-@doc string(
-"""
-    param_inc!(cvi::CH, sample::RealVector, label::Integer)
-
-Compute the Calinski-Harabasz (CH) CVI incrementally.
-"""
-, common_string)
 function param_inc!(cvi::CH, sample::RealVector, label::Integer)
     # Get the internal label
     i_label = get_internal_label!(cvi.label_map, label)
@@ -141,11 +134,6 @@ function param_inc!(cvi::CH, sample::RealVector, label::Integer)
     cvi.SEP = [cvi.n[ix] * sum((cvi.v[:, ix] - cvi.mu).^2) for ix=1:cvi.n_clusters]
 end # param_inc!(cvi::CH, sample::RealVector, label::Integer)
 
-"""
-    param_batch!(cvi::CH, data::RealMatrix, labels::IntegerVector)
-
-Compute the Calinski-Harabasz (CH) CVI in batch.
-"""
 function param_batch!(cvi::CH, data::RealMatrix, labels::IntegerVector)
     cvi.dim, cvi.n_samples = size(data)
     # Take the average across all samples, but cast to 1-D vector
@@ -167,11 +155,6 @@ function param_batch!(cvi::CH, data::RealMatrix, labels::IntegerVector)
     end
 end # param_batch!(cvi::CH, data::RealMatrix, labels::IntegerVector)
 
-"""
-    evaluate!(cvi::CH)
-
-Compute the criterion value of the Calinski-Harabasz (CH) CVI.
-"""
 function evaluate!(cvi::CH)
     # Within group sum of scatters
     cvi.WGSS = sum(cvi.CP)

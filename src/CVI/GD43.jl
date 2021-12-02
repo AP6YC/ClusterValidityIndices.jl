@@ -88,11 +88,6 @@ function setup!(cvi::GD43, sample::Vector{T}) where {T<:RealFP}
     cvi.G = Array{T, 2}(undef, cvi.dim, 0)
 end # setup!(cvi::GD43, sample::Vector{T}) where {T<:RealFP}
 
-"""
-    param_inc!(cvi::GD43, sample::RealVector, label::Integer)
-
-Compute the Generalized Dunn's Index 43 (GD43) CVI incrementally.
-"""
 function param_inc!(cvi::GD43, sample::RealVector, label::Integer)
     # Get the internal label
     i_label = get_internal_label!(cvi.label_map, label)
@@ -157,11 +152,6 @@ function param_inc!(cvi::GD43, sample::RealVector, label::Integer)
     cvi.mu_data = mu_data_new
 end # param_inc!(cvi::GD43, sample::RealVector, label::Integer)
 
-"""
-    param_batch!(cvi::GD43, data::RealMatrix, labels::IntegerVector)
-
-Compute the Generalized Dunn's Index 43 (GD43) CVI in batch.
-"""
 function param_batch!(cvi::GD43, data::RealMatrix, labels::IntegerVector)
     cvi.dim, cvi.n_samples = size(data)
     # Take the average across all samples, but cast to 1-D vector
@@ -188,11 +178,6 @@ function param_batch!(cvi::GD43, data::RealMatrix, labels::IntegerVector)
     cvi.D = cvi.D + transpose(cvi.D)
 end # param_batch!(cvi::GD43, data::RealMatrix, labels::IntegerVector)
 
-"""
-    evaluate!(cvi::GD43)
-
-Compute the criterion value of the Generalized Dunn's Index 43 (GD43) CVI.
-"""
 function evaluate!(cvi::GD43)
     cvi.intra = 2*maximum(cvi.CP ./ cvi.n)
     if cvi.n_clusters > 1
