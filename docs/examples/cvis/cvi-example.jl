@@ -8,6 +8,19 @@
 # description: This demo is a simple example of how to use a CVI in batch mode.
 # ---
 
+# ## Overview
+
+# This demo is a simple example of how to use CVIs in batch mode.
+# Here, we load a simple dataset and run a basic clustering algorithm to prescribe a set of clusters to the features.
+# It is a combination of these features and the prescribed labels that are used to compute the criterion value.
+# This simple example demonstrates the usage of a single CVI, but it may be substituted for any other CVI in the `ClusterValidityIndices.jl` package.
+
+# ## Clustering
+
+# ### Data Setup
+
+# First, we must load all of our dependencies.
+# We will load the `ClusterValidityIndices.jl` along with some data utilities and the Julia `Clustering.jl` package to cluster that data.
 using ClusterValidityIndices    # CVI/ICVI
 using Clustering                # DBSCAN
 using MLDatasets                # Iris dataset
@@ -22,17 +35,26 @@ features, labels = Iris.features(), Iris.labels()
 labels = convertlabel(LabelEnc.Indices{Int}, labels)
 unique(labels)
 
+# ### Fuzzy C-Means
+
 # Get the Fuzzy C-Means clustering result
 results = fuzzy_cmeans(features, 3, 2)
 
-# Find the maximum elements
+# Because the results are fuzzy weights, find the maximum elements along each sample
 indices = argmax(results.weights, dims=2)
 
-# Get the labels as a vector of integers
+# Get those labels as a vector of integers
 c_labels = vec([c[2] for c in indices])
 
-# Create a CVI
+# ## CVI Criterion Value Extraction
+
+# Now that we have some data and a clustering algorithm's prescribed labels, we can compute a criterion value using a CVI in batch mode.
+# First, we create a CVI object with the default constructor:
+
+## Create a CVI object
 my_cvi = CH()
 
-# Get the batch criterion value
+# Finally we can simply get the criterion value in batch by passing all of the data and Fuzzy C-Means labels at once.
+
+## Get the batch criterion value
 criterion_value = get_cvi!(my_cvi, features, c_labels)
