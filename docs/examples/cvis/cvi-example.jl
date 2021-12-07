@@ -14,7 +14,6 @@ using MLDatasets                # Iris dataset
 using MLDataUtils               # Shuffling and splitting
 using Printf                    # Formatted number printing
 
-
 # We will download the Iris dataset for its small size and benchmark use for clustering algorithms.
 Iris.download(i_accept_the_terms_of_use=true)
 features, labels = Iris.features(), Iris.labels()
@@ -23,12 +22,17 @@ features, labels = Iris.features(), Iris.labels()
 labels = convertlabel(LabelEnc.Indices{Int}, labels)
 unique(labels)
 
+# Get the Fuzzy C-Means clustering result
 results = fuzzy_cmeans(features, 3, 2)
-# Show the result weights
-results.weights
+
 # Find the maximum elements
 indices = argmax(results.weights, dims=2)
 
-# asdf
-c_labels = [c[2] for c in indices]
-# indices[2]
+# Get the labels as a vector of integers
+c_labels = vec([c[2] for c in indices])
+
+# Create a CVI
+my_cvi = CH()
+
+# Get the batch criterion value
+criterion_value = get_cvi!(my_cvi, features, c_labels)
