@@ -1,12 +1,11 @@
 # ---
-# title: CVI Example
-# id: cvi_example
+# title: ICVI Example
+# id: icvi_example
 # cover: ../assets/logo.png
 # date: 2021-12-6
 # author: "[Sasha Petrenko](https://github.com/AP6YC)"
 # julia: 1.6
-# description: This demo illustrates how to use incremental training methods vs. batch training for all ART modules.
+# description: This demo is a simple example of how to use a CVI in batch mode.
 # ---
-
 
 # testing
