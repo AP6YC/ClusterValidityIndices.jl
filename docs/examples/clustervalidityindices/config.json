@@ -1,4 +1,0 @@
-{
-    "title": "ClusterValidityIndices",
-    "description": "These examples demonstrate the ins-and-outs of the ClusterValidityIndices.jl package, such as how to run CVIs incrementally and in batch."
-}

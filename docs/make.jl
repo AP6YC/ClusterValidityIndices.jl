@@ -25,7 +25,8 @@ makedocs(
         "Home" => "index.md",
         "Tutorial" => [
             "Guide" => "man/guide.md",
-            "Examples" => "man/examples.md",
+            # "Examples" => "man/examples.md",
+            demopage,
             "Contributing" => "man/contributing.md",
             "Index" => "man/full-index.md"
         ]
