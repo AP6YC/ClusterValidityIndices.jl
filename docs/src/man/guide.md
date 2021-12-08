@@ -19,33 +19,41 @@ Pkg.add("CVI")
 ## Quickstart
 
 This section provides a quick overview of how to use the project.
-For more detailed code usage, please see [Usage](##Usage).
+For more detailed code usage, please see [Usage](@ref usage).
+For a variety of detailed examples that you can run yourself, please see the [Examples](@ref examples) page.
 
-This project has several example scripts to demonstrate the functionality of CVIs in the ClusterValidityIndices.jl package.
-In `ICVI-Examples/src/examples/`, the scripts `db.jl`, `ps.jl`, and `xb.jl` demonstrate usage of the Davies-Boudin (DB), Partition Separation (PS), and Xie-Beni (XB) metrics, respectively.
+First, assume that you have a dataset of features/data and labels prescribed by some clustering algorithm:
 
-!!! note "Note"
-    Each of these scripts must be run at the top level of the project to correctly point to the datasets.
-    For example, they can be run in the shell with
+```julia
+data_file = "path/to/data.csv"
+data, labels = get_cvi_data(data_file)
+```
 
-    ```sh
-    julia src/examples/db.jl
-    ```
+All CVI objects in this package are acronymed versions of their full names, which can be found in the [Index](@ref index-types).
+You can create a new CVI structure with a default constructor:
 
-    or in a Julia REPL session with
+```julia
+# Davies-Bouldin (DB)
+my_cvi = DB()
+```
 
-    ```sh
-    include("src/examples/db.jl")
-    ```
+The output of CVIs are called *criterion values*, and they can be computed incrementally with `get_icvi`
 
-Three preprocessed datasets are provided under `data/` to demonstrate the correct partitioning, over partitioning, and under partitioning of samples by a clustering algorithm to illustrate how the CVIs behave in each case.
-The data consists of 2000 samples of 2-element features with the clustering label appended in the third column.
-You can change which dataset is used in each script above.
+```julia
+n_samples = length(labels)
+criterion_values = zeros(n_samples)
+for i = 1:n_samples
+    criterion_values[i] = get_icvi(data[:, i], labels[i])
+end
+```
 
-Lastly, there is a large experiment script `src/examples/combined.jl` that runs every CVI with all three datasets.
-The common code for all scripts and tests is contained under `test/utils.jl`, while the experiment subroutines referenced in these scripts are under `src/experiments.jl`, so feel free to modify them to further explore the behavior and usage of these CVIs.
+or in batch with `get_cvi`
 
-## Usage
+```julia
+criterion_value = get_cvi(data, labels)
+```
+
+## [Usage](@id usage)
 
 The usage of these CVIs requires an understanding of:
 
@@ -110,34 +118,34 @@ cvi = DB()
 
 The CVIs in this project all contain *incremental* and *batch* implementations.
 When evaluated in incremental mode, they are often called ICVIs (incremental cluster validity indices).
-In documentation, CVI refers to both modalities (as in the literature), but in code, CVI means batch and ICVI means incremental.
+In this documentation, CVI means batch and ICVI means incremental, though both are `CVI` objects.
 
-The funtions that differ between the two modes are how they are updated
-
-```julia
-# Incremental
-param_inc!(...)
-# Batch
-param_batch!(...)
-```
-
-and their respective porcelain functions
+The funtions that differ between the two modes are how they are updated:
 
 ```julia
 # Incremental
-get_icvi!(...)
+param_inc!(cvi::CVI, sample::RealVector, label::Integer)
 # Batch
-get_cvi!(...)
+param_batch!(cvi::CVI, data::RealMatrix, labels::IntegerVector)
 ```
 
-They both compute their most recent criterion values with
+After updating their internal parameters, they both compute their most recent criterion values with
 
 ```julia
-evaluate!(...)
+evaluate!(cvi::CVI)
+```
+
+To simplify the process, both modes have their respective "porcelain" functions to update the internal parameters, evaluate the criterion value, and return it:
+
+```julia
+# Incremental
+get_icvi!(cvi::CVI, sample::RealVector, label::Integer)
+# Batch
+get_cvi!(cvi::CVI, data::RealMatrix, labels::IntegerVector)
 ```
 
 !!! note "Note"
-    Any CVI can switch to be updated incrementally or in batch, as the CVI data structs are update mode agnostic.
+    Any CVI object can be updated incrementally or in batch, as the CVIs are equivalent to their ICVI counterparts after all data is presented.
 
 ### [Updating](@id updating)
 
@@ -154,12 +162,12 @@ More concretely, they are
 
 ```julia
 # Incremental updating
-param_inc!(cvi::C, sample::Array{T, 1}, label::I) where {C<:AbstractCVI, T<:Real, I<:Int}
+param_inc!(cvi::CVI, sample::RealVector, label::Integer)
 # Batch updating
-param_batch!(cvi::C, data::Array{T, 2}, labels::Array{I, 1}) where {C<:AbstractCVI, T<:Real, I<:Int}
+param_batch!(cvi::CVI, data::RealMatrix, labels::IntegerVector)
 ```
 
-Every CVI is a subtype of the abstract type `AbstractCVI`.
+Every CVI is a subtype of the abstract type `CVI`.
 For example, we may instantiate and load our data
 
 ```julia
@@ -211,7 +219,7 @@ This is also provide granularity to the user that may only which to extract the 
 Because the criterion values only depend on the internal CVI parameters, they are computed (and internally stored) with
 
 ```julia
-evaluate!(cvi::C) where {C<:AbstractCVI}
+evaluate!(cvi::C) where {C<:CVI}
 ```
 
 To extract them, you must then simply grab the criterion value from the CVI struct with
@@ -265,9 +273,9 @@ Exactly as in the usage for updating the parameters, the functions take the cvi,
 
 ```julia
 # Incremental
-get_icvi!(cvi::C, x::Array{N, 1}, y::M) where {C<:AbstractCVI, N<:Real, M<:Int}
+get_icvi!(cvi::C, x::Array{N, 1}, y::M) where {C<:CVI, N<:Real, M<:Int}
 # Batch
-get_cvi!(cvi::C, x::Array{N, 2}, y::Array{M, 1}) where {C<:AbstractCVI, N<:Real, M<:Int}
+get_cvi!(cvi::C, x::Array{N, 2}, y::Array{M, 1}) where {C<:CVI, N<:Real, M<:Int}
 ```
 
 For example, after loading the data you may get the criterion value at each step with

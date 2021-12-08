@@ -20,14 +20,17 @@ cluster validity indices for performance monitoring of streaming data clustering
 Int. J. Intell. Syst., pp. 1–23, 2018.
 """
 
-using Statistics
-
 """
     DB
 
-The stateful information of the Davies-Bouldin (DB) CVI.
+The stateful information of the Davies-Bouldin (DB) Cluster Validity Index.
+
+# References
+1. D. L. Davies and D. W. Bouldin, "A cluster separation measure," IEEE Transaction on Pattern Analysis and Machine Intelligence, vol. 1, no. 2, pp. 224–227, Feb. 1979.
+2. M. Moshtaghi, J. C. Bezdek, S. M. Erfani, C. Leckie, and J. Bailey, "Online Cluster Validity Indices for Streaming Data," ArXiv e-prints, 2018, arXiv:1801.02937v1 [stat.ML]. [Online].
+3. M. Moshtaghi, J. C. Bezdek, S. M. Erfani, C. Leckie, J. Bailey, "Online cluster validity indices for performance monitoring of streaming data clustering," Int. J. Intell. Syst., pp. 1–23, 2018.
 """
-mutable struct DB <: AbstractCVI
+mutable struct DB <: CVI
     label_map::LabelMap
     dim::Integer
     n_samples::Integer
@@ -40,8 +43,8 @@ mutable struct DB <: AbstractCVI
     G::RealMatrix               # dim x n_clusters
     D::RealMatrix               # n_clusters x n_clusters
     n_clusters::Integer
-    criterion_value::RealFP
-end # DB <: AbstractCVI
+    criterion_value::Float
+end # DB <: CVI
 
 """
     DB()
@@ -53,14 +56,14 @@ function DB()
         LabelMap(),                     # label_map
         0,                              # dim
         0,                              # n_samples
-        Array{RealFP, 1}(undef, 0),     # mu_data
+        Array{Float, 1}(undef, 0),      # mu_data
         Array{Integer, 1}(undef, 0),    # n
-        Array{RealFP, 2}(undef, 0, 0),  # v
-        Array{RealFP, 1}(undef, 0),     # CP
-        Array{RealFP, 1}(undef, 0),     # S
-        Array{RealFP, 2}(undef, 0, 0),  # R
-        Array{RealFP, 2}(undef, 0, 0),  # G
-        Array{RealFP, 2}(undef, 0, 0),  # D
+        Array{Float, 2}(undef, 0, 0),   # v
+        Array{Float, 1}(undef, 0),      # CP
+        Array{Float, 1}(undef, 0),      # S
+        Array{Float, 2}(undef, 0, 0),   # R
+        Array{Float, 2}(undef, 0, 0),   # G
+        Array{Float, 2}(undef, 0, 0),   # D
         0,                              # n_clusters
         0.0                             # criterion_value
     )
@@ -78,11 +81,6 @@ function setup!(cvi::DB, sample::Vector{T}) where {T<:RealFP}
     cvi.G = Array{T, 2}(undef, cvi.dim, 0)
 end # setup!(cvi::DB, sample::Vector{T}) where {T<:RealFP}
 
-"""
-    param_inc!(cvi::DB, sample::RealVector, label::Integer)
-
-Compute the Davies-Bouldin (DB) CVI incrementally.
-"""
 function param_inc!(cvi::DB, sample::RealVector, label::Integer)
     # Get the internal label
     i_label = get_internal_label!(cvi.label_map, label)
@@ -151,11 +149,6 @@ function param_inc!(cvi::DB, sample::RealVector, label::Integer)
     cvi.mu_data = mu_data_new
 end # param_inc!(cvi::DB, sample::RealVector, label::Integer)
 
-"""
-    param_batch!(cvi::DB, data::RealMatrix, labels::IntegerVector)
-
-Compute the Davies-Bouldin (DB) CVI in batch.
-"""
 function param_batch!(cvi::DB, data::RealMatrix, labels::IntegerVector)
     cvi.dim, cvi.n_samples = size(data)
     # Take the average across all samples, but cast to 1-D vector
@@ -184,11 +177,6 @@ function param_batch!(cvi::DB, data::RealMatrix, labels::IntegerVector)
     cvi.D = cvi.D + transpose(cvi.D)
 end # function param_batch!(cvi::DB, data::RealMatrix, labels::IntegerVector)
 
-"""
-    evaluate!(cvi::DB)
-
-Compute the criterion value of the Davies-Bouldin (DB) CVI.
-"""
 function evaluate!(cvi::DB)
     cvi.R = zeros(cvi.n_clusters, cvi.n_clusters)
     for ix = 1:(cvi.n_clusters - 1)

@@ -22,14 +22,26 @@ cluster validity indices for performance monitoring of streaming data clustering
 Int. J. Intell. Syst., pp. 1–23, 2018.
 """
 
-using Statistics
+const common_string = """
+
+# Arguments
+- `cvi::CVI`: the CVI object.
+- `sample::RealVector`: a vector of features used in clustering the sample.
+- `label::Integer`: the cluster label prescribed to the sample by the clustering algorithm.
+"""
 
 """
     CH
 
-The stateful information of the Calinski-Harabasz (CH) CVI.
+The stateful information of the Calinski-Harabasz (CH) Cluster Validity Index
+
+# References
+1. L. E. Brito da Silva, N. M. Melton, and D. C. Wunsch II, "Incremental Cluster Validity Indices for Hard Partitions: Extensions  and  Comparative Study," ArXiv  e-prints, Feb 2019, arXiv:1902.06711v1 [cs.LG].
+2. T. Calinski and J. Harabasz, "A dendrite method for cluster analysis," Communications in Statistics, vol. 3, no. 1, pp. 1–27, 1974.
+3. M. Moshtaghi, J. C. Bezdek, S. M. Erfani, C. Leckie, and J. Bailey, "Online Cluster Validity Indices for Streaming Data," ArXiv e-prints, 2018, arXiv:1801.02937v1 [stat.ML]. [Online].
+4. M. Moshtaghi, J. C. Bezdek, S. M. Erfani, C. Leckie, J. Bailey, "Online cluster validity indices for performance monitoring of streaming data clustering," Int. J. Intell. Syst., pp. 1–23, 2018.
 """
-mutable struct CH <: AbstractCVI
+mutable struct CH <: CVI
     label_map::LabelMap
     dim::Integer
     n_samples::Integer
@@ -39,11 +51,11 @@ mutable struct CH <: AbstractCVI
     CP::RealVector      # dim
     SEP::RealVector     # dim
     G::RealMatrix       # dim x n_clusters
-    BGSS::RealFP
-    WGSS::RealFP
+    BGSS::Float
+    WGSS::Float
     n_clusters::Integer
-    criterion_value::RealFP
-end # CH <: AbstractCVI
+    criterion_value::Float
+end # CH <: CVI
 
 """
     CH()
@@ -55,12 +67,12 @@ function CH()
         LabelMap(),                     # label_map
         0,                              # dim
         0,                              # n_samples
-        Array{RealFP, 1}(undef, 0),     # mu
+        Array{Float, 1}(undef, 0),      # mu
         Array{Integer, 1}(undef, 0),    # n
-        Array{RealFP, 2}(undef, 0, 0),  # v
-        Array{RealFP, 1}(undef, 0),     # CP
-        Array{RealFP, 1}(undef, 0),     # SEP
-        Array{RealFP, 2}(undef, 0, 0),  # G
+        Array{Float, 2}(undef, 0, 0),   # v
+        Array{Float, 1}(undef, 0),      # CP
+        Array{Float, 1}(undef, 0),      # SEP
+        Array{Float, 2}(undef, 0, 0),   # G
         0.0,                            # BGSS
         0.0,                            # WGSS
         0,                              # n_clusters
@@ -69,9 +81,9 @@ function CH()
 end # CH()
 
 """
-    setup!(cvi::CH, sample::Vector{T}) where {T<:Real}
+    setup!(cvi::CH, sample::Vector{T}) where {T<:RealFP}
 """
-function setup!(cvi::CH, sample::Vector{T}) where {T<:Real}
+function setup!(cvi::CH, sample::Vector{T}) where {T<:RealFP}
     # Get the feature dimension
     cvi.dim = length(sample)
     # Initialize the augmenting 2-D arrays with the correct feature dimension
@@ -80,11 +92,6 @@ function setup!(cvi::CH, sample::Vector{T}) where {T<:Real}
     cvi.G = Array{T, 2}(undef, cvi.dim, 0)
 end # setup!(cvi::CH, sample::Vector{T}) where {T<:Real}
 
-"""
-    param_inc!(cvi::CH, sample::RealVector, label::Integer)
-
-Compute the Calinski-Harabasz (CH) CVI incrementally.
-"""
 function param_inc!(cvi::CH, sample::RealVector, label::Integer)
     # Get the internal label
     i_label = get_internal_label!(cvi.label_map, label)
@@ -127,11 +134,6 @@ function param_inc!(cvi::CH, sample::RealVector, label::Integer)
     cvi.SEP = [cvi.n[ix] * sum((cvi.v[:, ix] - cvi.mu).^2) for ix=1:cvi.n_clusters]
 end # param_inc!(cvi::CH, sample::RealVector, label::Integer)
 
-"""
-    param_batch!(cvi::CH, data::RealMatrix, labels::IntegerVector)
-
-Compute the Calinski-Harabasz (CH) CVI in batch.
-"""
 function param_batch!(cvi::CH, data::RealMatrix, labels::IntegerVector)
     cvi.dim, cvi.n_samples = size(data)
     # Take the average across all samples, but cast to 1-D vector
@@ -153,11 +155,6 @@ function param_batch!(cvi::CH, data::RealMatrix, labels::IntegerVector)
     end
 end # param_batch!(cvi::CH, data::RealMatrix, labels::IntegerVector)
 
-"""
-    evaluate!(cvi::CH)
-
-Compute the criterion value of the Calinski-Harabasz (CH) CVI.
-"""
 function evaluate!(cvi::CH)
     # Within group sum of scatters
     cvi.WGSS = sum(cvi.CP)

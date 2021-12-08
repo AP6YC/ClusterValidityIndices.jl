@@ -1,0 +1,4 @@
+{
+    "title": "Basic CVI/ICVI Examples",
+    "description": "These examples demonstrate basic usage of the ClusterValidityIndices.jl package, such as how to run CVIs incrementally and in batch."
+}

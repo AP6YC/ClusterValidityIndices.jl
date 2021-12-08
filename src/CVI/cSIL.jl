@@ -20,14 +20,17 @@ Scalable Uncertainty Management, E. Hüllermeier, S. Link, T. Fober et al.,
 Eds. Berlin, Heidelberg: Springer, 2012, pp. 406–419.
 """
 
-using Statistics
-
 """
     cSIL
 
-The stateful information of the Centroid-based Silhouette (cSIL) CVI.
+The stateful information of the Centroid-based Silhouette (cSIL) Cluster Validity Index.
+
+# References
+1. L. E. Brito da Silva, N. M. Melton, and D. C. Wunsch II, "Incremental Cluster Validity Indices for Hard Partitions: Extensions  and  Comparative Study," ArXiv  e-prints, Feb 2019, arXiv:1902.06711v1 [cs.LG].
+2. P. J. Rousseeuw, "Silhouettes: A graphical aid to the interpretation and validation of cluster analysis," Journal of Computational and Applied Mathematics, vol. 20, pp. 53–65, 1987.
+3. M. Rawashdeh and A. Ralescu, "Center-wise intra-inter silhouettes," in Scalable Uncertainty Management, E. Hüllermeier, S. Link, T. Fober et al., Eds. Berlin, Heidelberg: Springer, 2012, pp. 406–419.
 """
-mutable struct cSIL <: AbstractCVI
+mutable struct cSIL <: CVI
     label_map::LabelMap
     dim::Integer
     n_samples::Integer
@@ -38,8 +41,8 @@ mutable struct cSIL <: AbstractCVI
     S::RealMatrix           # n_clusters x n_clusters
     sil_coefs::RealVector   # dim
     n_clusters::Integer
-    criterion_value::RealFP
-end # cSIL <: AbstractCVI
+    criterion_value::Float
+end # cSIL <: CVI
 
 """
     cSIL()
@@ -52,11 +55,11 @@ function cSIL()
         0,                              # dim
         0,                              # n_samples
         Array{Integer, 1}(undef, 0),    # n
-        Array{RealFP, 2}(undef, 0, 0),  # v
-        Array{RealFP, 1}(undef, 0),     # CP
-        Array{RealFP, 2}(undef, 0, 0),  # G
-        Array{RealFP, 2}(undef, 0, 0),  # S
-        Array{RealFP, 1}(undef, 0),     # sil_coefs
+        Array{Float, 2}(undef, 0, 0),   # v
+        Array{Float, 1}(undef, 0),      # CP
+        Array{Float, 2}(undef, 0, 0),   # G
+        Array{Float, 2}(undef, 0, 0),   # S
+        Array{Float, 1}(undef, 0),      # sil_coefs
         0,                              # n_clusters
         0.0                             # criterion_value
     )
@@ -74,11 +77,6 @@ function setup!(cvi::cSIL, sample::Vector{T}) where {T<:RealFP}
     cvi.G = Array{T, 2}(undef, cvi.dim, 0)
 end # setup!(cvi::cSIL, sample::Vector{T}) where {T<:RealFP}
 
-"""
-    param_inc!(cvi::cSIL, sample::RealVector, label::Integer)
-
-Compute the Centroid-based Silhouette (cSIL) CVI incrementally.
-"""
 function param_inc!(cvi::cSIL, sample::RealVector, label::Integer)
     # Get the internal label
     i_label = get_internal_label!(cvi.label_map, label)
@@ -161,11 +159,6 @@ function param_inc!(cvi::cSIL, sample::RealVector, label::Integer)
     cvi.n_samples = n_samples_new
 end # param_inc!(cvi::cSIL, sample::RealVector, label::Integer)
 
-"""
-    param_batch!(cvi::cSIL, data::RealMatrix, labels::IntegerVector)
-
-Compute the Centroid-based Silhouette (cSIL) CVI in batch.
-"""
 function param_batch!(cvi::cSIL, data::RealMatrix, labels::IntegerVector)
     cvi.dim, cvi.n_samples = size(data)
     # u = findfirst.(isequal.(unique(labels)), [labels])
@@ -192,11 +185,6 @@ function param_batch!(cvi::cSIL, data::RealMatrix, labels::IntegerVector)
     end
 end # param_batch!(cvi::cSIL, data::RealMatrix, labels::IntegerVector)
 
-"""
-    evaluate!(cvi::cSIL)
-
-Compute the criterion value of the Centroid-based Silhouette (cSIL) CVI.
-"""
 function evaluate!(cvi::cSIL)
     cvi.sil_coefs = zeros(cvi.n_clusters)
     if !isempty(cvi.S) && cvi.n_clusters > 1

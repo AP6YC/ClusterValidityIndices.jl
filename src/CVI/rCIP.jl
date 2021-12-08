@@ -27,27 +27,32 @@ vol. 40, no. 10, pp. 4190–4205, Aug. 2013.
 John Wiley & Sons, 2000.
 """
 
-using Statistics
-using LinearAlgebra
-
 """
     rCIP
 
-The stateful information of the (Renyi's) representative Cross Information Potential (rCIP) CVI.
+The stateful information of the (Renyi's) representative Cross Information Potential (rCIP) Cluster Validity Index.
+
+# References
+1. L. E. Brito da Silva, N. M. Melton, and D. C. Wunsch II, "Incremental Cluster Validity Indices for Hard Partitions: Extensions  and  Comparative Study," ArXiv  e-prints, Feb 2019, arXiv:1902.06711v1 [cs.LG].
+2. E. Gokcay and J. C. Principe, "A new clustering evaluation function using Renyi’s information potential," in Proc. Int. Conf. Acoust., Speech, Signal Process. (ICASSP), vol. 6. Jun. 2000, pp. 3490–3493.
+3. E. Gokcay and J. C. Principe, "Information theoretic clustering," IEEE Trans. Pattern Anal. Mach. Intell., vol. 24, no. 2, pp. 158–171, Feb. 2002.
+4. D. Araújo, A. D. Neto, and A. Martins, "Representative cross information potential clustering," Pattern Recognit. Lett., vol. 34, no. 16, pp. 2181–2191, Dec. 2013.
+5. D. Araújo, A. D. Neto, and A. Martins, "Information-theoretic clustering: A representative and evolutionary approach," Expert Syst. Appl., vol. 40, no. 10, pp. 4190–4205, Aug. 2013.
+6. R. O. Duda, P. E. Hart, and D. G. Stork, Pattern Classification, 2nd ed. John Wiley & Sons, 2000.
 """
-mutable struct rCIP <: AbstractCVI
+mutable struct rCIP <: CVI
     label_map::LabelMap
     dim::Integer
     n_samples::Integer
     n::IntegerVector            # dim
     v::RealMatrix               # dim x n_clusters
-    sigma::Array{RealFP, 3}     # dim x dim x n_clusters
-    constant::RealFP
+    sigma::Array{Float, 3}     # dim x dim x n_clusters
+    constant::Float
     D::RealMatrix               # n_clusters x n_clusters
     delta_term::RealMatrix      # dim x dim
     n_clusters::Integer
-    criterion_value::RealFP
-end # rCIP <: AbstractCVI
+    criterion_value::Float
+end # rCIP <: CVI
 
 """
     rCIP()
@@ -60,11 +65,11 @@ function rCIP()
         0,                                  # dim
         0,                                  # n_samples
         Array{Integer, 1}(undef, 0),        # n
-        Array{RealFP, 2}(undef, 0, 0),      # v
-        Array{RealFP, 3}(undef, 0, 0, 0),   # sigma
+        Array{Float, 2}(undef, 0, 0),       # v
+        Array{Float, 3}(undef, 0, 0, 0),    # sigma
         0.0,                                # constant
-        Array{RealFP, 2}(undef, 0, 0),      # D
-        Array{RealFP, 2}(undef, 0, 0),      # delta_term
+        Array{Float, 2}(undef, 0, 0),       # D
+        Array{Float, 2}(undef, 0, 0),       # delta_term
         0,                                  # n_clusters
         0.0                                 # criterion_value
     )
@@ -85,11 +90,6 @@ function setup!(cvi::rCIP, sample::Vector{T}) where {T<:RealFP}
     cvi.delta_term = Matrix{Float64}(LinearAlgebra.I, cvi.dim, cvi.dim).*delta
 end # setup!(cvi::rCIP, sample::Vector{T}) where {T<:RealFP}
 
-"""
-    param_inc!(cvi::rCIP, sample::RealVector, label::Integer)
-
-Compute the (Renyi's) representative Cross Information Potential (rCIP) CVI incrementally.
-"""
 function param_inc!(cvi::rCIP, sample::RealVector, label::Integer)
     # Get the internal label
     i_label = get_internal_label!(cvi.label_map, label)
@@ -155,11 +155,6 @@ function param_inc!(cvi::rCIP, sample::RealVector, label::Integer)
     cvi.n_samples = n_samples_new
 end # param_inc!(cvi::rCIP, sample::RealVector, label::Integer)
 
-"""
-    param_batch!(cvi::rCIP, data::RealMatrix, labels::IntegerVector)
-
-Compute the (Renyi's) representative Cross Information Potential (rCIP) CVI in batch.
-"""
 function param_batch!(cvi::rCIP, data::RealMatrix, labels::IntegerVector)
     cvi.dim, cvi.n_samples = size(data)
     cvi.constant = 1/sqrt((2*pi)^cvi.dim)
@@ -198,11 +193,6 @@ function param_batch!(cvi::rCIP, data::RealMatrix, labels::IntegerVector)
     cvi.D = cvi.D + transpose(cvi.D)
 end # param_batch!(cvi::rCIP, data::RealMatrix, labels::IntegerVector)
 
-"""
-    evaluate!(cvi::rCIP)
-
-Compute the criterion value of the (Renyi's) representative Cross Information Potential (rCIP) CVI.
-"""
 function evaluate!(cvi::rCIP)
     # Assume a symmetric dimension
     dim = size(cvi.D)[1]

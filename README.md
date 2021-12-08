@@ -6,11 +6,8 @@ A Julia package for Cluster Validity Indices (CVI) algorithms.
 |:------------------:|:----------------:|:------------:|
 | [![Stable][docs-stable-img]][docs-stable-url] | [![Build Status][ci-img]][ci-url] | [![Codecov][codecov-img]][codecov-url] |
 | [![Dev][docs-dev-img]][docs-dev-url] | [![Build Status][appveyor-img]][appveyor-url] | [![Coveralls][coveralls-img]][coveralls-url] |
-
 | **Dependents** | **Date** | **Status** |
-|:--------------:|:--------:|:----------:|
 | [![deps][deps-img]][deps-url] | [![version][version-img]][version-url] | [![pkgeval][pkgeval-img]][pkgeval-url] |
-<!-- | [![Stable][docs-stable-img]][docs-stable-url] [![Dev][docs-dev-img]][docs-dev-url] | [![Build Status][travis-img]][travis-url] [![Build Status][appveyor-img]][appveyor-url] | [![Codecov][codecov-img]][codecov-url] [![Coveralls][coveralls-img]][coveralls-url] | -->
 
 [deps-img]: https://juliahub.com/docs/ClusterValidityIndices/deps.svg
 [deps-url]: https://juliahub.com/ui/Packages/ClusterValidityIndices/Z19r6?t=2
@@ -29,8 +26,6 @@ A Julia package for Cluster Validity Indices (CVI) algorithms.
 
 [ci-img]: https://github.com/AP6YC/ClusterValidityIndices.jl/workflows/CI/badge.svg
 [ci-url]: https://github.com/AP6YC/ClusterValidityIndices.jl/actions?query=workflow%3ACI
-<!-- [travis-img]: https://travis-ci.com/AP6YC/ClusterValidityIndices.jl.svg?branch=master -->
-<!-- [travis-url]: https://travis-ci.com/AP6YC/ClusterValidityIndices.jl -->
 
 [appveyor-img]: https://ci.appveyor.com/api/projects/status/github/AP6YC/ClusterValidityIndices.jl?svg=true
 [appveyor-url]: https://ci.appveyor.com/project/AP6YC/ClusterValidityIndices-jl
@@ -42,12 +37,7 @@ A Julia package for Cluster Validity Indices (CVI) algorithms.
 [coveralls-url]: https://coveralls.io/github/AP6YC/ClusterValidityIndices.jl?branch=master
 
 [issues-url]: https://github.com/AP6YC/ClusterValidityIndices.jl/issues
-[contrib-url]: https://juliadocs.github.io/Documenter.jl/dev/contributing/
-[discourse-tag-url]: https://discourse.julialang.org/tags/documenter
-[gitter-url]: https://gitter.im/juliadocs/users
-
-This package is developed and maintained by [Sasha Petrenko](https://github.com/AP6YC) with sponsorship by the [Applied Computational Intelligence Laboratory (ACIL)](https://acil.mst.edu/). This project is supported by grants from the [Night Vision Electronic Sensors Directorate](https://c5isr.ccdc.army.mil/inside_c5isr_center/nvesd/), the [DARPA Lifelong Learning Machines (L2M) program](https://www.darpa.mil/program/lifelong-learning-machines), [Teledyne Technologies](http://www.teledyne.com/), and the [National Science Foundation](https://www.nsf.gov/).
-The material, findings, and conclusions here do not necessarily reflect the views of these entities.
+[contrib-url]: https://ap6yc.github.io/ClusterValidityIndices.jl/dev/man/contributing/
 
 Please read the [documentation](https://ap6yc.github.io/ClusterValidityIndices.jl/dev/) for detailed usage and tutorials.
 
@@ -55,9 +45,12 @@ Please read the [documentation](https://ap6yc.github.io/ClusterValidityIndices.j
 
 - [ClusterValidityIndices](#clustervalidityindices)
   - [Table of Contents](#table-of-contents)
-  - [Outline](#outline)
-  - [Implemented CVI/ICVIs](#implemented-cviicvis)
+  - [Overview](#overview)
+  - [Contributing](#contributing)
+  - [Installation](#installation)
   - [Quickstart](#quickstart)
+    - [Examples](#examples)
+  - [Implemented CVI/ICVIs](#implemented-cviicvis)
   - [Structure](#structure)
   - [Usage](#usage)
     - [Data](#data)
@@ -66,13 +59,97 @@ Please read the [documentation](https://ap6yc.github.io/ClusterValidityIndices.j
     - [Updating](#updating)
     - [Criterion Values](#criterion-values)
     - [Porcelain](#porcelain)
+  - [Acknowledgements](#acknowledgements)
+    - [Authors](#authors)
+  - [License](#license)
 
-## Outline
+## Overview
 
-This Julia project contains an outline of the conceptual usage of CVIs along with many example scripts.
+Cluster Validity Indices (CVIs) are designed to be metrics of performance for unsupervised clustering algorithms.
+In the absense of supervisory labels (i.e., ground truth), clustering algorithms - or any truly unsupervised learning algorithms - have no way to definitively know the stability of their learning and accuracy of their performance.
+As a result, CVIs exist to provide metrics of partitioning stability/validity through the use of only the original data samples and the cluster labels prescribed by the clustering algorithm.
+
+This Julia package contains an outline of the conceptual usage of CVIs along with many example scripts.
 This outline begins with [a list of CVIs](#implemented-cviicvis) that are implemented in the lastest version of the project.
 [Quickstart](#quickstart) provides an overview of how to use this project, while [Structure](#structure) outlines the project file structure, giving context to the locations of every component of the project.
-[Usage](#usage) outlines the general syntax and workflow of the ICVIs.
+[Usage](#usage) outlines the general syntax and workflow of the CVIs/ICVIs.
+
+## Contributing
+
+If you have a question or concern, please raise an [issue][issues-url].
+For more details on how to work with the project, propose changes, or even contribute code, please see the [Developer Notes][contrib-url] in the project's documentation.
+
+In summary:
+
+1. Questions and requested changes should all be made in the [issues][issues-url] page.
+These are preferred because they are publicly viewable and could assist or educate others with similar issues or questions.
+2. For changes, this project accepts pull requests (PRs) from `feature/<my-feature>` branches onto the `develop` branch using the [GitFlow](https://nvie.com/posts/a-successful-git-branching-model/) methodology.
+If unit tests pass and the changes are beneficial, these PRs are merged into `develop` and eventually folded into versioned releases.
+3. The project follows the [Semantic Versioning](https://semver.org/) convention of `major.minor.patch` incremental versioning numbers.
+Patch versions are for bug fixes, minor versions are for backward-compatible changes, and major versions are for new and incompatible usage changes.
+
+## Installation
+
+This project is distributed as a Julia package, available on [JuliaHub](https://juliahub.com/).
+Its usage follows the usual Julia package installation procedure, interactively:
+
+```julia
+] add ClusterValidityIndices
+```
+
+or programmatically:
+
+```julia
+using Pkg
+Pkg.add("ClusterValidityIndices")
+```
+
+You may also add the package directly from GitHub to get the latest changes between releases:
+
+```julia
+] add https://github.com/AP6YC/ClusterValidityIndices.jl
+```
+
+## Quickstart
+
+This section provides a quick overview of how to use the project.
+For more detailed code usage, please see [Usage](#usage).
+
+First, assume that you have a dataset of features/data and labels prescribed by some clustering algorithm:
+
+```julia
+data_file = "path/to/data.csv"
+data, labels = get_cvi_data(data_file)
+```
+
+All CVIs in this package are acronymed (see [Implemented Modules](#implemented-cviicvis)).
+You can create a new CVI structure with a default constructor:
+
+```julia
+# Davies-Bouldin (DB)
+my_cvi = DB()
+```
+
+The output of CVIs are called *criterion values*, and they can be computed incrementally with `get_icvi`
+
+```julia
+n_samples = length(labels)
+criterion_values = zeros(n_samples)
+for i = 1:n_samples
+    criterion_values[i] = get_icvi(data[:, i], labels[i])
+end
+```
+
+or in batch with `get_cvi`
+
+```julia
+criterion_value = get_cvi(data, labels)
+```
+
+### Examples
+
+There are a variety of examples in the [Examples](https://ap6yc.github.io/ClusterValidityIndices.jl/dev/man/examples/) section of the documentation.
+Each is made using the [`DemoCards.jl`](https://github.com/johnnychen94/DemoCards.jl) package and can be opened, saved, and run as a Julia notebook.
 
 ## Implemented CVI/ICVIs
 
@@ -87,34 +164,6 @@ This project has implementations of the following CVIs in both batch and increme
 - **rCIP**: (Renyi's) representative Cross Information Potential
 - **WB**: WB-index
 - **XB**: Xie-Beni
-
-## Quickstart
-
-This section provides a quick overview of how to use the project.
-For more detailed code usage, please see [Usage](##Usage).
-
-This project has several example scripts to demonstrate the functionality of CVIs in the ClusterValidityIndices.jl package.
-In `ICVI-Examples/src/examples/`, the scripts `db.jl`, `ps.jl`, and `xb.jl` demonstrate usage of the Davies-Boudin (DB), Partition Separation (PS), and Xie-Beni (XB) metrics, respectively.
-
-**NOTE** Each of these scripts must be run at the top level of the project to correctly point to the datasets.
-For example, they can be run in the shell with
-
-```sh
-julia src/examples/db.jl
-```
-
-or in a Julia REPL session with
-
-```sh
-include("src/examples/db.jl")
-```
-
-Three preprocessed datasets are provided under `data/` to demonstrate the correct partitioning, over partitioning, and under partitioning of samples by a clustering algorithm to illustrate how the CVIs behave in each case.
-The data consists of 2000 samples of 2-element features with the clustering label appended in the third column.
-You can change which dataset is used in each script above.
-
-Lastly, there is a large experiment script `src/examples/combined.jl` that runs every CVI with all three datasets.
-The common code for all scripts and tests is contained under `test/utils.jl`, while the experiment subroutines referenced in these scripts are under `src/experiments.jl`, so feel free to modify them to further explore the behavior and usage of these CVIs.
 
 ## Structure
 
@@ -183,7 +232,7 @@ Alternatively, you may pairwise sort the entirety of the data with
 sort_cvi_data(data::Array{N, 2}, labels::Array{M, 1}) where {N<:Real, M<:Integer}
 ```
 
-**NOTE*** `sort_cvi_data` reorders the input data as well, which will lead to different ICVI results than with `relabel_cvi_data`.
+**NOTE** `sort_cvi_data` reorders the input data as well, which will lead to different ICVI results than with `relabel_cvi_data`.
 
 ### Instantiation
 
@@ -198,33 +247,33 @@ cvi = DB()
 
 The CVIs in this project all contain *incremental* and *batch* implementations.
 When evaluated in incremental mode, they are often called ICVIs (incremental cluster validity indices).
-In documentation, CVI refers to both modalities (as in the literature), but in code, CVI means batch and ICVI means incremental.
+In this documentation, CVI means batch and ICVI means incremental, though both are `CVI` objects.
 
-The funtions that differ between the two modes are how they are updated
-
-```julia
-# Incremental
-param_inc!(...)
-# Batch
-param_batch!(...)
-```
-
-and their respective porcelain functions
+The funtions that differ between the two modes are how they are updated:
 
 ```julia
 # Incremental
-get_icvi!(...)
+param_inc!(cvi::CVI, sample::RealVector, label::Integer)
 # Batch
-get_cvi!(...)
+param_batch!(cvi::CVI, data::RealMatrix, labels::IntegerVector)
 ```
 
-They both compute their most recent criterion values with
+After updating their internal parameters, they both compute their most recent criterion values with
 
 ```julia
-evaluate!(...)
+evaluate!(cvi::CVI)
 ```
 
-**NOTE**: Any CVI can switch to be updated incrementally or in batch, as the CVI data structs are update mode agnostic.
+To simplify the process, both modes have their respective "porcelain" functions to update the internal parameters, evaluate the criterion value, and return it:
+
+```julia
+# Incremental
+get_icvi!(cvi::CVI, sample::RealVector, label::Integer)
+# Batch
+get_cvi!(cvi::CVI, data::RealMatrix, labels::IntegerVector)
+```
+
+**NOTE**: Any CVI object can be updated incrementally or in batch, as the CVIs are equivalent to their ICVI counterparts after all data is presented.
 
 ### Updating
 
@@ -241,12 +290,12 @@ More concretely, they are
 
 ```julia
 # Incremental updating
-param_inc!(cvi::C, sample::Array{T, 1}, label::I) where {C<:AbstractCVI, T<:Real, I<:Integer}
+param_inc!(cvi::C, sample::RealVector, label::Integer)
 # Batch updating
-param_batch!(cvi::C, data::Array{T, 2}, labels::Array{I, 1}) where {C<:AbstractCVI, T<:Real, I<:Integer}
+param_batch!(cvi::C, data::RealMatrix, labels::IntegerVector)
 ```
 
-Every CVI is a subtype of the abstract type `AbstractCVI`.
+Every CVI is a subtype of the abstract type `CVI`.
 For example, we may instantiate and load our data
 
 ```julia
@@ -298,7 +347,7 @@ This is also provide granularity to the user that may only which to extract the 
 Because the criterion values only depend on the internal CVI parameters, they are computed (and internally stored) with
 
 ```julia
-evaluate!(cvi::C) where {C<:AbstractCVI}
+evaluate!(cvi::C) where {C<:CVI}
 ```
 
 To extract them, you must then simply grab the criterion value from the CVI struct with
@@ -339,22 +388,14 @@ criterion_value = cvi.criterion_value
 
 Taken from the `git` convention of calling low-level operations *plumbing* and high-level user-land functions *porcelain*, the package comes with a small set of *porcelain* function that do common operations all at once for the user.
 
-For example, you may compute, evalute, and return the criterion value all at once with the functions
-
-```julia
-# Incremental
-get_icvi!(...)
-# Batch
-get_cvi!(...)
-```
-
+For example, you may compute, evalute, and return the criterion value all at once with the functions `get_icvi!` and `get_cvi`.
 Exactly as in the usage for updating the parameters, the functions take the cvi, sample(s), and clustered label(s) as input:
 
 ```julia
 # Incremental
-get_icvi!(cvi::C, x::Array{N, 1}, y::M) where {C<:AbstractCVI, N<:Real, M<:Integer}
+get_icvi!(cvi::CVI, x::RealVector, y::Integer)
 # Batch
-get_cvi!(cvi::C, x::Array{N, 2}, y::Array{M, 1}) where {C<:AbstractCVI, N<:Real, M<:Integer}
+get_cvi!(cvi::CVI, x::RealMatrix, y::IntegerVector)
 ```
 
 For example, after loading the data you may get the criterion value at each step with
@@ -371,3 +412,16 @@ or you may get the final criterion value in batch mode with
 ```julia
 criterion_value = get_cvi!(cvi, data, labels)
 ```
+
+## Acknowledgements
+
+### Authors
+
+This package is developed and maintained by [Sasha Petrenko](https://github.com/AP6YC) with sponsorship by the [Applied Computational Intelligence Laboratory (ACIL)](https://acil.mst.edu/). This project is supported by grants from the [Night Vision Electronic Sensors Directorate](https://c5isr.ccdc.army.mil/inside_c5isr_center/nvesd/), the [DARPA Lifelong Learning Machines (L2M) program](https://www.darpa.mil/program/lifelong-learning-machines), [Teledyne Technologies](http://www.teledyne.com/), and the [National Science Foundation](https://www.nsf.gov/).
+The material, findings, and conclusions here do not necessarily reflect the views of these entities.
+
+The users [@rMassimiliano](https://github.com/rMassimiliano) and [@malmaud](https://github.com/malmaud) have graciously contributed their time with reviews and feedback that has greatly improved the project.
+
+## License
+
+This software is openly maintained by the ACIL of the Missouri University of Science and Technology under the [MIT License](LICENSE).
