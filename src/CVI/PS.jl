@@ -19,7 +19,11 @@ Recognit., vol. 41, no. 3, pp. 995–1011, 2008.
 """
     PS
 
-The stateful information of the Partition Separation (PS) CVI.
+The stateful information of the Partition Separation (PS) Cluster Validity Index.
+
+# References
+1. Miin-Shen Yang and Kuo-Lung Wu, "A new validity index for fuzzy clustering," 10th IEEE International Conference on Fuzzy Systems. (Cat. No.01CH37297), Melbourne, Victoria, Australia, 2001, pp. 89-92, vol.1.
+2. E. Lughofer, "Extensions of vector quantization for incremental clustering," Pattern Recognit., vol. 41, no. 3, pp. 995–1011, 2008.
 """
 mutable struct PS <: CVI
     label_map::LabelMap
@@ -66,11 +70,6 @@ function setup!(cvi::PS, sample::Vector{T}) where {T<:RealFP}
     cvi.v = Array{T, 2}(undef, cvi.dim, 0)
 end # setup!(cvi::PS, sample::Vector{T}) where {T<:RealFP}
 
-"""
-    param_inc!(cvi::PS, sample::RealVector, label::Integer)
-
-Compute the Partition Separation (PS) CVI incrementally.
-"""
 function param_inc!(cvi::PS, sample::RealVector, label::Integer)
     # Get the internal label
     i_label = get_internal_label!(cvi.label_map, label)
@@ -120,11 +119,6 @@ function param_inc!(cvi::PS, sample::RealVector, label::Integer)
     cvi.n_samples = n_samples_new
 end # param_inc!(cvi::PS, sample::RealVector, label::Integer)
 
-"""
-    param_batch!(cvi::PS, data::RealMatrix, labels::IntegerVector)
-
-Compute the Partition Separation (PS) CVI in batch.
-"""
 function param_batch!(cvi::PS, data::RealMatrix, labels::IntegerVector)
     cvi.dim, cvi.n_samples = size(data)
     # Take the average across all samples, but cast to 1-D vector
@@ -146,11 +140,6 @@ function param_batch!(cvi::PS, data::RealMatrix, labels::IntegerVector)
     cvi.D = cvi.D + transpose(cvi.D)
 end # param_batch!(cvi::PS, data::RealMatrix, labels::IntegerVector)
 
-"""
-    evaluate!(cvi::PS)
-
-Compute the criterion value of the Partition Separation (PS) CVI.
-"""
 function evaluate!(cvi::PS)
     if cvi.n_clusters > 1
         cvi.v_bar = vec(mean(cvi.v, dims=2))

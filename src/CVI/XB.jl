@@ -23,7 +23,12 @@ Int. J. Intell. Syst., pp. 1–23, 2018.
 """
     XB
 
-The stateful information of the Xie-Beni (XB) CVI.
+The stateful information of the Xie-Beni (XB) Cluster Validity Index.
+
+# References
+1. X. L. Xie and G. Beni, "A Validity Measure for Fuzzy Clustering," IEEE Transactions on Pattern Analysis and Machine Intelligence, vol. 13, no. 8, pp. 841–847, 1991.
+2. M. Moshtaghi, J. C. Bezdek, S. M. Erfani, C. Leckie, and J. Bailey, "Online Cluster Validity Indices for Streaming Data," ArXiv e-prints, 2018, arXiv:1801.02937v1 [stat.ML]. [Online].
+3. M. Moshtaghi, J. C. Bezdek, S. M. Erfani, C. Leckie, J. Bailey, "Online cluster validity indices for performance monitoring of streaming data clustering," Int. J. Intell. Syst., pp. 1–23, 2018.
 """
 mutable struct XB <: CVI
     label_map::LabelMap
@@ -75,11 +80,6 @@ function setup!(cvi::XB, sample::Vector{T}) where {T<:RealFP}
     cvi.G = Array{T, 2}(undef, cvi.dim, 0)
 end # setup!(cvi::XB, sample::Vector{T}) where {T<:RealFP}
 
-"""
-    param_inc!(cvi::XB, sample::RealVector, label::Integer)
-
-Compute the Xie-Beni (XB) CVI incrementally.
-"""
 function param_inc!(cvi::XB, sample::RealVector, label::Integer)
     # Get the internal label
     i_label = get_internal_label!(cvi.label_map, label)
@@ -144,11 +144,6 @@ function param_inc!(cvi::XB, sample::RealVector, label::Integer)
     cvi.mu_data = mu_data_new
 end # param_inc!(cvi::XB, sample::RealVector, label::Integer)
 
-"""
-    param_batch!(cvi::XB, data::RealMatrix, labels::IntegerVector)
-
-Compute the Xie-Beni (XB) CVI in batch.
-"""
 function param_batch!(cvi::XB, data::RealMatrix, labels::IntegerVector)
     cvi.dim, cvi.n_samples = size(data)
     # Take the average across all samples, but cast to 1-D vector
@@ -176,11 +171,6 @@ function param_batch!(cvi::XB, data::RealMatrix, labels::IntegerVector)
     cvi.D = cvi.D + transpose(cvi.D)
 end # param_batch!(cvi::XB, data::RealMatrix, labels::IntegerVector)
 
-"""
-    evaluate!(cvi::XB)
-
-Compute the criterion value of the Xie-Beni (XB) CVI.
-"""
 function evaluate!(cvi::XB)
     cvi.WGSS = sum(cvi.CP)
     if cvi.n_clusters > 1

@@ -22,13 +22,19 @@ Int. J. Intell. Syst., pp. 1–23, 2018.
 compact well-separated clusters," J. Cybern., vol. 3, no. 3 , pp. 32–57, 1973.
 [5] J. C. Bezdek and N. R. Pal, "Some new indexes of cluster validity," IEEE
 Trans. Syst., Man, and Cybern., vol. 28, no. 3, pp. 301–315, Jun. 1998.
-
 """
 
 """
     GD53
 
-The stateful information of the Generalized Dunn's Index 53 (GD53) CVI.
+The stateful information of the Generalized Dunn's Index 53 (GD53) Cluster Validity Index.
+
+# References
+1. A. Ibrahim, J. M. Keller, and J. C. Bezdek, "Evaluating Evolving Structure in Streaming Data With Modified Dunn's Indices," IEEE Transactions on Emerging Topics in Computational Intelligence, pp. 1–12, 2019.
+2. M. Moshtaghi, J. C. Bezdek, S. M. Erfani, C. Leckie, and J. Bailey, "Online Cluster Validity Indices for Streaming Data," ArXiv e-prints, 2018, arXiv:1801.02937v1 [stat.ML].
+3. M. Moshtaghi, J. C. Bezdek, S. M. Erfani, C. Leckie, J. Bailey, "Online cluster validity indices for performance monitoring of streaming data clustering," Int. J. Intell. Syst., pp. 1–23, 2018.
+4. J. C. Dunn, "A fuzzy relative of the ISODATA process and its use in detecting compact well-separated clusters," J. Cybern., vol. 3, no. 3 , pp. 32–57, 1973.
+5. J. C. Bezdek and N. R. Pal, "Some new indexes of cluster validity," IEEE Trans. Syst., Man, and Cybern., vol. 28, no. 3, pp. 301–315, Jun. 1998.
 """
 mutable struct GD53 <: CVI
     label_map::LabelMap
@@ -81,11 +87,6 @@ function setup!(cvi::GD53, sample::Vector{T}) where {T<:RealFP}
     cvi.G = Array{T, 2}(undef, cvi.dim, 0)
 end # setup!(cvi::GD53, sample::Vector{T}) where {T<:RealFP}
 
-"""
-    param_inc!(cvi::GD53, sample::RealVector, label::Integer)
-
-Compute the Generalized Dunn's Index 53 (GD53) CVI incrementally.
-"""
 function param_inc!(cvi::GD53, sample::RealVector, label::Integer)
     # Get the internal label
     i_label = get_internal_label!(cvi.label_map, label)
@@ -151,11 +152,6 @@ function param_inc!(cvi::GD53, sample::RealVector, label::Integer)
     cvi.mu_data = mu_data_new
 end # param_inc!(cvi::GD53, sample::RealVector, label::Integer)
 
-"""
-    param_batch!(cvi::GD53, data::RealMatrix, labels::IntegerVector)
-
-Compute the Generalized Dunn's Index 53 (GD53) CVI in batch.
-"""
 function param_batch!(cvi::GD53, data::RealMatrix, labels::IntegerVector)
     cvi.dim, cvi.n_samples = size(data)
     # Take the average across all samples, but cast to 1-D vector
@@ -183,11 +179,6 @@ function param_batch!(cvi::GD53, data::RealMatrix, labels::IntegerVector)
     cvi.D = cvi.D + transpose(cvi.D)
 end # param_batch!(cvi::GD53, data::RealMatrix, labels::IntegerVector)
 
-"""
-    evaluate!(cvi::GD53)
-
-Compute the criterion value of the Generalized Dunn's Index 53 (GD53) CVI.
-"""
 function evaluate!(cvi::GD53)
     cvi.intra = 2*maximum(cvi.CP ./ cvi.n)
     if cvi.n_clusters > 1

@@ -1,3 +1,7 @@
+![header](assets/header.png)
+
+---
+
 # ClusterValidityIndices.jl
 
 These pages serve as the official documentation for the ClusterValidityIndices.jl Julia package.

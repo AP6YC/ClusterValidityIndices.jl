@@ -130,7 +130,7 @@ You can create a new CVI structure with a default constructor:
 my_cvi = DB()
 ```
 
-The output of CVIs are called *criterion values*, and they can be computed incremental with `get_icvi`
+The output of CVIs are called *criterion values*, and they can be computed incrementally with `get_icvi`
 
 ```julia
 n_samples = length(labels)
@@ -148,28 +148,8 @@ criterion_value = get_cvi(data, labels)
 
 ### Examples
 
-This project has several example scripts to demonstrate the functionality of CVIs in the ClusterValidityIndices.jl package.
-In `ICVI-Examples/src/examples/`, the scripts `db.jl`, `ps.jl`, and `xb.jl` demonstrate usage of the Davies-Boudin (DB), Partition Separation (PS), and Xie-Beni (XB) metrics, respectively.
-
-**NOTE** Each of these scripts must be run at the top level of the project to correctly point to the datasets.
-For example, they can be run in the shell with
-
-```sh
-julia src/examples/db.jl
-```
-
-or in a Julia REPL session with
-
-```sh
-include("src/examples/db.jl")
-```
-
-Three preprocessed datasets are provided under `data/` to demonstrate the correct partitioning, over partitioning, and under partitioning of samples by a clustering algorithm to illustrate how the CVIs behave in each case.
-The data consists of 2000 samples of 2-element features with the clustering label appended in the third column.
-You can change which dataset is used in each script above.
-
-Lastly, there is a large experiment script `src/examples/combined.jl` that runs every CVI with all three datasets.
-The common code for all scripts and tests is contained under `test/utils.jl`, while the experiment subroutines referenced in these scripts are under `src/experiments.jl`, so feel free to modify them to further explore the behavior and usage of these CVIs.
+There are a variety of examples in the [Examples](https://ap6yc.github.io/ClusterValidityIndices.jl/dev/man/examples/) section of the documentation.
+Each is made using the [`DemoCards.jl`](https://github.com/johnnychen94/DemoCards.jl) package and can be opened, saved, and run as a Julia notebook.
 
 ## Implemented CVI/ICVIs
 
@@ -267,33 +247,33 @@ cvi = DB()
 
 The CVIs in this project all contain *incremental* and *batch* implementations.
 When evaluated in incremental mode, they are often called ICVIs (incremental cluster validity indices).
-In documentation, CVI refers to both modalities (as in the literature), but in code, CVI means batch and ICVI means incremental.
+In this documentation, CVI means batch and ICVI means incremental, though both are `CVI` objects.
 
-The funtions that differ between the two modes are how they are updated
-
-```julia
-# Incremental
-param_inc!(...)
-# Batch
-param_batch!(...)
-```
-
-and their respective porcelain functions
+The funtions that differ between the two modes are how they are updated:
 
 ```julia
 # Incremental
-get_icvi!(...)
+param_inc!(cvi::CVI, sample::RealVector, label::Integer)
 # Batch
-get_cvi!(...)
+param_batch!(cvi::CVI, data::RealMatrix, labels::IntegerVector)
 ```
 
-They both compute their most recent criterion values with
+After updating their internal parameters, they both compute their most recent criterion values with
 
 ```julia
-evaluate!(...)
+evaluate!(cvi::CVI)
 ```
 
-**NOTE**: Any CVI can switch to be updated incrementally or in batch, as the CVI data structs are update mode agnostic.
+To simplify the process, both modes have their respective "porcelain" functions to update the internal parameters, evaluate the criterion value, and return it:
+
+```julia
+# Incremental
+get_icvi!(cvi::CVI, sample::RealVector, label::Integer)
+# Batch
+get_cvi!(cvi::CVI, data::RealMatrix, labels::IntegerVector)
+```
+
+**NOTE**: Any CVI object can be updated incrementally or in batch, as the CVIs are equivalent to their ICVI counterparts after all data is presented.
 
 ### Updating
 

@@ -29,7 +29,14 @@ Int. J. Intell. Syst., pp. 1–23, 2018.
 """
     WB
 
-The stateful information of the WB-Index (WB) CVI.
+The stateful information of the WB-Index (WB) Cluster Validity Index.
+
+# References
+1. L. E. Brito da Silva, N. M. Melton, and D. C. Wunsch II, "Incremental Cluster Validity Indices for Hard Partitions: Extensions  and  Comparative Study," ArXiv  e-prints, Feb 2019, arXiv:1902.06711v1 [cs.LG].
+2. Q. Zhao, M. Xu, and P. Franti, "Sum-of-Squares Based Cluster Validity Index and Significance Analysis," in Adaptive and Natural Computing Algorithms, M. Kolehmainen, P. Toivanen, and B. Beliczynski, Eds. Berlin, Heidelberg: Springer Berlin Heidelberg, 2009, pp. 313–322.
+3. Q. Zhao and P. Franti, "WB-index: A sum-of-squares based index for cluster validity," Data Knowledge Engineering, vol. 92, pp. 77–89, 2014.
+4. M. Moshtaghi, J. C. Bezdek, S. M. Erfani, C. Leckie, and J. Bailey, "Online Cluster Validity Indices for Streaming Data," ArXiv e-prints, 2018, arXiv:1801.02937v1 [stat.ML].
+5. M. Moshtaghi, J. C. Bezdek, S. M. Erfani, C. Leckie, J. Bailey, "Online cluster validity indices for performance monitoring of streaming data clustering," Int. J. Intell. Syst., pp. 1–23, 2018.
 """
 mutable struct WB <: CVI
     label_map::LabelMap
@@ -82,11 +89,6 @@ function setup!(cvi::WB, sample::Vector{T}) where {T<:Real}
     cvi.G = Array{T, 2}(undef, cvi.dim, 0)
 end # setup!(cvi::WB, sample::Vector{T}) where {T<:Real}
 
-"""
-    param_inc!(cvi::WB, sample::RealVector, label::Integer)
-
-Compute the WB-Index (WB) CVI incrementally.
-"""
 function param_inc!(cvi::WB, sample::RealVector, label::Integer)
     # Get the internal label
     i_label = get_internal_label!(cvi.label_map, label)
@@ -129,11 +131,6 @@ function param_inc!(cvi::WB, sample::RealVector, label::Integer)
     cvi.SEP = [cvi.n[ix] * sum((cvi.v[:, ix] - cvi.mu).^2) for ix=1:cvi.n_clusters]
 end # param_inc!(cvi::WB, sample::RealVector, label::Integer)
 
-"""
-    param_batch!(cvi::WB, data::RealMatrix, labels::IntegerVector)
-
-Compute the WB-Index (WB) CVI in batch.
-"""
 function param_batch!(cvi::WB, data::RealMatrix, labels::IntegerVector)
     cvi.dim, cvi.n_samples = size(data)
     # Take the average across all samples, but cast to 1-D vector
@@ -155,11 +152,6 @@ function param_batch!(cvi::WB, data::RealMatrix, labels::IntegerVector)
     end
 end # param_batch!(cvi::WB, data::RealMatrix, labels::IntegerVector)
 
-"""
-    evaluate!(cvi::WB)
-
-Compute the criterion value of the WB-Index (WB) CVI.
-"""
 function evaluate!(cvi::WB)
     # Within group sum of scatters
     cvi.WGSS = sum(cvi.CP)
