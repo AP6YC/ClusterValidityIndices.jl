@@ -2,7 +2,7 @@
 
 This page lists the core methods and types of the `ClusterValidityIndices.jl` package.
 The [Methods](@ref index-methods) section lists the public methods for the package that use the CVIs/ICVIs in [Types](@ref index-types).
-Each of these entries link to the docstrings in [Docs](@ref index-docs)
+Each of these entries link to the docstrings in the [Docs](@ref index-docs) section.
 
 ## [Methods](@id index-methods)
 

@@ -8,7 +8,7 @@
 # description: This demo is a simple example of how to use a CVI in batch mode.
 # ---
 
-# #e Overview
+# ## Overview
 
 # This demo is a simple example of how to use CVIs incrementally.
 # Here, we load a simple dataset and run a basic clustering algorithm to prescribe a set of clusters to the features.
@@ -36,11 +36,11 @@ features, labels = Iris.features(), Iris.labels()
 labels = convertlabel(LabelEnc.Indices{Int}, labels)
 unique(labels)
 
-# ### ART Clustering
+# ### ART Online Clustering
 
-# Adaptie Resonane Theory (ART) is a neurocognitive theory that is the basis of a class of online clustering algorithms.
+# Adaptive Resonance Theory (ART) is a neurocognitive theory that is the basis of a class of online clustering algorithms.
 # Because these clustering algorithms run online, we can both cluster and compute a new criterion value at every step.
-# For more on these ART algorithms, see `AdaptiveResonance.jl`
+# For more on these ART algorithms, see [`AdaptiveResonance.jl`](https://github.com/AP6YC/AdaptiveResonance.jl).
 
 ## Create a Distributed Dual-Vigilance Fuzzy ART (DDVFA) module with default options
 art = DDVFA()
@@ -48,9 +48,12 @@ typeof(art)
 
 # Because we are streaming clustering, we must setup the internal data setup of the DDVFA module.
 # This is akin to doing some data preprocessing and communicating the dimension of the data, bounds, etc. to the module beforehand.
-data_setup!(art, features)
+## Setup the data configuration for the module
+data_setup!(art.config, features)
+## Verify that the data is setup
+art.config.setup
 
-# We can now cluster and get the criterion values online
+# We can now cluster and get the criterion values online.
 # We will do this by creating an ICVI object, setting up containers for the iterations, and then iterating.
 
 ## Create an ICVI object
@@ -71,4 +74,5 @@ for ix = 1:n_samples
     criterion_values[ix] = get_icvi!(icvi, sample, c_labels[ix])
 end
 
+## See the list of criterion values
 criterion_values
