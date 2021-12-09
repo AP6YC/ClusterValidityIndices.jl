@@ -16,6 +16,9 @@ authors:
   - name: Sasha Petrenko
     orcid: 0000-0003-2442-8901
     affiliation: 1
+  - name: Donald C. Wunsch II
+    orcid: 0000-0002-9726-9051
+    affiliation: 1
 affiliations:
   - name: Missouri University of Science and Technology
     index: 1
