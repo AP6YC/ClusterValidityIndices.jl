@@ -28,9 +28,9 @@ bibliography: paper.bib
 
 # Summary
 
-ClusterValidityIndices.jl is a Julia package for evaluating the performance the performance of clustering algorithms without the aid of supervised labels.
+ClusterValidityIndices.jl is a Julia package for evaluating the performance of clustering algorithms without the aid of supervised labels.
 Cluster Validity Indices (CVI) provide a metric of the over- or under-partitioning of an arbitrary clustering algorithm with only the original data and labels assigned by the clustering algorithm.
-Furthermore, there exist formulations of every CVI such that they may run incrementally (i.e. Incremental CVIs, or ICVI),streaming alongside the clustering algorithm and producing the same results as in their batch implementations.
+Furthermore, there exist formulations of every CVI such that they may run incrementally (i.e. Incremental CVIs, or ICVI), streaming alongside the clustering algorithm and producing the same results as in their batch implementations.
 Using a standard interface, each CVI in this package can be run with any clustering algorithm to produce a metric of that algorithm's performance in scenarios where explicit supervised labels do not exist, which is extremely useful in real-world applications where that is often the case.
 
 # Statement of need
