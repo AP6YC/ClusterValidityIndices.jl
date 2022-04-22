@@ -42,13 +42,11 @@ There exist many CVIs in the literature, and their algorithmic and programmatic 
 Despite their utility in machine learning applications, however, there does not exist to date a unified repository of their implementations in Julia.
 Furthermore, new incremental variations of these algorithms are regularly developed in the literature without the ability to update the original implementations.
 The purpose of this package is to create a unified framework and repository of CVIs so as to fill the gap left by most metrics in this machine learning problem subset.
+
 # Acknowledgements
 
 This package is developed and maintained with sponsorship by the Applied Computational Intelligence Laboratory (ACIL) of the Missouri University of Science and Technology.
 This project is supported by grants from the Army Research Labs Night Vision Electronic Sensors Directorate (NVESD), the DARPA Lifelong Learning Machines (L2M) program, Teledyne Technologies, and the National Science Foundation.
 The material, findings, and conclusions here do not necessarily reflect the views of these entities.
-
-<!-- This package is developed and maintained by [Sasha Petrenko](https://github.com/AP6YC) with sponsorship by the [Applied Computational Intelligence Laboratory (ACIL)](https://acil.mst.edu/). This project is supported by grants from the [Night Vision Electronic Sensors Directorate](https://c5isr.ccdc.army.mil/inside_c5isr_center/nvesd/), the [DARPA Lifelong Learning Machines (L2M) program](https://www.darpa.mil/program/lifelong-learning-machines), [Teledyne Technologies](http://www.teledyne.com/), and the [National Science Foundation](https://www.nsf.gov/).
-The material, findings, and conclusions here do not necessarily reflect the views of these entities. -->
 
 # References
