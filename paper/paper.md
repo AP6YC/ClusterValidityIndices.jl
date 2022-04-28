@@ -8,10 +8,11 @@ tags:
   - Cluster Validity Index
   - Incremental Cluster Validity Indices
   - Incremental Cluster Validity Index
-  - Neural Networks
   - Machine Learning
   - Clustering
   - Metrics
+  - Streaming
+  - Time Series
 authors:
   - name: Sasha Petrenko
     orcid: 0000-0003-2442-8901
@@ -42,6 +43,12 @@ There exist many CVIs in the literature, and their algorithmic and programmatic 
 Despite their utility in machine learning applications, however, there does not exist to date a unified repository of their implementations in Julia.
 Furthermore, new incremental variations of these algorithms are regularly developed in the literature without the ability to update the original implementations.
 The purpose of this package is to create a unified framework and repository of CVIs so as to fill the gap left by most metrics in this machine learning problem subset.
+
+## Target Audience
+
+This package is principally intended as a resource for researchers in machine learning, clustering, and the research fields that utilize these tools to other ends, such as the statistical analysis of time series.
+However, implementing these algorithms in the Julia programming language brings all of the benefits of Julia itself, such as the computational speed comparable to that of being implemented in a low-level language such as C while having the syntactic transparency of a high-level language such as MATLAB or Python.
+Being implemented in Julia allows this package to be understood and expanded upon by research scientists while also being able to be used in resource-demanding production environments.
 
 ## Comparison to Existing Implementations
 
