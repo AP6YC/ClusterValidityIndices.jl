@@ -8,46 +8,46 @@ features, labels = Iris.features(), Iris.labels()</code></pre><pre class="docume
 unique(labels)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">3-element Array{Int64,1}:
  1
  2
- 3</code></pre><h3 id="Fuzzy-C-Means"><a class="docs-heading-anchor" href="#Fuzzy-C-Means">Fuzzy C-Means</a><a id="Fuzzy-C-Means-1"></a><a class="docs-heading-anchor-permalink" href="#Fuzzy-C-Means" title="Permalink"></a></h3><p>Get the Fuzzy C-Means clustering result</p><pre><code class="language-julia hljs">results = fuzzy_cmeans(features, 3, 2)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">FuzzyCMeansResult: 3 clusters for 150 points in 4 dimensions (converged in 18 iterations)</code></pre><p>Because the results are fuzzy weights, find the maximum elements along each sample</p><pre><code class="language-julia hljs">indices = argmax(results.weights, dims=2)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">150×1 Array{CartesianIndex{2},2}:
- CartesianIndex(1, 2)
- CartesianIndex(2, 2)
- CartesianIndex(3, 2)
- CartesianIndex(4, 2)
- CartesianIndex(5, 2)
- CartesianIndex(6, 2)
- CartesianIndex(7, 2)
- CartesianIndex(8, 2)
- CartesianIndex(9, 2)
- CartesianIndex(10, 2)
+ 3</code></pre><h3 id="Fuzzy-C-Means"><a class="docs-heading-anchor" href="#Fuzzy-C-Means">Fuzzy C-Means</a><a id="Fuzzy-C-Means-1"></a><a class="docs-heading-anchor-permalink" href="#Fuzzy-C-Means" title="Permalink"></a></h3><p>Get the Fuzzy C-Means clustering result</p><pre><code class="language-julia hljs">results = fuzzy_cmeans(features, 3, 2)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">FuzzyCMeansResult: 3 clusters for 150 points in 4 dimensions (converged in 16 iterations)</code></pre><p>Because the results are fuzzy weights, find the maximum elements along each sample</p><pre><code class="language-julia hljs">indices = argmax(results.weights, dims=2)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">150×1 Array{CartesianIndex{2},2}:
+ CartesianIndex(1, 1)
+ CartesianIndex(2, 1)
+ CartesianIndex(3, 1)
+ CartesianIndex(4, 1)
+ CartesianIndex(5, 1)
+ CartesianIndex(6, 1)
+ CartesianIndex(7, 1)
+ CartesianIndex(8, 1)
+ CartesianIndex(9, 1)
+ CartesianIndex(10, 1)
  ⋮
- CartesianIndex(142, 1)
+ CartesianIndex(142, 2)
  CartesianIndex(143, 3)
- CartesianIndex(144, 1)
- CartesianIndex(145, 1)
- CartesianIndex(146, 1)
+ CartesianIndex(144, 2)
+ CartesianIndex(145, 2)
+ CartesianIndex(146, 2)
  CartesianIndex(147, 3)
- CartesianIndex(148, 1)
- CartesianIndex(149, 1)
+ CartesianIndex(148, 2)
+ CartesianIndex(149, 2)
  CartesianIndex(150, 3)</code></pre><p>Get those labels as a vector of integers</p><pre><code class="language-julia hljs">c_labels = vec([c[2] for c in indices])</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">150-element Array{Int64,1}:
- 2
- 2
- 2
- 2
- 2
- 2
- 2
- 2
- 2
- 2
+ 1
+ 1
+ 1
+ 1
+ 1
+ 1
+ 1
+ 1
+ 1
+ 1
  ⋮
- 1
+ 2
  3
- 1
- 1
- 1
+ 2
+ 2
+ 2
  3
- 1
- 1
+ 2
+ 2
  3</code></pre><h2 id="CVI-Criterion-Value-Extraction"><a class="docs-heading-anchor" href="#CVI-Criterion-Value-Extraction">CVI Criterion Value Extraction</a><a id="CVI-Criterion-Value-Extraction-1"></a><a class="docs-heading-anchor-permalink" href="#CVI-Criterion-Value-Extraction" title="Permalink"></a></h2><p>Now that we have some data and a clustering algorithm&#39;s prescribed labels, we can compute a criterion value using a CVI in batch mode. First, we create a CVI object with the default constructor:</p><pre><code class="language-julia hljs"># Create a CVI object
 my_cvi = CH()</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">CH(Dict{Int64,Int64}(), 0, 0, Float64[], Integer[], Array{Float64}(undef,0,0), Float64[], Float64[], Array{Float64}(undef,0,0), 0.0, 0.0, 0, 0.0)</code></pre><p>Finally we can simply get the criterion value in batch by passing all of the data and Fuzzy C-Means labels at once.</p><pre><code class="language-julia hljs"># Get the batch criterion value
-criterion_value = get_cvi!(my_cvi, features, c_labels)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">558.9999681899938</code></pre><hr/><p><em>This page was generated using <a href="https://github.com/johnnychen94/DemoCards.jl">DemoCards.jl</a> and <a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a>.</em></p></article><nav class="docs-footer"><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.16 on <span class="colophon-date" title="Thursday 28 April 2022 14:00">Thursday 28 April 2022</span>. Using Julia version 1.4.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+criterion_value = get_cvi!(my_cvi, features, c_labels)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">558.9999681899938</code></pre><hr/><p><em>This page was generated using <a href="https://github.com/johnnychen94/DemoCards.jl">DemoCards.jl</a> and <a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a>.</em></p></article><nav class="docs-footer"><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.16 on <span class="colophon-date" title="Thursday 28 April 2022 19:34">Thursday 28 April 2022</span>. Using Julia version 1.4.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
