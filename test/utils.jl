@@ -32,9 +32,9 @@ function get_cvi_data(data_file::String)
 end # get_cvi_data(data_file::String)
 
 """
-    get_bernoulli_subset(data::ClusterValidityIndices.RealMatrix, labels::ClusterValidityIndices.IntegerVector, p::ClusterValidityIndices.Float)
+    get_bernoulli_subset(data::ClusterValidityIndices.RealMatrix, labels::ClusterValidityIndices.IntegerVector, p::Real)
 """
-function get_bernoulli_subset(data::ClusterValidityIndices.RealMatrix, labels::ClusterValidityIndices.IntegerVector, p::ClusterValidityIndices.Float)
+function get_bernoulli_subset(data::ClusterValidityIndices.RealMatrix, labels::ClusterValidityIndices.IntegerVector, p::Real)
     # Get the dimensions of the data
     dim, n_samples = size(data)
 
@@ -43,4 +43,4 @@ function get_bernoulli_subset(data::ClusterValidityIndices.RealMatrix, labels::C
 
     # Return the subset
     return data[:, subset], labels[subset]
-end # get_bernoulli_subset(data::ClusterValidityIndices.RealMatrix, labels::ClusterValidityIndices.IntegerVector, p::ClusterValidityIndices.Float)
+end # get_bernoulli_subset(data::ClusterValidityIndices.RealMatrix, labels::ClusterValidityIndices.IntegerVector, p::Real)
