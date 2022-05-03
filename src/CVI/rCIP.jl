@@ -87,7 +87,7 @@ function setup!(cvi::rCIP, sample::Vector{T}) where {T<:RealFP}
     # Calculate the delta term
     epsilon = 12
     delta = 10^(-epsilon/cvi.dim)
-    cvi.delta_term = Matrix{Float64}(LinearAlgebra.I, cvi.dim, cvi.dim).*delta
+    cvi.delta_term = Matrix{Float}(LinearAlgebra.I, cvi.dim, cvi.dim).*delta
 end # setup!(cvi::rCIP, sample::Vector{T}) where {T<:RealFP}
 
 function param_inc!(cvi::rCIP, sample::RealVector, label::Integer)
