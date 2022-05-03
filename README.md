@@ -9,6 +9,13 @@ A Julia package for Cluster Validity Indices (CVI) algorithms.
 | **Dependents** | **Date** | **Status** |
 | [![deps][deps-img]][deps-url] | [![version][version-img]][version-url] | [![pkgeval][pkgeval-img]][pkgeval-url] |
 
+| **Zenodo DOI** |
+| :------------: |
+| [![DOI][zenodo-img]][zenodo-url] |
+
+[zenodo-img]: https://zenodo.org/badge/DOI/10.5281/zenodo.5765807.svg
+[zenodo-url]: https://doi.org/10.5281/zenodo.5765807
+
 [deps-img]: https://juliahub.com/docs/ClusterValidityIndices/deps.svg
 [deps-url]: https://juliahub.com/ui/Packages/ClusterValidityIndices/Z19r6?t=2
 
