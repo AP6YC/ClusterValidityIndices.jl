@@ -26,15 +26,15 @@ function get_cvi_data(data_file::String)
     data = readdlm(data_file, ',')
     data = permutedims(data)
     train_x = data[1:2, :]
-    train_y = convert(Array{Int64}, data[3, :])
+    train_y = convert(Array{Int}, data[3, :])
 
     return train_x, train_y
 end # get_cvi_data(data_file::String)
 
 """
-    get_bernoulli_subset(data::Array{N, 2}, labels::Array{M, 1}) where {N<:Real, M<:Int}
+    get_bernoulli_subset(data::ClusterValidityIndices.RealMatrix, labels::ClusterValidityIndices.IntegerVector, p::Real)
 """
-function get_bernoulli_subset(data::Array{N, 2}, labels::Array{M, 1}, p::Float64) where {N<:Real, M<:Int}
+function get_bernoulli_subset(data::ClusterValidityIndices.RealMatrix, labels::ClusterValidityIndices.IntegerVector, p::Real)
     # Get the dimensions of the data
     dim, n_samples = size(data)
 
@@ -43,4 +43,4 @@ function get_bernoulli_subset(data::Array{N, 2}, labels::Array{M, 1}, p::Float64
 
     # Return the subset
     return data[:, subset], labels[subset]
-end # get_bernoulli_subset(data::Array{N, 2}, labels::Array{M, 1}) where {N<:Real, M<:Int}
+end # get_bernoulli_subset(data::ClusterValidityIndices.RealMatrix, labels::ClusterValidityIndices.IntegerVector, p::Real)
