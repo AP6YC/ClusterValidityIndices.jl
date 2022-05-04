@@ -31,7 +31,6 @@ param_batch!
 evaluate!
 relabel_cvi_data
 sort_cvi_data
-CVI
 CH
 cSIL
 DB
@@ -41,4 +40,5 @@ PS
 rCIP
 WB
 XB
+CVI
 ```
