@@ -172,26 +172,6 @@ This project has implementations of the following CVIs in both batch and increme
 - **WB**: WB-index
 - **XB**: Xie-Beni
 
-## Structure
-
-```console
-ClusterValidityIndices.jl
-├── .github/workflows       // GitHub: workflows for testing and documentation.
-├── data                    // Data: CI and example data location.
-├── docs                    // Docs: GitHub pages documentation files.
-├── examples                // Source: Example scripts for CVI usage.
-├── paper                   // Docs: JOSS paper and bib files.
-├── results                 // Data: Destination for example-generated files.
-├── src                     // Source: scripts and common helper functions.
-│   └─── CVI                //      All CVI and ICVI definitions
-├── test                    // Test: unit, integration, and environment tests.
-├── .gitignore              // Git: .gitignore for the whole project.
-├── LICENSE                 // Doc: the license to the project.
-├── Manifest.toml           // Julia: the explicit package versions used.
-├── Project.toml            // Julia: the Pkg.jl dependencies of the project.
-└── README.md               // Doc: this document.
-```
-
 ## Usage
 
 The usage of these CVIs requires an understanding of:
@@ -418,6 +398,31 @@ or you may get the final criterion value in batch mode with
 
 ```julia
 criterion_value = get_cvi!(cvi, data, labels)
+```
+
+## Structure
+
+The following reference describes the role of each top-level folder and file in the project:
+
+```console
+ClusterValidityIndices.jl
+├── .github/workflows       // GitHub: workflows for testing and documentation.
+├── data                    // Data: CI and example data location.
+├── docs                    // Docs: GitHub pages documentation files.
+├── examples                // Source: example scripts for CVI usage.
+├── paper                   // Docs: JOSS paper and bib files.
+├── results                 // Data: destination for example-generated files.
+├── src                     // Source: scripts and common helper functions.
+│   └─── CVI                //      All CVI and ICVI definitions
+├── test                    // Test: unit, integration, and environment tests.
+├── .appveyor               // CI: Appveyor CI script
+├── .gitignore              // Git: .gitignore for the whole project.
+├── CODE_OF_CONDUCT         // Doc: the expectations of contributors to the project.
+├── CONTRIBUTING            // Doc: a summary of contribution guidelines, pointing to these docs.
+├── LICENSE                 // Doc: the license to the project.
+├── Manifest.toml           // Julia: the explicit package versions used (ignored).
+├── Project.toml            // Julia: the Pkg.jl dependencies of the project.
+└── README.md               // Doc: this document.
 ```
 
 ## Acknowledgements

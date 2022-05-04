@@ -87,17 +87,20 @@ ClusterValidityIndices.jl
 ├── .github/workflows       // GitHub: workflows for testing and documentation.
 ├── data                    // Data: CI and example data location.
 ├── docs                    // Docs: GitHub pages documentation files.
-├── examples                // Source: Example scripts for CVI usage.
+├── examples                // Source: example scripts for CVI usage.
 ├── paper                   // Docs: JOSS paper and bib files.
-├── results                 // Data: Destination for example-generated files.
+├── results                 // Data: destination for example-generated files.
 ├── src                     // Source: scripts and common helper functions.
 │   └─── CVI                //      All CVI and ICVI definitions
 ├── test                    // Test: unit, integration, and environment tests.
+├── .appveyor               // CI: Appveyor CI script
 ├── .gitignore              // Git: .gitignore for the whole project.
+├── CODE_OF_CONDUCT         // Doc: the expectations of contributors to the project.
+├── CONTRIBUTING            // Doc: a summary of contribution guidelines, pointing to these docs.
 ├── LICENSE                 // Doc: the license to the project.
-├── Manifest.toml           // Julia: the explicit package versions used.
+├── Manifest.toml           // Julia: the explicit package versions used (ignored).
 ├── Project.toml            // Julia: the Pkg.jl dependencies of the project.
-└── README.md               // Doc: this document.
+└── README.md               // Doc: the README.
 ```
 
 All CVIs are implemented in separate files in the `src/CVI/` directory, and they are imported to `src/ClusterValidityIndices.jl` through imports in `src/CVI/CVI.jl`.
@@ -107,10 +110,11 @@ All CVIs are implemented in separate files in the `src/CVI/` directory, and they
 To write a CVI for this project, it will require the following:
 
 1. A struct subtyped from `CVI` that implements the internal parameters in addition to a `Float` named `criterion_value` and a `LabelMap`.
-2. A Default constructor that initializes values to zeros and arrays to empties (see existing CVI files such as `DB.jl` for examples).
+2. A default constructor that initializes values to zeros and arrays to empties (see existing CVI files such as `DB.jl` for examples).
 3. An incremental parameter update method `param_inc!(cvi::NEW_CVI, sample::RealVector, label::Integer)` where `NEW_CVI` is the name of the new CVI.
 4. A batch parameter update method `param_batch!(cvi::NEW_CVI, data::RealMatrix, labels::IntegerVector)`.
 5. A criterion value evaluation method `evaluate(cvi::NEW_CVI)` that updates the internal criterion value.
+6. The top-level functions `get_icvi` and `get_cvi` will work automatically after writing the above definitions!
 
 ## Authors
 
