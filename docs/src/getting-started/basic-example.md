@@ -1,5 +1,8 @@
 # Basic Example
 
+This page gives a basic overview of a workflow using CVIs.
+For more detailed and interactive examples that you can run on your own in Julia notebooks, see the [Examples](@ref examples) section.
+
 ## CVI Full Usage Example
 
 Consider that you already have a dataset that is labeled by some clustering algorithm.
