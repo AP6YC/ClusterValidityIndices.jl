@@ -69,6 +69,22 @@ In contrast, the R programming language is open and extremely powerful for resea
 The Julia programming langauge is selected for this open-source CVI package implementation due to its high-level syntactic ease of use and speed of development without comprimising computational efficiency for production environments.
 Furthermore, the objective of this package is to contain both batch and incremental implementations of many CVIs with clear documentation and simple usage for research scientists and engineers alike.
 
+# Cluster Validity Indices
+
+Cluster Validity Indices (CVIs) are designed to tackle the problem of creating a metric of performance for unsupervised algorithms where the true answer is unknown.
+Clustering is a ubiquitous unsupervised learning paradigm, so the terminology and development of CVIs principally target clustering algorithms.
+
+Because the clustering problem statement means that one does not have true labels to measure how well or poorly these algorithms perform, the most that can be done is to create a metric of the validity of the solution.
+This translates to how much an algorithm over- or under-partitions the data (i.e., how eager or reticent it is to create new categories) and quantifies how the algorithm structures its solution in its compactness (i.e., the density of the prescribed cluster regions) and its connectedness (i.e., how much disparate points in a cluster can be said to still belong to the same category).
+
+In general, CVIs take a set of samples and the labels prescribed to them by a clustering algorithm, and they return a criterion value that is generally a positive real number.
+This criterion value often does not have an upper bound, varies greatly in behavior between CVIs, and changes as new samples are labeled and the CVI is reprocessed.
+In fact, it is often the trendlines of these values that provide the most information about the clustering process rather than the values themselves.
+
+CVIs are originally derived to work on batches of samples and labels.
+However, there exist incremental variants that are proven to be mathematically equivalent to their batch counterparts.
+These incremental CVIs (ICVIs) mitigate the computational overhead of computing these metrics online, such as in a streaming clustering scenarios.
+
 # Acknowledgements
 
 This package is developed and maintained with sponsorship by the Applied Computational Intelligence Laboratory (ACIL) of the Missouri University of Science and Technology.

@@ -28,16 +28,16 @@ Enter cluster validity indices.
 
 ## What are Cluster Validity Indices?
 
-Cluster Validity Indices (CVIs) are metrics designed to tackle the problem of creating a metric of performance for unsupervised algorithms where the true answer is unknown.
-Clustering is a ubiquitous unsupervised learning paradigm, so the terminology and development of CVIs principally targets clustering algorithms.
+Cluster Validity Indices (CVIs) are designed to tackle the problem of creating a metric of performance for unsupervised algorithms where the true answer is unknown.
+Clustering is a ubiquitous unsupervised learning paradigm, so the terminology and development of CVIs principally target clustering algorithms.
 
-Because the clustering problem statement means that we do not have truth labels to measure how well or poorly these algorithms perform, the most that we can do is to create a metric of the **validity** of the solution.
+Because the clustering problem statement means that we do not have true labels to measure how well or poorly these algorithms perform, the most that we can do is to create a metric of the **validity** of the solution.
 This typically translates to how much an algorithm over- or under-partitions the data (i.e., how eager or reticent it is to create new categories), but some CVIs take other aspects of the structure of the solution into account, such as **compactness** (i.e., the density of the prescribed cluster regions) and **connectedness** (i.e., a measure of how much disparate points in a cluster can be said to still belong to the same category).
 
-In general, CVIs take a set of samples and the labels prescribed to them by a clustering algorithm, and they return a **criterion value** that is a positive real number.
-This criterion value generally does not have an upper bound, and it changes as new samples are labeled and the CVI is reprocessed.
-In fact, it is the trendlines of these values that provide the most information about the clustering process rather than the values themselves.
+In general, CVIs take a set of samples and the labels prescribed to them by a clustering algorithm, and they return a **criterion value** that is generally a positive real number.
+This criterion value often does not have an upper bound, varies greatly in behavior between CVIs, and changes as new samples are labeled and the CVI is reprocessed.
+In fact, it is often the trendlines of these values that provide the most information about the clustering process rather than the values themselves.
 
 CVIs are originally derived to work on batches of samples and labels.
 However, there exist incremental variants that are proven to be mathematically equivalent to their batch counterparts.
-Incremental CVIs (ICVIs) mitigates the computational overhead of computing these metrics online, such as in a streaming clustering scenario.
+These incremental CVIs (ICVIs) mitigate the computational overhead of computing these metrics online, such as in a streaming clustering scenarios.
