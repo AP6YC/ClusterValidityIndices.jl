@@ -23,6 +23,10 @@ makedocs(
     # format=Documenter.HTML(),
     pages=[
         "Home" => "index.md",
+        "Getting Started" => [
+            "getting-started/what-are-cvis.md",
+            "getting-started/basic-example.md",
+        ],
         "Tutorial" => [
             "Guide" => "man/guide.md",
             # "Examples" => "man/examples.md",

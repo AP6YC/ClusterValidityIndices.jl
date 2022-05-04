@@ -26,6 +26,8 @@
 
     # Sanitize all the data
     p = 0.1
+    @info "p is a $(typeof(p))"
+
     @info "Subsampling data at rate: $p"
     for data_path in data_paths
         # Load the data, get a subset, and relabel in order

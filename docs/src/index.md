@@ -19,14 +19,18 @@ This documentation is split into the following sections:
 
 ```@contents
 Pages = [
+    "getting-started/what-are-cvis.md",
+    "getting-started/basic-example.md",
     "man/guide.md",
-    "man/examples.md",
+    "../examples/index.md",
     "man/contributing.md",
     "man/full-index.md",
 ]
 Depth = 1
 ```
 
-The [Package Guide](@ref) provides a tutorial to the full usage of the package, while [Examples](@ref) gives sample workflows using a variety of ART modules.
+The [Background](@ref) provides an overview of the problem statement of CVIs and what they are theoretically, while [Basic Example](@ref) steps through an single example workflow.
+
+The [Package Guide](@ref) provides a tutorial to the full usage of the package, while [Examples](@ref examples) gives many sample workflows using a variety of CVI modules.
 
 Instructions on how to contribute to the package are found in [Contributing](@ref), and docstrings for every element of the package is listed in the [Index](@ref main-index).

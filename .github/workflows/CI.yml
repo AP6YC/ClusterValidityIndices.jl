@@ -15,20 +15,19 @@ jobs:
       fail-fast: false
       matrix:
         version:
-          # - "1.0"  # LTS
-          - "1.5"
+          - "1.6"  # LTS
           - "1"    # Latest Release
         os:
           - ubuntu-latest
-          # - macOS-latest
+          - macOS-latest
           - windows-latest
         arch:
           - x64
-          # - x86
-        # exclude:
-          # Test 32-bit only on Linux
-          # - os: macOS-latest
-          #   arch: x86
+          - x86
+        exclude:
+          # Exclude 32-bit macOS due to Julia support
+          - os: macOS-latest
+            arch: x86
           # - os: windows-latest
           #   arch: x86
         # include:
@@ -79,19 +78,3 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           path-to-lcov: lcov.info
-
-  # slack:
-  #   name: Notify Slack Failure
-  #   needs: test
-  #   runs-on: ubuntu-latest
-  #   if: always() && github.event_name == 'schedule'
-  #   steps:
-  #     - uses: technote-space/workflow-conclusion-action@v2
-  #     - uses: voxmedia/github-action-slack-notify-build@v1
-  #       if: env.WORKFLOW_CONCLUSION == 'failure'
-  #       with:
-  #         channel: nightly-dev
-  #         status: FAILED
-  #         color: danger
-  #       env:
-  #         SLACK_BOT_TOKEN: ${{ secrets.DEV_SLACK_BOT_TOKEN }}
