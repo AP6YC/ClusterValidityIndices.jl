@@ -23,15 +23,20 @@ Public = true
 ## [Docs](@id index-docs)
 
 ```@docs
+ClusterValidityIndices
 get_cvi!
 get_icvi!
 param_inc!
 param_batch!
 evaluate!
+relabel_cvi_data
+sort_cvi_data
+CVI
 CH
 cSIL
 DB
 GD43
+GD53
 PS
 rCIP
 WB

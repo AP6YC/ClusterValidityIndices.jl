@@ -10,6 +10,11 @@ Description:
 # -------------------------------------------
 
 # Type for all CVIs
+"""
+    CVI
+
+Abstract supertype for all CVI objects.
+"""
 abstract type CVI end
 
 # -------------------------------------------
