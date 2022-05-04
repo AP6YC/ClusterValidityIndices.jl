@@ -91,3 +91,9 @@ criterion_values
 
 # We can inspect the final ICVI values to see how they differ:
 criterion_values[:, end]
+
+
+x = range(0, stop=6π, length=1000)
+y1 = sin.(x)
+y2 = cos.(x)
+plot(x, [y1, y2])

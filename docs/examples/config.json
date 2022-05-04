@@ -1,3 +1,7 @@
 {
-    "theme": "grid"
+    "theme": "grid",
+    "order": [
+        "basic-examples",
+        "cvis"
+    ]
 }
