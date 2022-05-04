@@ -1,8 +1,27 @@
+"""
+Main module for `ClusterValidityIndices.jl`, a Julia package of metrics for unsupervised learning.
+
+This module exports all of the CVI modules, options, and utilities used by the `ClusterValidityIndices.jl package.`
+
+# Exports
+
+$(EXPORTS)
+
+"""
 module ClusterValidityIndices
 
+# --------------------------------------------------------------------------- #
+# USINGS
+# --------------------------------------------------------------------------- #
+
 # Package dependencies
+using DocStringExtensions   # Docstring utilities
 using Statistics: mean
 using LinearAlgebra
+
+# --------------------------------------------------------------------------- #
+# INCLUDES
+# --------------------------------------------------------------------------- #
 
 # Common structures
 include("common.jl")
@@ -12,6 +31,10 @@ include("utils.jl")
 
 # All of the CVI modules
 include("CVI/CVI.jl")
+
+# --------------------------------------------------------------------------- #
+# EXPORTS
+# --------------------------------------------------------------------------- #
 
 # Export all public names
 export
