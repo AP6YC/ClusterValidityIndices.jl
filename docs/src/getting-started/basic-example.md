@@ -22,7 +22,7 @@ data, labels = get_cvi_data(data_path)
 Because Julia is column-major in memory and our data samples are potentially large, we follow the Julia notation and treat the dimensions of ```data``` as ```[dim, n_samples]```.
 
 !!! note "Note"
-    As of ClusterValidityIndices.jl v0.1.5, all the CVIs assume that the labels are presented sequentially initially, starting with index 1 (e.g., 1, 1, 2, 2, 3, 2, 2, 1, 3, 4, 4 ...).
+    Before ClusterValidityIndices.jl v0.3.0, all the CVIs assume that the labels are presented sequentially initially, starting with index 1 (e.g., 1, 1, 2, 2, 3, 2, 2, 1, 3, 4, 4 ...).
     You may repeat previously seen label indices, but skipping label indices (e.g., 1, 2, 4) results in undefined behavior.
     If your data does not accomodate this,we may circumvent this by relabelling the data monotonically with
 
@@ -83,7 +83,7 @@ If we wish to do all of this in batch, we have methods that correspond to their 
 
 ```julia
 # Update and extract the criterion value all at once
-criterion_value_b = get_cvi!(cvi_b, data[data_path], labels[data_path])
+criterion_value_b = get_cvi!(cvi_b, data, labels)
 ```
 
 and at a more granular level:
