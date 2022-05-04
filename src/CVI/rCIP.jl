@@ -130,12 +130,14 @@ function param_inc!(cvi::rCIP, sample::RealVector, label::Integer)
         n_new = cvi.n[i_label] + 1
         v_new = (1 - 1/n_new) .* cvi.v[:, i_label] + (1/n_new) .* sample
         diff_x_v = sample - cvi.v[:, i_label]
-        if n_new > 1
-            sigma_new = ((n_new - 2)/(n_new - 1))*(cvi.sigma[:,:,i_label] - cvi.delta_term) +
-                (1/n_new)*(diff_x_v*transpose(diff_x_v)) + cvi.delta_term
-        else
-            sigma_new = cvi.delta_term
-        end
+        # if n_new > 1
+        sigma_new = ((n_new - 2)/(n_new - 1))*(cvi.sigma[:,:,i_label] - cvi.delta_term) +
+            (1/n_new)*(diff_x_v*transpose(diff_x_v)) + cvi.delta_term
+        # This should never occur because the top if happens first
+        # else
+        #     @info "DID THE THING"
+        #     sigma_new = cvi.delta_term
+        # end
         d_column_new = zeros(cvi.n_clusters)
         for jx = 1:cvi.n_clusters
             if jx == i_label
