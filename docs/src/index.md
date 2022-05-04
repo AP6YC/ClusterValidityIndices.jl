@@ -22,7 +22,7 @@ Pages = [
     "getting-started/what-are-cvis.md",
     "getting-started/basic-example.md",
     "man/guide.md",
-    "../examples/index.md
+    "../examples/index.md"
     "man/contributing.md",
     "man/full-index.md",
 ]
