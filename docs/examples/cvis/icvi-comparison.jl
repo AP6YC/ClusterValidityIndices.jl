@@ -25,7 +25,8 @@ using AdaptiveResonance         # DDVFA
 using MLDatasets                # Iris dataset
 using MLDataUtils               # Shuffling and splitting
 using Printf                    # Formatted number printing
-using Plots
+using Plots                     # Plots frontend
+pyplot()                        # Use the pyplot backend
 
 # We will download the Iris dataset for its small size and benchmark use for clustering algorithms.
 Iris.download(i_accept_the_terms_of_use=true)
@@ -91,3 +92,27 @@ criterion_values
 
 # We can inspect the final ICVI values to see how they differ:
 criterion_values[:, end]
+
+# Next, we would like to visualize these CVI trendlines over time with some plotting.
+# We can try plotting these trendlines all over one another
+
+## Define a simple function for plotting
+function plot_cvis(range)
+    ## Create the plotting object
+    p = plot(legend=:topleft)
+    ## Iterate over the range of ICVI indices provided
+    for jx = range
+        ## Plot the ICVI criterion values versus sample index
+        plot!(p, 1:n_samples, criterion_values[jx, :], label = typeof(icvis[jx]))
+    end
+    ## Return the plotting object for IJulia display
+    return p
+end
+
+## Plot all of the ICVIs tested here
+plot_cvis(1:n_icvi)
+
+# We see from the final values that the CH and cSIL metrics behave very differently from the other metrics, so we should plot them separately to see them in better detail
+
+## Exclude CH and cSIL
+plot_cvis(3:n_icvi)
