@@ -3,7 +3,8 @@ using AdaptiveResonance         # DDVFA
 using MLDatasets                # Iris dataset
 using MLDataUtils               # Shuffling and splitting
 using Printf                    # Formatted number printing
-using Plots
+using Plots                     # Plots frontend
+pyplot()                        # Use the pyplot backend
 
 Iris.download(i_accept_the_terms_of_use=true)
 features, labels = Iris.features(), Iris.labels()
@@ -55,6 +56,25 @@ end
 criterion_values
 
 criterion_values[:, end]
+
+# Define a simple function for plotting
+function plot_cvis(range)
+    # Create the plotting object
+    p = plot(legend=:topleft)
+    # Iterate over the range of ICVI indices provided
+    for jx = range
+        # Plot the ICVI criterion values versus sample index
+        plot!(p, 1:n_samples, criterion_values[jx, :], label = typeof(icvis[jx]))
+    end
+    # Return the plotting object for IJulia display
+    return p
+end
+
+# Plot all of the ICVIs tested here
+plot_cvis(1:n_icvi)
+
+# Exclude CH and cSIL
+plot_cvis(3:n_icvi)
 
 # This file was generated using Literate.jl, https://github.com/fredrikekre/Literate.jl
 
