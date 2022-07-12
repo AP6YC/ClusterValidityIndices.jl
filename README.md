@@ -202,7 +202,7 @@ You may repeat previously seen label indices, but skipping label indices (e.g., 
 In this project, this is ameliorated with the function
 
 ```julia
-relabel_cvi_data(labels::Array{M, 1}) where {M<:Integer}
+relabel_cvi_data(labels::IntegerVector)
 ```
 
 For example,
@@ -216,7 +216,7 @@ labels = relabel_cvi_data(labels)
 Alternatively, you may pairwise sort the entirety of the data with
 
 ```julia
-sort_cvi_data(data::Array{N, 2}, labels::Array{M, 1}) where {N<:Real, M<:Integer}
+sort_cvi_data(data::RealMatrix, labels::IntegerVector)
 ```
 
 **NOTE** `sort_cvi_data` reorders the input data as well, which will lead to different ICVI results than with `relabel_cvi_data`.
@@ -236,7 +236,7 @@ The CVIs in this project all contain *incremental* and *batch* implementations.
 When evaluated in incremental mode, they are often called ICVIs (incremental cluster validity indices).
 In this documentation, CVI means batch and ICVI means incremental, though both are `CVI` objects.
 
-The funtions that differ between the two modes are how they are updated:
+The functions that differ between the two modes are how they are updated:
 
 ```julia
 # Incremental
