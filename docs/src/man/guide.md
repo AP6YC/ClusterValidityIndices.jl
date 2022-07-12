@@ -13,7 +13,7 @@ Alternatively, it can be added to your environment in a script with
 
 ```julia
 using Pkg
-Pkg.add("CVI")
+Pkg.add("ClusterValidityIndices")
 ```
 
 ## Quickstart
@@ -85,7 +85,7 @@ dim, n_samples = size(data)
 In this project, this is ameliorated with the function
 
 ```julia
-relabel_cvi_data(labels::Array{M, 1}) where {M<:Int}
+relabel_cvi_data(labels::IntegerVector)
 ```
 
 For example,
@@ -99,7 +99,7 @@ labels = relabel_cvi_data(labels)
 Alternatively, you may pairwise sort the entirety of the data with
 
 ```julia
-sort_cvi_data(data::Array{N, 2}, labels::Array{M, 1}) where {N<:Real, M<:Int}
+sort_cvi_data(data::RealMatrix, labels::IntegerVector)
 ```
 
 !!! note "Note"
@@ -273,9 +273,9 @@ Exactly as in the usage for updating the parameters, the functions take the cvi,
 
 ```julia
 # Incremental
-get_icvi!(cvi::C, x::Array{N, 1}, y::M) where {C<:CVI, N<:Real, M<:Int}
+get_icvi!(cvi::CVI, sample::RealVector, label::Integer)
 # Batch
-get_cvi!(cvi::C, x::Array{N, 2}, y::Array{M, 1}) where {C<:CVI, N<:Real, M<:Int}
+get_cvi!(cvi::CVI, data::RealMatrix, labels::IntegerVector)
 ```
 
 For example, after loading the data you may get the criterion value at each step with
