@@ -1,7 +1,7 @@
 name = "ClusterValidityIndices"
 uuid = "2fefd308-f647-4698-a2f0-e90cfcbca9ad"
 authors = ["Sasha Petrenko <sap625@mst.edu>"]
-version = "0.4.1"
+version = "0.4.2"
 
 [deps]
 DocStringExtensions = "ffbed154-4ef7-542d-bbb7-c09d3a79fcae"
