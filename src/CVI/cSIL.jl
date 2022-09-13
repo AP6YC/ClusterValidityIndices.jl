@@ -102,10 +102,18 @@ function param_inc!(cvi::cSIL, sample::RealVector, label::Integer)
             S_col_new = zeros(cvi.n_clusters + 1)
             for cl = 1:cvi.n_clusters
                 # Column "bmu_temp" - D_new
-                C = CP_new + (transpose(cvi.v[:, cl]) * cvi.v[:, cl]) - 2 * (transpose(G_new) * cvi.v[:, cl])
+                C = (
+                    CP_new
+                    + (transpose(cvi.v[:, cl]) * cvi.v[:, cl])
+                    - 2 * (transpose(G_new) * cvi.v[:, cl])
+                )
                 S_col_new[cl] = C
                 # Row "bmu_temp" - E
-                C = cvi.CP[cl] + cvi.n[cl] * (transpose(v_new)*v_new) - 2*(transpose(cvi.G[:, cl]) * v_new)
+                C = (
+                    cvi.CP[cl]
+                    + cvi.n[cl] * (transpose(v_new)*v_new)
+                    - 2*(transpose(cvi.G[:, cl]) * v_new)
+                )
                 S_row_new[cl] = C / cvi.n[cl]
             end
             # Column "ind_minus" - F
@@ -124,7 +132,10 @@ function param_inc!(cvi::cSIL, sample::RealVector, label::Integer)
         cvi.S = S_new
     else
         n_new = cvi.n[i_label] + 1
-        v_new = (1 - 1/n_new) .* cvi.v[:, i_label] + (1/n_new) .* sample
+        v_new = (
+            (1 - 1/n_new) .* cvi.v[:, i_label]
+            + (1/n_new) .* sample
+        )
         CP_new = cvi.CP[i_label] + (transpose(sample) * sample)
         G_new = cvi.G[:, i_label] + sample
         # Compute S_new
@@ -137,15 +148,29 @@ function param_inc!(cvi::cSIL, sample::RealVector, label::Integer)
             end
             # Column "bmu_temp" - D_new
             diff_x_v = sample - cvi.v[:, cl]
-            C = cvi.CP[i_label] + (transpose(diff_x_v)*diff_x_v) + cvi.n[i_label]*(transpose(cvi.v[:, cl]) * cvi.v[:, cl]) - 2 * (transpose(G_new) * cvi.v[:, cl])
+            C = (
+                cvi.CP[i_label]
+                + (transpose(diff_x_v)*diff_x_v)
+                + cvi.n[i_label]*(transpose(cvi.v[:, cl]) * cvi.v[:, cl])
+                - 2 * (transpose(G_new) * cvi.v[:, cl])
+            )
             S_col_new[cl] = C / n_new
             # Row "bmu_temp" - E
-            C = cvi.CP[cl] + cvi.n[cl] * (transpose(v_new)*v_new) - 2*(transpose(cvi.G[:, cl]) * v_new)
+            C = (
+                cvi.CP[cl]
+                + cvi.n[cl] * (transpose(v_new) * v_new)
+                - 2 * (transpose(cvi.G[:, cl]) * v_new)
+            )
             S_row_new[cl] = C / cvi.n[cl]
         end
         # Column "ind_minus" - F
         diff_x_v = sample - v_new
-        C = cvi.CP[i_label] + (transpose(diff_x_v) * diff_x_v) + cvi.n[i_label] * (transpose(v_new) * v_new) - 2*(transpose(cvi.G[:, i_label])*v_new)
+        C = (
+            cvi.CP[i_label]
+            + (transpose(diff_x_v) * diff_x_v)
+            + cvi.n[i_label] * (transpose(v_new) * v_new)
+            - 2*(transpose(cvi.G[:, i_label])*v_new)
+        )
         S_col_new[i_label] = C / n_new
         S_row_new[i_label] = S_col_new[i_label]
         # Update parameters
