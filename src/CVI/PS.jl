@@ -102,7 +102,10 @@ function param_inc!(cvi::PS, sample::RealVector, label::Integer)
         cvi.D = D_new
     else
         n_new = cvi.n[i_label] + 1
-        v_new = (1 - 1/n_new) .* cvi.v[:, i_label] + (1/n_new) .* sample
+        v_new = (
+            (1 - 1/n_new) .* cvi.v[:, i_label]
+            + (1/n_new) .* sample
+        )
         d_column_new = zeros(cvi.n_clusters)
         for jx = 1:cvi.n_clusters
             if jx == i_label
@@ -154,7 +157,10 @@ function evaluate!(cvi::PS)
         for ix = 1:cvi.n_clusters
             d = cvi.D[:, ix]
             deleteat!(d, ix)
-            cvi.PS_i[ix] = (cvi.n[ix] / n_max) - exp(-minimum(d) / cvi.beta_t)
+            cvi.PS_i[ix] = (
+                (cvi.n[ix] / n_max)
+                - exp(-minimum(d) / cvi.beta_t)
+            )
         end
         cvi.criterion_value = sum(cvi.PS_i)
     end

@@ -113,7 +113,12 @@ function param_inc!(cvi::rCIP, sample::RealVector, label::Integer)
             for jx = 1:cvi.n_clusters
                 diff_m = v_new - cvi.v[:, jx]
                 sigma_q = sigma_new + cvi.sigma[:,:,jx]
-                d_column_new[jx] = cvi.constant * (1/sqrt(det(sigma_q)))*exp(-0.5*transpose(diff_m)*inv(sigma_q)*diff_m)
+                d_column_new[jx] = (
+                    cvi.constant
+                    * (1/sqrt(det(sigma_q)))
+                    * exp(-0.5*transpose(diff_m)
+                    * inv(sigma_q)*diff_m)
+                )
                 # d_column_new[jx] = sum((v_new - cvi.v[:, jx]).^2)
             end
             D_new[:, i_label] = d_column_new
@@ -131,13 +136,11 @@ function param_inc!(cvi::rCIP, sample::RealVector, label::Integer)
         v_new = (1 - 1/n_new) .* cvi.v[:, i_label] + (1/n_new) .* sample
         diff_x_v = sample - cvi.v[:, i_label]
         # if n_new > 1
-        sigma_new = ((n_new - 2)/(n_new - 1))*(cvi.sigma[:,:,i_label] - cvi.delta_term) +
-            (1/n_new)*(diff_x_v*transpose(diff_x_v)) + cvi.delta_term
-        # This should never occur because the top if happens first
-        # else
-        #     @info "DID THE THING"
-        #     sigma_new = cvi.delta_term
-        # end
+        sigma_new = (
+            ((n_new - 2)/(n_new - 1)) * (cvi.sigma[:,:,i_label] - cvi.delta_term)
+            + (1/n_new)*(diff_x_v*transpose(diff_x_v))
+            + cvi.delta_term
+        )
         d_column_new = zeros(cvi.n_clusters)
         for jx = 1:cvi.n_clusters
             if jx == i_label
@@ -145,7 +148,12 @@ function param_inc!(cvi::rCIP, sample::RealVector, label::Integer)
             end
             diff_m = v_new - cvi.v[:, jx]
             sigma_q = sigma_new + cvi.sigma[:,:,jx]
-            d_column_new[jx] = cvi.constant*(1/sqrt(det(sigma_q)))*exp(-0.5*transpose(diff_m)*inv(sigma_q)*diff_m)
+            d_column_new[jx] = (
+                cvi.constant
+                * (1/sqrt(det(sigma_q)))
+                * exp(-0.5*transpose(diff_m)
+                * inv(sigma_q)*diff_m)
+            )
         end
         # Update parameters
         cvi.n[i_label] = n_new
@@ -178,9 +186,11 @@ function param_batch!(cvi::rCIP, data::RealMatrix, labels::IntegerVector)
         cvi.n[ix] = size(subset, 2)
         cvi.v[1:cvi.dim, ix] = mean(subset, dims=2)
         if cvi.n[ix] > 1
-            cvi.sigma[:,:,ix] = (1/(cvi.n[ix] - 1)) *
-                ((subset*transpose(subset)) - cvi.n[ix].*cvi.v[:,ix]*transpose(cvi.v[:,ix])) +
-                cvi.delta_term
+            cvi.sigma[:,:,ix] = (
+                (1/(cvi.n[ix] - 1)) * ((subset*transpose(subset))
+                - cvi.n[ix].*cvi.v[:,ix]*transpose(cvi.v[:,ix]))
+                + cvi.delta_term
+            )
         else
             cvi.sigma[:,:,ix] = cvi.delta_term
         end
@@ -189,7 +199,12 @@ function param_batch!(cvi::rCIP, data::RealMatrix, labels::IntegerVector)
         for jx = ix + 1 : cvi.n_clusters
             diff_m = cvi.v[:, ix] - cvi.v[:, jx]
             sigma_q = cvi.sigma[:,:,ix] + cvi.sigma[:,:,jx]
-            cvi.D[jx, ix] = cvi.constant*(1/sqrt(det(sigma_q)))*exp(-0.5*transpose(diff_m)*inv(sigma_q)*diff_m)
+            cvi.D[jx, ix] = (
+                cvi.constant
+                * (1/sqrt(det(sigma_q)))
+                * exp(-0.5*transpose(diff_m)
+                * inv(sigma_q)*diff_m)
+            )
         end
     end
     cvi.D = cvi.D + transpose(cvi.D)
