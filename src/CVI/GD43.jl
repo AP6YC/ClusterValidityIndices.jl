@@ -97,7 +97,10 @@ function param_inc!(cvi::GD43, sample::RealVector, label::Integer)
         mu_data_new = sample
         setup!(cvi, sample)
     else
-        mu_data_new = (1 - 1/n_samples_new) .* cvi.mu_data + (1/n_samples_new) .* sample
+        mu_data_new = (
+            (1 - 1/n_samples_new) .* cvi.mu_data
+            + (1/n_samples_new) .* sample
+        )
     end
 
     if i_label > cvi.n_clusters
@@ -127,10 +130,18 @@ function param_inc!(cvi::GD43, sample::RealVector, label::Integer)
         cvi.D = D_new
     else
         n_new = cvi.n[i_label] + 1
-        v_new = (1 - 1/n_new) .* cvi.v[:, i_label] + (1/n_new) .* sample
+        v_new = (
+            (1 - 1/n_new) .* cvi.v[:, i_label]
+            + (1/n_new) .* sample
+        )
         delta_v = cvi.v[:, i_label] - v_new
         diff_x_v = sample .- v_new
-        CP_new = cvi.CP[i_label] + transpose(diff_x_v)*diff_x_v + cvi.n[i_label]*transpose(delta_v)*delta_v + 2*transpose(delta_v)*cvi.G[:, i_label]
+        CP_new = (
+            cvi.CP[i_label]
+            + transpose(diff_x_v)*diff_x_v
+            + cvi.n[i_label]*transpose(delta_v)*delta_v
+            + 2*transpose(delta_v)*cvi.G[:, i_label]
+        )
         G_new = cvi.G[:, i_label] + diff_x_v + cvi.n[i_label].*delta_v
         d_column_new = zeros(cvi.n_clusters)
         for jx = 1:cvi.n_clusters
@@ -172,17 +183,21 @@ function param_batch!(cvi::GD43, data::RealMatrix, labels::IntegerVector)
     end
     for ix = 1 : (cvi.n_clusters - 1)
         for jx = ix + 1 : cvi.n_clusters
-            cvi.D[jx, ix] = sqrt(sum((cvi.v[:, ix] - cvi.v[:, jx]).^2))
+            cvi.D[jx, ix] = (
+                sqrt(sum((cvi.v[:, ix] - cvi.v[:, jx]).^2))
+            )
         end
     end
     cvi.D = cvi.D + transpose(cvi.D)
 end # param_batch!(cvi::GD43, data::RealMatrix, labels::IntegerVector)
 
 function evaluate!(cvi::GD43)
-    cvi.intra = 2*maximum(cvi.CP ./ cvi.n)
+    cvi.intra = 2 * maximum(cvi.CP ./ cvi.n)
     if cvi.n_clusters > 1
         # Between-group measure of separation/isolation
-        cvi.inter = minimum(cvi.D[triu(ones(Bool, cvi.n_clusters, cvi.n_clusters), 1)])
+        cvi.inter = (
+            minimum(cvi.D[triu(ones(Bool, cvi.n_clusters, cvi.n_clusters), 1)])
+        )
         # GD43 index value
         cvi.criterion_value = cvi.inter/cvi.intra
     else
