@@ -11,17 +11,17 @@ Julia port: Sasha Petrenko <sap625@mst.edu>
 REFERENCES
 [1] A. Ibrahim, J. M. Keller, and J. C. Bezdek, "Evaluating Evolving Structure
 in Streaming Data With Modified Dunn's Indices," IEEE Transactions on Emerging
-Topics in Computational Intelligence, pp. 1–12, 2019.
+Topics in Computational Intelligence, pp. 1-12, 2019.
 [2] M. Moshtaghi, J. C. Bezdek, S. M. Erfani, C. Leckie, and J. Bailey,
 "Online Cluster Validity Indices for Streaming Data," ArXiv e-prints, 2018,
 arXiv:1801.02937v1 [stat.ML].
 [3] M. Moshtaghi, J. C. Bezdek, S. M. Erfani, C. Leckie, J. Bailey, "Online
 cluster validity indices for performance monitoring of streaming data clustering,"
-Int. J. Intell. Syst., pp. 1–23, 2018.
+Int. J. Intell. Syst., pp. 1-23, 2018.
 [4] J. C. Dunn, "A fuzzy relative of the ISODATA process and its use in detecting
-compact well-separated clusters," J. Cybern., vol. 3, no. 3 , pp. 32–57, 1973.
+compact well-separated clusters," J. Cybern., vol. 3, no. 3 , pp. 32-57, 1973.
 [5] J. C. Bezdek and N. R. Pal, "Some new indexes of cluster validity," IEEE
-Trans. Syst., Man, and Cybern., vol. 28, no. 3, pp. 301–315, Jun. 1998.
+Trans. Syst., Man, and Cybern., vol. 28, no. 3, pp. 301-315, Jun. 1998.
 
 """
 
@@ -31,11 +31,11 @@ Trans. Syst., Man, and Cybern., vol. 28, no. 3, pp. 301–315, Jun. 1998.
 The stateful information of the Generalized Dunn's Index 43 (GD43) Cluster Validity Index.
 
 # References
-1. A. Ibrahim, J. M. Keller, and J. C. Bezdek, "Evaluating Evolving Structure in Streaming Data With Modified Dunn's Indices," IEEE Transactions on Emerging Topics in Computational Intelligence, pp. 1–12, 2019.
+1. A. Ibrahim, J. M. Keller, and J. C. Bezdek, "Evaluating Evolving Structure in Streaming Data With Modified Dunn's Indices," IEEE Transactions on Emerging Topics in Computational Intelligence, pp. 1-12, 2019.
 2. M. Moshtaghi, J. C. Bezdek, S. M. Erfani, C. Leckie, and J. Bailey, "Online Cluster Validity Indices for Streaming Data," ArXiv e-prints, 2018, arXiv:1801.02937v1 [stat.ML].
-3. M. Moshtaghi, J. C. Bezdek, S. M. Erfani, C. Leckie, J. Bailey, "Online cluster validity indices for performance monitoring of streaming data clustering," Int. J. Intell. Syst., pp. 1–23, 2018.
-4. J. C. Dunn, "A fuzzy relative of the ISODATA process and its use in detecting compact well-separated clusters," J. Cybern., vol. 3, no. 3 , pp. 32–57, 1973.
-5. J. C. Bezdek and N. R. Pal, "Some new indexes of cluster validity," IEEE Trans. Syst., Man, and Cybern., vol. 28, no. 3, pp. 301–315, Jun. 1998.
+3. M. Moshtaghi, J. C. Bezdek, S. M. Erfani, C. Leckie, J. Bailey, "Online cluster validity indices for performance monitoring of streaming data clustering," Int. J. Intell. Syst., pp. 1-23, 2018.
+4. J. C. Dunn, "A fuzzy relative of the ISODATA process and its use in detecting compact well-separated clusters," J. Cybern., vol. 3, no. 3 , pp. 32-57, 1973.
+5. J. C. Bezdek and N. R. Pal, "Some new indexes of cluster validity," IEEE Trans. Syst., Man, and Cybern., vol. 28, no. 3, pp. 301-315, Jun. 1998.
 """
 mutable struct GD43 <: CVI
     label_map::LabelMap
@@ -97,7 +97,10 @@ function param_inc!(cvi::GD43, sample::RealVector, label::Integer)
         mu_data_new = sample
         setup!(cvi, sample)
     else
-        mu_data_new = (1 - 1/n_samples_new) .* cvi.mu_data + (1/n_samples_new) .* sample
+        mu_data_new = (
+            (1 - 1 / n_samples_new) .* cvi.mu_data
+            + (1 / n_samples_new) .* sample
+        )
     end
 
     if i_label > cvi.n_clusters
@@ -112,7 +115,7 @@ function param_inc!(cvi::GD43, sample::RealVector, label::Integer)
             D_new[1:cvi.n_clusters, 1:cvi.n_clusters] = cvi.D
             d_column_new = zeros(cvi.n_clusters + 1)
             for jx = 1:cvi.n_clusters
-                d_column_new[jx] = sqrt(sum((v_new - cvi.v[:, jx]).^2))
+                d_column_new[jx] = sqrt(sum((v_new - cvi.v[:, jx]) .^ 2))
             end
             D_new[:, i_label] = d_column_new
             D_new[i_label, :] = transpose(d_column_new)
@@ -127,18 +130,30 @@ function param_inc!(cvi::GD43, sample::RealVector, label::Integer)
         cvi.D = D_new
     else
         n_new = cvi.n[i_label] + 1
-        v_new = (1 - 1/n_new) .* cvi.v[:, i_label] + (1/n_new) .* sample
+        v_new = (
+            (1 - 1 / n_new) .* cvi.v[:, i_label]
+            + (1 / n_new) .* sample
+        )
         delta_v = cvi.v[:, i_label] - v_new
         diff_x_v = sample .- v_new
-        CP_new = cvi.CP[i_label] + transpose(diff_x_v)*diff_x_v + cvi.n[i_label]*transpose(delta_v)*delta_v + 2*transpose(delta_v)*cvi.G[:, i_label]
-        G_new = cvi.G[:, i_label] + diff_x_v + cvi.n[i_label].*delta_v
+        CP_new = (
+            cvi.CP[i_label]
+            + transpose(diff_x_v) * diff_x_v
+            + cvi.n[i_label] * transpose(delta_v) * delta_v
+            + 2 * transpose(delta_v) * cvi.G[:, i_label]
+        )
+        G_new = (
+            cvi.G[:, i_label]
+            + diff_x_v
+            + cvi.n[i_label] .* delta_v
+        )
         d_column_new = zeros(cvi.n_clusters)
         for jx = 1:cvi.n_clusters
             # Skip the current i_label index
             if jx == i_label
                 continue
             end
-            d_column_new[jx] = sqrt(sum((v_new - cvi.v[:, jx]).^2))
+            d_column_new[jx] = sqrt(sum((v_new - cvi.v[:, jx]) .^ 2))
         end
         # Update parameters
         cvi.n[i_label] = n_new
@@ -168,23 +183,27 @@ function param_batch!(cvi::GD43, data::RealMatrix, labels::IntegerVector)
         cvi.n[ix] = size(subset, 2)
         cvi.v[1:cvi.dim, ix] = mean(subset, dims=2)
         diff_x_v = subset - cvi.v[:, ix] * ones(1, cvi.n[ix])
-        cvi.CP[ix] = sum(diff_x_v.^2)
+        cvi.CP[ix] = sum(diff_x_v .^ 2)
     end
     for ix = 1 : (cvi.n_clusters - 1)
         for jx = ix + 1 : cvi.n_clusters
-            cvi.D[jx, ix] = sqrt(sum((cvi.v[:, ix] - cvi.v[:, jx]).^2))
+            cvi.D[jx, ix] = (
+                sqrt(sum((cvi.v[:, ix] - cvi.v[:, jx]) .^ 2))
+            )
         end
     end
     cvi.D = cvi.D + transpose(cvi.D)
 end # param_batch!(cvi::GD43, data::RealMatrix, labels::IntegerVector)
 
 function evaluate!(cvi::GD43)
-    cvi.intra = 2*maximum(cvi.CP ./ cvi.n)
+    cvi.intra = 2 * maximum(cvi.CP ./ cvi.n)
     if cvi.n_clusters > 1
         # Between-group measure of separation/isolation
-        cvi.inter = minimum(cvi.D[triu(ones(Bool, cvi.n_clusters, cvi.n_clusters), 1)])
+        cvi.inter = (
+            minimum(cvi.D[triu(ones(Bool, cvi.n_clusters, cvi.n_clusters), 1)])
+        )
         # GD43 index value
-        cvi.criterion_value = cvi.inter/cvi.intra
+        cvi.criterion_value = cvi.inter / cvi.intra
     else
         cvi.criterion_value = 0.0
     end

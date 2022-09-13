@@ -13,13 +13,13 @@ REFERENCES
 Cluster Validity Indices for Hard Partitions: Extensions  and  Comparative
 Study," ArXiv  e-prints, Feb 2019, arXiv:1902.06711v1 [cs.LG].
 [2] T. Calinski and J. Harabasz, "A dendrite method for cluster analysis,"
-Communications in Statistics, vol. 3, no. 1, pp. 1–27, 1974.
+Communications in Statistics, vol. 3, no. 1, pp. 1-27, 1974.
 [3] M. Moshtaghi, J. C. Bezdek, S. M. Erfani, C. Leckie, and J. Bailey,
 "Online Cluster Validity Indices for Streaming Data," ArXiv e-prints, 2018,
 arXiv:1801.02937v1 [stat.ML]. [Online].
 [4] M. Moshtaghi, J. C. Bezdek, S. M. Erfani, C. Leckie, J. Bailey, "Online
 cluster validity indices for performance monitoring of streaming data clustering,"
-Int. J. Intell. Syst., pp. 1–23, 2018.
+Int. J. Intell. Syst., pp. 1-23, 2018.
 """
 
 const common_string = """
@@ -37,9 +37,9 @@ The stateful information of the Calinski-Harabasz (CH) Cluster Validity Index
 
 # References
 1. L. E. Brito da Silva, N. M. Melton, and D. C. Wunsch II, "Incremental Cluster Validity Indices for Hard Partitions: Extensions  and  Comparative Study," ArXiv  e-prints, Feb 2019, arXiv:1902.06711v1 [cs.LG].
-2. T. Calinski and J. Harabasz, "A dendrite method for cluster analysis," Communications in Statistics, vol. 3, no. 1, pp. 1–27, 1974.
+2. T. Calinski and J. Harabasz, "A dendrite method for cluster analysis," Communications in Statistics, vol. 3, no. 1, pp. 1-27, 1974.
 3. M. Moshtaghi, J. C. Bezdek, S. M. Erfani, C. Leckie, and J. Bailey, "Online Cluster Validity Indices for Streaming Data," ArXiv e-prints, 2018, arXiv:1801.02937v1 [stat.ML]. [Online].
-4. M. Moshtaghi, J. C. Bezdek, S. M. Erfani, C. Leckie, J. Bailey, "Online cluster validity indices for performance monitoring of streaming data clustering," Int. J. Intell. Syst., pp. 1–23, 2018.
+4. M. Moshtaghi, J. C. Bezdek, S. M. Erfani, C. Leckie, J. Bailey, "Online cluster validity indices for performance monitoring of streaming data clustering," Int. J. Intell. Syst., pp. 1-23, 2018.
 """
 mutable struct CH <: CVI
     label_map::LabelMap
@@ -101,7 +101,9 @@ function param_inc!(cvi::CH, sample::RealVector, label::Integer)
         mu_new = sample
         setup!(cvi, sample)
     else
-        mu_new = (1 - 1/n_samples_new) .* cvi.mu + (1/n_samples_new) .* sample
+        mu_new = (
+            (1 - 1/n_samples_new) .* cvi.mu + (1 / n_samples_new) .* sample
+        )
     end
 
     if i_label > cvi.n_clusters
@@ -118,11 +120,22 @@ function param_inc!(cvi::CH, sample::RealVector, label::Integer)
         cvi.G = [cvi.G G_new]
     else
         n_new = cvi.n[i_label] + 1
-        v_new = (1 - 1/n_new) .* cvi.v[:, i_label] + (1/n_new) .* sample
+        v_new = (
+            (1 - 1/n_new) .* cvi.v[:, i_label] + (1 / n_new) .* sample
+        )
         delta_v = cvi.v[:, i_label] - v_new
         diff_x_v = sample .- v_new
-        CP_new = cvi.CP[i_label] + transpose(diff_x_v)*diff_x_v + cvi.n[i_label]*transpose(delta_v)*delta_v + 2*transpose(delta_v)*cvi.G[:, i_label]
-        G_new = cvi.G[:, i_label] + diff_x_v + cvi.n[i_label].*delta_v
+        CP_new = (
+            cvi.CP[i_label]
+            + transpose(diff_x_v) * diff_x_v
+            + cvi.n[i_label] * transpose(delta_v) * delta_v
+            + 2*transpose(delta_v) * cvi.G[:, i_label]
+        )
+        G_new = (
+            cvi.G[:, i_label]
+            + diff_x_v
+            + cvi.n[i_label] .* delta_v
+        )
         # Update parameters
         cvi.n[i_label] = n_new
         cvi.v[:, i_label] = v_new
@@ -131,7 +144,9 @@ function param_inc!(cvi::CH, sample::RealVector, label::Integer)
     end
     cvi.n_samples = n_samples_new
     cvi.mu = mu_new
-    cvi.SEP = [cvi.n[ix] * sum((cvi.v[:, ix] - cvi.mu).^2) for ix=1:cvi.n_clusters]
+    cvi.SEP = (
+        [cvi.n[ix] * sum((cvi.v[:, ix] - cvi.mu) .^ 2) for ix = 1:cvi.n_clusters]
+    )
 end # param_inc!(cvi::CH, sample::RealVector, label::Integer)
 
 function param_batch!(cvi::CH, data::RealMatrix, labels::IntegerVector)
@@ -150,8 +165,8 @@ function param_batch!(cvi::CH, data::RealMatrix, labels::IntegerVector)
         cvi.n[ix] = size(subset, 2)
         cvi.v[1:cvi.dim, ix] = mean(subset, dims=2)
         diff_x_v = subset - cvi.v[:, ix] * ones(1, cvi.n[ix])
-        cvi.CP[ix] = sum(diff_x_v.^2)
-        cvi.SEP[ix] = cvi.n[ix] * sum((cvi.v[:, ix] - cvi.mu).^2);
+        cvi.CP[ix] = sum(diff_x_v .^ 2)
+        cvi.SEP[ix] = cvi.n[ix] * sum((cvi.v[:, ix] - cvi.mu) .^ 2);
     end
 end # param_batch!(cvi::CH, data::RealMatrix, labels::IntegerVector)
 
@@ -162,7 +177,10 @@ function evaluate!(cvi::CH)
         # Between groups sum of scatters
         cvi.BGSS = sum(cvi.SEP)
         # CH index value
-        cvi.criterion_value = (cvi.BGSS / cvi.WGSS) * ((cvi.n_samples - cvi.n_clusters)/(cvi.n_clusters - 1))
+        cvi.criterion_value = (
+            (cvi.BGSS / cvi.WGSS)
+            * ((cvi.n_samples - cvi.n_clusters) / (cvi.n_clusters - 1))
+        )
     else
         cvi.BGSS = 0.0
         cvi.criterion_value = 0.0

@@ -15,15 +15,15 @@ Study," ArXiv  e-prints, Feb 2019, arXiv:1902.06711v1 [cs.LG].
 [2] Q. Zhao, M. Xu, and P. Franti, "Sum-of-Squares Based Cluster Validity
 Index and Significance Analysis," in Adaptive and Natural Computing Algorithms,
 M. Kolehmainen, P. Toivanen, and B. Beliczynski, Eds. Berlin, Heidelberg:
-Springer Berlin Heidelberg, 2009, pp. 313–322.
+Springer Berlin Heidelberg, 2009, pp. 313-322.
 [3] Q. Zhao and P. Franti, "WB-index: A sum-of-squares based index for
-cluster validity," Data Knowledge Engineering, vol. 92, pp. 77–89, 2014.
+cluster validity," Data Knowledge Engineering, vol. 92, pp. 77-89, 2014.
 [4] M. Moshtaghi, J. C. Bezdek, S. M. Erfani, C. Leckie, and J. Bailey,
 "Online Cluster Validity Indices for Streaming Data," ArXiv e-prints, 2018,
 arXiv:1801.02937v1 [stat.ML].
 [5] M. Moshtaghi, J. C. Bezdek, S. M. Erfani, C. Leckie, J. Bailey, "Online
 cluster validity indices for performance monitoring of streaming data clustering,"
-Int. J. Intell. Syst., pp. 1–23, 2018.
+Int. J. Intell. Syst., pp. 1-23, 2018.
 """
 
 """
@@ -33,10 +33,10 @@ The stateful information of the WB-Index (WB) Cluster Validity Index.
 
 # References
 1. L. E. Brito da Silva, N. M. Melton, and D. C. Wunsch II, "Incremental Cluster Validity Indices for Hard Partitions: Extensions  and  Comparative Study," ArXiv  e-prints, Feb 2019, arXiv:1902.06711v1 [cs.LG].
-2. Q. Zhao, M. Xu, and P. Franti, "Sum-of-Squares Based Cluster Validity Index and Significance Analysis," in Adaptive and Natural Computing Algorithms, M. Kolehmainen, P. Toivanen, and B. Beliczynski, Eds. Berlin, Heidelberg: Springer Berlin Heidelberg, 2009, pp. 313–322.
-3. Q. Zhao and P. Franti, "WB-index: A sum-of-squares based index for cluster validity," Data Knowledge Engineering, vol. 92, pp. 77–89, 2014.
+2. Q. Zhao, M. Xu, and P. Franti, "Sum-of-Squares Based Cluster Validity Index and Significance Analysis," in Adaptive and Natural Computing Algorithms, M. Kolehmainen, P. Toivanen, and B. Beliczynski, Eds. Berlin, Heidelberg: Springer Berlin Heidelberg, 2009, pp. 313-322.
+3. Q. Zhao and P. Franti, "WB-index: A sum-of-squares based index for cluster validity," Data Knowledge Engineering, vol. 92, pp. 77-89, 2014.
 4. M. Moshtaghi, J. C. Bezdek, S. M. Erfani, C. Leckie, and J. Bailey, "Online Cluster Validity Indices for Streaming Data," ArXiv e-prints, 2018, arXiv:1801.02937v1 [stat.ML].
-5. M. Moshtaghi, J. C. Bezdek, S. M. Erfani, C. Leckie, J. Bailey, "Online cluster validity indices for performance monitoring of streaming data clustering," Int. J. Intell. Syst., pp. 1–23, 2018.
+5. M. Moshtaghi, J. C. Bezdek, S. M. Erfani, C. Leckie, J. Bailey, "Online cluster validity indices for performance monitoring of streaming data clustering," Int. J. Intell. Syst., pp. 1-23, 2018.
 """
 mutable struct WB <: CVI
     label_map::LabelMap
@@ -98,7 +98,10 @@ function param_inc!(cvi::WB, sample::RealVector, label::Integer)
         mu_new = sample
         setup!(cvi, sample)
     else
-        mu_new = (1 - 1/n_samples_new) .* cvi.mu + (1/n_samples_new) .* sample
+        mu_new = (
+            (1 - 1 / n_samples_new) .* cvi.mu
+            + (1 / n_samples_new) .* sample
+        )
     end
 
     if i_label > cvi.n_clusters
@@ -115,11 +118,23 @@ function param_inc!(cvi::WB, sample::RealVector, label::Integer)
         cvi.G = [cvi.G G_new]
     else
         n_new = cvi.n[i_label] + 1
-        v_new = (1 - 1/n_new) .* cvi.v[:, i_label] + (1/n_new) .* sample
+        v_new = (
+            (1 - 1/n_new) .* cvi.v[:, i_label]
+            + (1/n_new) .* sample
+        )
         delta_v = cvi.v[:, i_label] - v_new
         diff_x_v = sample .- v_new
-        CP_new = cvi.CP[i_label] + transpose(diff_x_v)*diff_x_v + cvi.n[i_label]*transpose(delta_v)*delta_v + 2*transpose(delta_v)*cvi.G[:, i_label]
-        G_new = cvi.G[:, i_label] + diff_x_v + cvi.n[i_label].*delta_v
+        CP_new = (
+            cvi.CP[i_label]
+            + transpose(diff_x_v) * diff_x_v
+            + cvi.n[i_label] * transpose(delta_v) * delta_v
+            + 2*transpose(delta_v) * cvi.G[:, i_label]
+        )
+        G_new = (
+            cvi.G[:, i_label]
+            + diff_x_v
+            + cvi.n[i_label] .* delta_v
+        )
         # Update parameters
         cvi.n[i_label] = n_new
         cvi.v[:, i_label] = v_new
@@ -128,7 +143,9 @@ function param_inc!(cvi::WB, sample::RealVector, label::Integer)
     end
     cvi.n_samples = n_samples_new
     cvi.mu = mu_new
-    cvi.SEP = [cvi.n[ix] * sum((cvi.v[:, ix] - cvi.mu).^2) for ix=1:cvi.n_clusters]
+    cvi.SEP = (
+        [cvi.n[ix] * sum((cvi.v[:, ix] - cvi.mu) .^ 2) for ix = 1:cvi.n_clusters]
+    )
 end # param_inc!(cvi::WB, sample::RealVector, label::Integer)
 
 function param_batch!(cvi::WB, data::RealMatrix, labels::IntegerVector)
@@ -147,8 +164,8 @@ function param_batch!(cvi::WB, data::RealMatrix, labels::IntegerVector)
         cvi.n[ix] = size(subset, 2)
         cvi.v[1:cvi.dim, ix] = mean(subset, dims=2)
         diff_x_v = subset - cvi.v[:, ix] * ones(1, cvi.n[ix])
-        cvi.CP[ix] = sum(diff_x_v.^2)
-        cvi.SEP[ix] = cvi.n[ix] * sum((cvi.v[:, ix] - cvi.mu).^2);
+        cvi.CP[ix] = sum(diff_x_v .^ 2)
+        cvi.SEP[ix] = cvi.n[ix] * sum((cvi.v[:, ix] - cvi.mu) .^ 2);
     end
 end # param_batch!(cvi::WB, data::RealMatrix, labels::IntegerVector)
 

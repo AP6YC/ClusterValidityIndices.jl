@@ -47,7 +47,7 @@ end
     local_labels = local_labels[indices]
 
     # Incrementally compute the ICVI
-    for ix = 1:length(local_labels)
+    for ix in eachindex(local_labels)
         sample = local_data[:, ix]
         label = local_labels[ix]
         _ = get_icvi!(cvi, sample, label)
