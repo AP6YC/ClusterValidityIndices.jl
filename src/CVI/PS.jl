@@ -89,7 +89,7 @@ function param_inc!(cvi::PS, sample::RealVector, label::Integer)
             D_new[1:cvi.n_clusters, 1:cvi.n_clusters] = cvi.D
             d_column_new = zeros(cvi.n_clusters + 1)
             for jx = 1:cvi.n_clusters
-                d_column_new[jx] = sum((v_new - cvi.v[:, jx]).^2)
+                d_column_new[jx] = sum((v_new - cvi.v[:, jx]) .^ 2)
             end
             D_new[:, i_label] = d_column_new
             D_new[i_label, :] = transpose(d_column_new)
@@ -103,15 +103,15 @@ function param_inc!(cvi::PS, sample::RealVector, label::Integer)
     else
         n_new = cvi.n[i_label] + 1
         v_new = (
-            (1 - 1/n_new) .* cvi.v[:, i_label]
-            + (1/n_new) .* sample
+            (1 - 1 / n_new) .* cvi.v[:, i_label]
+            + (1 / n_new) .* sample
         )
         d_column_new = zeros(cvi.n_clusters)
         for jx = 1:cvi.n_clusters
             if jx == i_label
                 continue
             end
-            d_column_new[jx] = sum((v_new - cvi.v[:, jx]).^2)
+            d_column_new[jx] = sum((v_new - cvi.v[:, jx]) .^ 2)
         end
         # Update parameters
         cvi.n[i_label] = n_new
@@ -137,7 +137,7 @@ function param_batch!(cvi::PS, data::RealMatrix, labels::IntegerVector)
     end
     for ix = 1 : (cvi.n_clusters - 1)
         for jx = ix + 1 : cvi.n_clusters
-            cvi.D[jx, ix] = sum((cvi.v[:, ix] - cvi.v[:, jx]).^2)
+            cvi.D[jx, ix] = sum((cvi.v[:, ix] - cvi.v[:, jx]) .^ 2)
         end
     end
     cvi.D = cvi.D + transpose(cvi.D)

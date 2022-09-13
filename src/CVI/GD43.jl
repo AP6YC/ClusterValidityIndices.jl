@@ -98,8 +98,8 @@ function param_inc!(cvi::GD43, sample::RealVector, label::Integer)
         setup!(cvi, sample)
     else
         mu_data_new = (
-            (1 - 1/n_samples_new) .* cvi.mu_data
-            + (1/n_samples_new) .* sample
+            (1 - 1 / n_samples_new) .* cvi.mu_data
+            + (1 / n_samples_new) .* sample
         )
     end
 
@@ -115,7 +115,7 @@ function param_inc!(cvi::GD43, sample::RealVector, label::Integer)
             D_new[1:cvi.n_clusters, 1:cvi.n_clusters] = cvi.D
             d_column_new = zeros(cvi.n_clusters + 1)
             for jx = 1:cvi.n_clusters
-                d_column_new[jx] = sqrt(sum((v_new - cvi.v[:, jx]).^2))
+                d_column_new[jx] = sqrt(sum((v_new - cvi.v[:, jx]) .^ 2))
             end
             D_new[:, i_label] = d_column_new
             D_new[i_label, :] = transpose(d_column_new)
@@ -131,25 +131,29 @@ function param_inc!(cvi::GD43, sample::RealVector, label::Integer)
     else
         n_new = cvi.n[i_label] + 1
         v_new = (
-            (1 - 1/n_new) .* cvi.v[:, i_label]
-            + (1/n_new) .* sample
+            (1 - 1 / n_new) .* cvi.v[:, i_label]
+            + (1 / n_new) .* sample
         )
         delta_v = cvi.v[:, i_label] - v_new
         diff_x_v = sample .- v_new
         CP_new = (
             cvi.CP[i_label]
-            + transpose(diff_x_v)*diff_x_v
-            + cvi.n[i_label]*transpose(delta_v)*delta_v
-            + 2*transpose(delta_v)*cvi.G[:, i_label]
+            + transpose(diff_x_v) * diff_x_v
+            + cvi.n[i_label] * transpose(delta_v) * delta_v
+            + 2 * transpose(delta_v) * cvi.G[:, i_label]
         )
-        G_new = cvi.G[:, i_label] + diff_x_v + cvi.n[i_label].*delta_v
+        G_new = (
+            cvi.G[:, i_label]
+            + diff_x_v
+            + cvi.n[i_label] .* delta_v
+        )
         d_column_new = zeros(cvi.n_clusters)
         for jx = 1:cvi.n_clusters
             # Skip the current i_label index
             if jx == i_label
                 continue
             end
-            d_column_new[jx] = sqrt(sum((v_new - cvi.v[:, jx]).^2))
+            d_column_new[jx] = sqrt(sum((v_new - cvi.v[:, jx]) .^ 2))
         end
         # Update parameters
         cvi.n[i_label] = n_new
@@ -179,12 +183,12 @@ function param_batch!(cvi::GD43, data::RealMatrix, labels::IntegerVector)
         cvi.n[ix] = size(subset, 2)
         cvi.v[1:cvi.dim, ix] = mean(subset, dims=2)
         diff_x_v = subset - cvi.v[:, ix] * ones(1, cvi.n[ix])
-        cvi.CP[ix] = sum(diff_x_v.^2)
+        cvi.CP[ix] = sum(diff_x_v .^ 2)
     end
     for ix = 1 : (cvi.n_clusters - 1)
         for jx = ix + 1 : cvi.n_clusters
             cvi.D[jx, ix] = (
-                sqrt(sum((cvi.v[:, ix] - cvi.v[:, jx]).^2))
+                sqrt(sum((cvi.v[:, ix] - cvi.v[:, jx]) .^ 2))
             )
         end
     end
@@ -199,7 +203,7 @@ function evaluate!(cvi::GD43)
             minimum(cvi.D[triu(ones(Bool, cvi.n_clusters, cvi.n_clusters), 1)])
         )
         # GD43 index value
-        cvi.criterion_value = cvi.inter/cvi.intra
+        cvi.criterion_value = cvi.inter / cvi.intra
     else
         cvi.criterion_value = 0.0
     end

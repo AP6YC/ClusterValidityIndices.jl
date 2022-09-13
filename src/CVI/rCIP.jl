@@ -87,7 +87,7 @@ function setup!(cvi::rCIP, sample::Vector{T}) where {T<:RealFP}
     # Calculate the delta term
     epsilon = 12
     delta = 10 ^ (-epsilon / cvi.dim)
-    cvi.delta_term = Matrix{Float}(LinearAlgebra.I, cvi.dim, cvi.dim).*delta
+    cvi.delta_term = Matrix{Float}(LinearAlgebra.I, cvi.dim, cvi.dim) .* delta
 end # setup!(cvi::rCIP, sample::Vector{T}) where {T<:RealFP}
 
 function param_inc!(cvi::rCIP, sample::RealVector, label::Integer)
@@ -132,11 +132,15 @@ function param_inc!(cvi::rCIP, sample::RealVector, label::Integer)
         cvi.sigma = cat(cvi.sigma, sigma_new, dims=3)
     else
         n_new = cvi.n[i_label] + 1
-        v_new = (1 - 1/n_new) .* cvi.v[:, i_label] + (1/n_new) .* sample
+        v_new = (
+            (1 - 1/n_new) .* cvi.v[:, i_label]
+            + (1 / n_new) .* sample
+        )
         diff_x_v = sample - cvi.v[:, i_label]
         # if n_new > 1
         sigma_new = (
-            ((n_new - 2)/(n_new - 1)) * (cvi.sigma[:, :, i_label] - cvi.delta_term)
+            ((n_new - 2)/(n_new - 1))
+            * (cvi.sigma[:, :, i_label] - cvi.delta_term)
             + (1 / n_new) * (diff_x_v * transpose(diff_x_v))
             + cvi.delta_term
         )
@@ -168,7 +172,7 @@ function param_batch!(cvi::rCIP, data::RealMatrix, labels::IntegerVector)
     cvi.constant = 1 / sqrt((2 * pi) ^ cvi.dim)
     # Calculate the delta term
     epsilon = 12
-    delta = 10^(-epsilon / cvi.dim)
+    delta = 10 ^ (-epsilon / cvi.dim)
     cvi.delta_term = Matrix{Float64}(LinearAlgebra.I, cvi.dim, cvi.dim) .* delta
 
     # Take the average across all samples, but cast to 1-D vector
@@ -184,13 +188,13 @@ function param_batch!(cvi::rCIP, data::RealMatrix, labels::IntegerVector)
         cvi.n[ix] = size(subset, 2)
         cvi.v[1:cvi.dim, ix] = mean(subset, dims=2)
         if cvi.n[ix] > 1
-            cvi.sigma[:,:,ix] = (
-                (1/(cvi.n[ix] - 1)) * ((subset * transpose(subset))
+            cvi.sigma[:, :, ix] = (
+                (1 / (cvi.n[ix] - 1)) * ((subset * transpose(subset))
                 - cvi.n[ix] .* cvi.v[:,ix] * transpose(cvi.v[:,ix]))
                 + cvi.delta_term
             )
         else
-            cvi.sigma[:,:,ix] = cvi.delta_term
+            cvi.sigma[:, :, ix] = cvi.delta_term
         end
     end
     for ix = 1 : (cvi.n_clusters - 1)
@@ -212,7 +216,7 @@ function evaluate!(cvi::rCIP)
     # Assume a symmetric dimension
     dim = size(cvi.D)[1]
     if dim > 1
-        values = [cvi.D[i,j] for i = 1:dim, j=1:dim if j > i]
+        values = [cvi.D[i,j] for i = 1:dim, j = 1:dim if j > i]
         cvi.criterion_value = sum(values)
     else
         cvi.criterion_value = 0.0

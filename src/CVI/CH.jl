@@ -101,7 +101,9 @@ function param_inc!(cvi::CH, sample::RealVector, label::Integer)
         mu_new = sample
         setup!(cvi, sample)
     else
-        mu_new = (1 - 1/n_samples_new) .* cvi.mu + (1/n_samples_new) .* sample
+        mu_new = (
+            (1 - 1/n_samples_new) .* cvi.mu + (1 / n_samples_new) .* sample
+        )
     end
 
     if i_label > cvi.n_clusters
@@ -118,16 +120,22 @@ function param_inc!(cvi::CH, sample::RealVector, label::Integer)
         cvi.G = [cvi.G G_new]
     else
         n_new = cvi.n[i_label] + 1
-        v_new = (1 - 1/n_new) .* cvi.v[:, i_label] + (1/n_new) .* sample
+        v_new = (
+            (1 - 1/n_new) .* cvi.v[:, i_label] + (1 / n_new) .* sample
+        )
         delta_v = cvi.v[:, i_label] - v_new
         diff_x_v = sample .- v_new
         CP_new = (
             cvi.CP[i_label]
-            + transpose(diff_x_v)*diff_x_v
-            + cvi.n[i_label]*transpose(delta_v)*delta_v
-            + 2*transpose(delta_v)*cvi.G[:, i_label]
+            + transpose(diff_x_v) * diff_x_v
+            + cvi.n[i_label] * transpose(delta_v) * delta_v
+            + 2*transpose(delta_v) * cvi.G[:, i_label]
         )
-        G_new = cvi.G[:, i_label] + diff_x_v + cvi.n[i_label].*delta_v
+        G_new = (
+            cvi.G[:, i_label]
+            + diff_x_v
+            + cvi.n[i_label] .* delta_v
+        )
         # Update parameters
         cvi.n[i_label] = n_new
         cvi.v[:, i_label] = v_new
@@ -136,7 +144,9 @@ function param_inc!(cvi::CH, sample::RealVector, label::Integer)
     end
     cvi.n_samples = n_samples_new
     cvi.mu = mu_new
-    cvi.SEP = [cvi.n[ix] * sum((cvi.v[:, ix] - cvi.mu).^2) for ix=1:cvi.n_clusters]
+    cvi.SEP = (
+        [cvi.n[ix] * sum((cvi.v[:, ix] - cvi.mu) .^ 2) for ix = 1:cvi.n_clusters]
+    )
 end # param_inc!(cvi::CH, sample::RealVector, label::Integer)
 
 function param_batch!(cvi::CH, data::RealMatrix, labels::IntegerVector)
@@ -155,8 +165,8 @@ function param_batch!(cvi::CH, data::RealMatrix, labels::IntegerVector)
         cvi.n[ix] = size(subset, 2)
         cvi.v[1:cvi.dim, ix] = mean(subset, dims=2)
         diff_x_v = subset - cvi.v[:, ix] * ones(1, cvi.n[ix])
-        cvi.CP[ix] = sum(diff_x_v.^2)
-        cvi.SEP[ix] = cvi.n[ix] * sum((cvi.v[:, ix] - cvi.mu).^2);
+        cvi.CP[ix] = sum(diff_x_v .^ 2)
+        cvi.SEP[ix] = cvi.n[ix] * sum((cvi.v[:, ix] - cvi.mu) .^ 2);
     end
 end # param_batch!(cvi::CH, data::RealMatrix, labels::IntegerVector)
 
@@ -169,7 +179,7 @@ function evaluate!(cvi::CH)
         # CH index value
         cvi.criterion_value = (
             (cvi.BGSS / cvi.WGSS)
-            * ((cvi.n_samples - cvi.n_clusters)/(cvi.n_clusters - 1))
+            * ((cvi.n_samples - cvi.n_clusters) / (cvi.n_clusters - 1))
         )
     else
         cvi.BGSS = 0.0
