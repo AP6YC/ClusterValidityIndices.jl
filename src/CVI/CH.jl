@@ -121,7 +121,12 @@ function param_inc!(cvi::CH, sample::RealVector, label::Integer)
         v_new = (1 - 1/n_new) .* cvi.v[:, i_label] + (1/n_new) .* sample
         delta_v = cvi.v[:, i_label] - v_new
         diff_x_v = sample .- v_new
-        CP_new = cvi.CP[i_label] + transpose(diff_x_v)*diff_x_v + cvi.n[i_label]*transpose(delta_v)*delta_v + 2*transpose(delta_v)*cvi.G[:, i_label]
+        CP_new = (
+            cvi.CP[i_label]
+            + transpose(diff_x_v)*diff_x_v
+            + cvi.n[i_label]*transpose(delta_v)*delta_v
+            + 2*transpose(delta_v)*cvi.G[:, i_label]
+        )
         G_new = cvi.G[:, i_label] + diff_x_v + cvi.n[i_label].*delta_v
         # Update parameters
         cvi.n[i_label] = n_new
@@ -162,7 +167,10 @@ function evaluate!(cvi::CH)
         # Between groups sum of scatters
         cvi.BGSS = sum(cvi.SEP)
         # CH index value
-        cvi.criterion_value = (cvi.BGSS / cvi.WGSS) * ((cvi.n_samples - cvi.n_clusters)/(cvi.n_clusters - 1))
+        cvi.criterion_value = (
+            (cvi.BGSS / cvi.WGSS)
+            * ((cvi.n_samples - cvi.n_clusters)/(cvi.n_clusters - 1))
+        )
     else
         cvi.BGSS = 0.0
         cvi.criterion_value = 0.0

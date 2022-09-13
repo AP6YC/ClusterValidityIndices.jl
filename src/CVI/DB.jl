@@ -90,7 +90,10 @@ function param_inc!(cvi::DB, sample::RealVector, label::Integer)
         mu_data_new = sample
         setup!(cvi, sample)
     else
-        mu_data_new = (1 - 1/n_samples_new) .* cvi.mu_data + (1/n_samples_new) .* sample
+        mu_data_new = (
+            (1 - 1/n_samples_new) .* cvi.mu_data
+            + (1/n_samples_new) .* sample
+        )
     end
 
     if i_label > cvi.n_clusters
@@ -125,7 +128,12 @@ function param_inc!(cvi::DB, sample::RealVector, label::Integer)
         v_new = (1 - 1/n_new) .* cvi.v[:, i_label] + (1/n_new) .* sample
         delta_v = cvi.v[:, i_label] - v_new
         diff_x_v = sample .- v_new
-        CP_new = cvi.CP[i_label] + transpose(diff_x_v)*diff_x_v + cvi.n[i_label]*transpose(delta_v)*delta_v + 2*transpose(delta_v)*cvi.G[:, i_label]
+        CP_new = (
+            cvi.CP[i_label]
+            + transpose(diff_x_v)*diff_x_v
+            + cvi.n[i_label]*transpose(delta_v)*delta_v
+            + 2*transpose(delta_v)*cvi.G[:, i_label]
+        )
         G_new = cvi.G[:, i_label] + diff_x_v + cvi.n[i_label].*delta_v
         S_new = CP_new / n_new
         d_column_new = zeros(cvi.n_clusters)
