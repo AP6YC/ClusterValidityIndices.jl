@@ -171,8 +171,8 @@ end # param_batch!(cvi::WB, data::RealMatrix, labels::IntegerVector)
 
 function evaluate!(cvi::WB)
     # Within group sum of scatters
-    cvi.WGSS = sum(cvi.CP)
     if cvi.n_clusters > 1
+        cvi.WGSS = sum(cvi.CP)
         # Between groups sum of scatters
         cvi.BGSS = sum(cvi.SEP)
         # WB index value

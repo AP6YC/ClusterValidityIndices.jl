@@ -182,8 +182,8 @@ function param_batch!(cvi::XB, data::RealMatrix, labels::IntegerVector)
 end # param_batch!(cvi::XB, data::RealMatrix, labels::IntegerVector)
 
 function evaluate!(cvi::XB)
-    cvi.WGSS = sum(cvi.CP)
     if cvi.n_clusters > 1
+        cvi.WGSS = sum(cvi.CP)
         # Assume a symmetric dimension
         dim = size(cvi.D)[1]
         # Get the values from D as the upper triangular offset from the diagonal
