@@ -1,6 +1,7 @@
 using ClusterValidityIndices
 using Test
 using Logging
+using Printf
 
 # Set the log level
 LogLevel(Logging.Info)
