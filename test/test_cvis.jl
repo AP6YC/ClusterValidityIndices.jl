@@ -25,8 +25,8 @@
     data, labels, n_samples = Dict(), Dict(), Dict()
 
     # Sanitize all the data
-    p = 0.1
-    # p = 1
+    # p = 0.1
+    p = 1
     @info "p is a $(typeof(p))"
 
     @info "Subsampling data at rate: $p"
@@ -90,7 +90,7 @@
                 _ = get_icvi!(cvi, sample, label)
                 # cvs_ip[data_path][ix, cx] = cv
             end
-            @info "CVI: $(typeof(cvi)), index: $(cvi.criterion_value)"
+            @info "CVI: $(typeof(cvi)), index: $(@sprintf("%.5f", cvi.criterion_value))"
         end
     end
 

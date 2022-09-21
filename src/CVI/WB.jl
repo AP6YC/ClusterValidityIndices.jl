@@ -128,7 +128,7 @@ function param_inc!(cvi::WB, sample::RealVector, label::Integer)
             cvi.CP[i_label]
             + transpose(diff_x_v) * diff_x_v
             + cvi.n[i_label] * transpose(delta_v) * delta_v
-            + 2*transpose(delta_v) * cvi.G[:, i_label]
+            + 2 * transpose(delta_v) * cvi.G[:, i_label]
         )
         G_new = (
             cvi.G[:, i_label]
