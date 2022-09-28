@@ -6,15 +6,15 @@
 
     # Construct the cvis
     cvis = [
-        WB(),
+        CH(),
+        cSIL(),
+        DB(),
         GD43(),
         GD53(),
-        cSIL(),
-        CH(),
-        XB(),
-        DB(),
         PS(),
         rCIP(),
+        WB(),
+        XB(),
     ]
     n_cvis = length(cvis)
 
