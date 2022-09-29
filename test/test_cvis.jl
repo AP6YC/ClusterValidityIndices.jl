@@ -90,7 +90,8 @@
                 _ = get_icvi!(cvi, sample, label)
                 # cvs_ip[data_path][ix, cx] = cv
             end
-            @info "CVI: $(typeof(cvi)), index: $(@sprintf("%.5f", cvi.criterion_value))"
+            # @info "CVI: $(typeof(cvi)), index: $(@sprintf("%.5f", cvi.criterion_value))"
+            @info "CVI: $(typeof(cvi)), index: $(@sprintf("%.12f", cvi.criterion_value))"
         end
     end
 
