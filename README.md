@@ -155,8 +155,10 @@ criterion_value = get_cvi(data, labels)
 
 ### Examples
 
-There are a variety of examples in the [Examples](https://ap6yc.github.io/ClusterValidityIndices.jl/dev/man/examples/) section of the documentation.
-Each is made using the [`DemoCards.jl`](https://github.com/johnnychen94/DemoCards.jl) package and can be opened, saved, and run as a Julia notebook.
+A [basic example](https://ap6yc.github.io/ClusterValidityIndices.jl/dev/getting-started/basic-example/) of the package usage is found in the documentation illustrating top-down usage of the package.
+
+Futhermore, there are a variety of examples in the [Examples](https://ap6yc.github.io/ClusterValidityIndices.jl/dev/examples/) section of the documentation for a variety of use cases of the project.
+Each of these is made using the [`DemoCards.jl`](https://github.com/johnnychen94/DemoCards.jl) package and can be opened, saved, and run as a Julia notebook.
 
 ## Implemented CVI/ICVIs
 
