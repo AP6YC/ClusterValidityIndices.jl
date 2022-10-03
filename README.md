@@ -415,9 +415,7 @@ ClusterValidityIndices.jl
 ├── .github/workflows       // GitHub: workflows for testing and documentation.
 ├── data                    // Data: CI and example data location.
 ├── docs                    // Docs: GitHub pages documentation files.
-├── examples                // Source: example scripts for CVI usage.
 ├── paper                   // Docs: JOSS paper and bib files.
-├── results                 // Data: destination for example-generated files.
 ├── src                     // Source: scripts and common helper functions.
 │   └─── CVI                //      All CVI and ICVI definitions
 ├── test                    // Test: unit, integration, and environment tests.
