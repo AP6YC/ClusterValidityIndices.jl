@@ -58,7 +58,6 @@ Please read the [documentation](https://ap6yc.github.io/ClusterValidityIndices.j
   - [Quickstart](#quickstart)
     - [Examples](#examples)
   - [Implemented CVI/ICVIs](#implemented-cviicvis)
-  - [Structure](#structure)
   - [Usage](#usage)
     - [Data](#data)
     - [Instantiation](#instantiation)
@@ -66,6 +65,7 @@ Please read the [documentation](https://ap6yc.github.io/ClusterValidityIndices.j
     - [Updating](#updating)
     - [Criterion Values](#criterion-values)
     - [Porcelain](#porcelain)
+  - [Structure](#structure)
   - [Acknowledgements](#acknowledgements)
     - [Authors](#authors)
   - [License](#license)
@@ -197,8 +197,10 @@ data = load_data()
 dim, n_samples = size(data)
 ```
 
-**NOTE**: As of ClusterValidityIndices.jl v0.1.3, all the CVIs assume that the labels are presented sequentially initially, starting with index 1 (e.g., 1, 1, 2, 2, 3, 2, 2, 1, 3, 4, 4 ...).
-You may repeat previously seen label indices, but skipping label indices (e.g., 1, 2, 4) results in undefined behavior.
+> **Note**
+>
+> As of ClusterValidityIndices.jl v0.1.3, all the CVIs assume that the labels are presented sequentially initially, starting with index 1 (e.g., 1, 1, 2, 2, 3, 2, 2, 1, 3, 4, 4 ...).
+> You may repeat previously seen label indices, but skipping label indices (e.g., 1, 2, 4) results in undefined behavior.
 In this project, this is ameliorated with the function
 
 ```julia
@@ -219,7 +221,9 @@ Alternatively, you may pairwise sort the entirety of the data with
 sort_cvi_data(data::RealMatrix, labels::IntegerVector)
 ```
 
-**NOTE** `sort_cvi_data` reorders the input data as well, which will lead to different ICVI results than with `relabel_cvi_data`.
+> **Note**
+>
+> `sort_cvi_data` reorders the input data as well, which will lead to different ICVI results than with `relabel_cvi_data`.
 
 ### Instantiation
 
@@ -260,7 +264,9 @@ get_icvi!(cvi::CVI, sample::RealVector, label::Integer)
 get_cvi!(cvi::CVI, data::RealMatrix, labels::IntegerVector)
 ```
 
-**NOTE**: Any CVI object can be updated incrementally or in batch, as the CVIs are equivalent to their ICVI counterparts after all data is presented.
+> **Note**
+>
+> Any CVI object can be updated incrementally or in batch, as the CVIs are equivalent to their ICVI counterparts after all data is presented.
 
 ### Updating
 
