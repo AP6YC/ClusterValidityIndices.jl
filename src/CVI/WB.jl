@@ -128,7 +128,7 @@ function param_inc!(cvi::WB, sample::RealVector, label::Integer)
             cvi.CP[i_label]
             + transpose(diff_x_v) * diff_x_v
             + cvi.n[i_label] * transpose(delta_v) * delta_v
-            + 2*transpose(delta_v) * cvi.G[:, i_label]
+            + 2 * transpose(delta_v) * cvi.G[:, i_label]
         )
         G_new = (
             cvi.G[:, i_label]
@@ -171,8 +171,8 @@ end # param_batch!(cvi::WB, data::RealMatrix, labels::IntegerVector)
 
 function evaluate!(cvi::WB)
     # Within group sum of scatters
-    cvi.WGSS = sum(cvi.CP)
     if cvi.n_clusters > 1
+        cvi.WGSS = sum(cvi.CP)
         # Between groups sum of scatters
         cvi.BGSS = sum(cvi.SEP)
         # WB index value

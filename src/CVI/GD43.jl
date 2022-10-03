@@ -196,11 +196,12 @@ function param_batch!(cvi::GD43, data::RealMatrix, labels::IntegerVector)
 end # param_batch!(cvi::GD43, data::RealMatrix, labels::IntegerVector)
 
 function evaluate!(cvi::GD43)
-    cvi.intra = 2 * maximum(cvi.CP ./ cvi.n)
     if cvi.n_clusters > 1
+        cvi.intra = 2 * maximum(cvi.CP ./ cvi.n)
         # Between-group measure of separation/isolation
         cvi.inter = (
             minimum(cvi.D[triu(ones(Bool, cvi.n_clusters, cvi.n_clusters), 1)])
+            # minimum(triu(cvi.D, 1))
         )
         # GD43 index value
         cvi.criterion_value = cvi.inter / cvi.intra

@@ -46,7 +46,7 @@ mutable struct rCIP <: CVI
     n_samples::Integer
     n::IntegerVector            # dim
     v::RealMatrix               # dim x n_clusters
-    sigma::Array{Float, 3}     # dim x dim x n_clusters
+    sigma::Array{Float, 3}      # dim x dim x n_clusters
     constant::Float
     D::RealMatrix               # n_clusters x n_clusters
     delta_term::RealMatrix      # dim x dim
@@ -88,6 +88,7 @@ function setup!(cvi::rCIP, sample::Vector{T}) where {T<:RealFP}
     epsilon = 12
     delta = 10 ^ (-epsilon / cvi.dim)
     cvi.delta_term = Matrix{Float}(LinearAlgebra.I, cvi.dim, cvi.dim) .* delta
+    cvi.constant = 1 / sqrt((2 * pi) ^ cvi.dim)
 end # setup!(cvi::rCIP, sample::Vector{T}) where {T<:RealFP}
 
 function param_inc!(cvi::rCIP, sample::RealVector, label::Integer)
@@ -98,7 +99,6 @@ function param_inc!(cvi::rCIP, sample::RealVector, label::Integer)
     if isempty(cvi.v)
         setup!(cvi, sample)
     end
-    cvi.constant = 1 / sqrt((2 * pi) ^ cvi.dim)
 
     if i_label > cvi.n_clusters
         n_new = 1
@@ -139,7 +139,7 @@ function param_inc!(cvi::rCIP, sample::RealVector, label::Integer)
         diff_x_v = sample - cvi.v[:, i_label]
         # if n_new > 1
         sigma_new = (
-            ((n_new - 2)/(n_new - 1))
+            ((n_new - 2) / (n_new - 1))
             * (cvi.sigma[:, :, i_label] - cvi.delta_term)
             + (1 / n_new) * (diff_x_v * transpose(diff_x_v))
             + cvi.delta_term
@@ -189,9 +189,10 @@ function param_batch!(cvi::rCIP, data::RealMatrix, labels::IntegerVector)
         cvi.v[1:cvi.dim, ix] = mean(subset, dims=2)
         if cvi.n[ix] > 1
             cvi.sigma[:, :, ix] = (
-                (1 / (cvi.n[ix] - 1)) * ((subset * transpose(subset))
-                - cvi.n[ix] .* cvi.v[:,ix] * transpose(cvi.v[:,ix]))
-                + cvi.delta_term
+                (1 / (cvi.n[ix] - 1)) * (
+                    (subset * transpose(subset))
+                    - cvi.n[ix] .* cvi.v[:, ix] * transpose(cvi.v[:, ix])
+                ) + cvi.delta_term
             )
         else
             cvi.sigma[:, :, ix] = cvi.delta_term
@@ -204,8 +205,7 @@ function param_batch!(cvi::rCIP, data::RealMatrix, labels::IntegerVector)
             cvi.D[jx, ix] = (
                 cvi.constant
                 * (1 / sqrt(det(sigma_q)))
-                * exp(-0.5 * transpose(diff_m)
-                * inv(sigma_q) * diff_m)
+                * exp(-0.5 * transpose(diff_m) * inv(sigma_q) * diff_m)
             )
         end
     end

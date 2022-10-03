@@ -1,6 +1,9 @@
 using Documenter
-using ClusterValidityIndices
 using DemoCards
+
+# Inlude the local package
+push!(LOAD_PATH,"../src/")
+using ClusterValidityIndices
 
 # Generate the demo files
 # this is the relative path to docs/

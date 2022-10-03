@@ -135,6 +135,11 @@ function param_inc!(cvi::XB, sample::RealVector, label::Integer)
             + cvi.n[i_label] * transpose(delta_v) * delta_v
             + 2 * transpose(delta_v) * cvi.G[:, i_label]
         )
+        G_new = (
+            cvi.G[:, i_label]
+            + diff_x_v
+            + cvi.n[i_label] .* delta_v
+        )
         d_column_new = zeros(cvi.n_clusters)
         for jx = 1:cvi.n_clusters
             if jx == i_label
@@ -146,6 +151,7 @@ function param_inc!(cvi::XB, sample::RealVector, label::Integer)
         cvi.n[i_label] = n_new
         cvi.v[:, i_label] = v_new
         cvi.CP[i_label] = CP_new
+        cvi.G[:, i_label] = G_new
         cvi.D[:, i_label] = d_column_new
         cvi.D[i_label, :] = transpose(d_column_new)
     end
@@ -182,8 +188,8 @@ function param_batch!(cvi::XB, data::RealMatrix, labels::IntegerVector)
 end # param_batch!(cvi::XB, data::RealMatrix, labels::IntegerVector)
 
 function evaluate!(cvi::XB)
-    cvi.WGSS = sum(cvi.CP)
     if cvi.n_clusters > 1
+        cvi.WGSS = sum(cvi.CP)
         # Assume a symmetric dimension
         dim = size(cvi.D)[1]
         # Get the values from D as the upper triangular offset from the diagonal

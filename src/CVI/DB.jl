@@ -75,6 +75,7 @@ end # DB()
 function setup!(cvi::DB, sample::Vector{T}) where {T<:RealFP}
     # Get the feature dimension
     cvi.dim = length(sample)
+    cvi.mu_data = sample
     # Initialize the augmenting 2-D arrays with the correct feature dimension
     # NOTE: R is emptied and calculated in evaluate!, so it is not defined here
     cvi.v = Array{T, 2}(undef, cvi.dim, 0)
@@ -87,10 +88,9 @@ function param_inc!(cvi::DB, sample::RealVector, label::Integer)
 
     n_samples_new = cvi.n_samples + 1
     if isempty(cvi.mu_data)
-        mu_data_new = sample
         setup!(cvi, sample)
     else
-        mu_data_new = (
+        cvi.mu_data = (
             (1 - 1 / n_samples_new) .* cvi.mu_data
             + (1 / n_samples_new) .* sample
         )
@@ -137,7 +137,11 @@ function param_inc!(cvi::DB, sample::RealVector, label::Integer)
             + cvi.n[i_label] * transpose(delta_v) * delta_v
             + 2 * transpose(delta_v) * cvi.G[:, i_label]
         )
-        G_new = cvi.G[:, i_label] + diff_x_v + cvi.n[i_label] .* delta_v
+        G_new = (
+            cvi.G[:, i_label]
+            + diff_x_v
+            + cvi.n[i_label] .* delta_v
+        )
         S_new = CP_new / n_new
         d_column_new = zeros(cvi.n_clusters)
         for jx = 1:cvi.n_clusters
@@ -157,7 +161,6 @@ function param_inc!(cvi::DB, sample::RealVector, label::Integer)
         cvi.D[i_label, :] = transpose(d_column_new)
     end
     cvi.n_samples = n_samples_new
-    cvi.mu_data = mu_data_new
 end # param_inc!(cvi::DB, sample::RealVector, label::Integer)
 
 function param_batch!(cvi::DB, data::RealMatrix, labels::IntegerVector)
@@ -175,7 +178,8 @@ function param_batch!(cvi::DB, data::RealMatrix, labels::IntegerVector)
     for ix = 1:cvi.n_clusters
         subset = data[:, findall(x->x==u[ix], labels)]
         cvi.n[ix] = size(subset, 2)
-        cvi.v[1:cvi.dim, ix] = mean(subset, dims=2)
+        # cvi.v[1:cvi.dim, ix] = mean(subset, dims=2)
+        cvi.v[:, ix] = mean(subset, dims=2)
         diff_x_v = subset - cvi.v[:, ix] * ones(1, cvi.n[ix])
         cvi.CP[ix] = sum(diff_x_v .^ 2)
         cvi.S[ix] = cvi.CP[ix] / cvi.n[ix]
@@ -189,12 +193,16 @@ function param_batch!(cvi::DB, data::RealMatrix, labels::IntegerVector)
 end # function param_batch!(cvi::DB, data::RealMatrix, labels::IntegerVector)
 
 function evaluate!(cvi::DB)
-    cvi.R = zeros(cvi.n_clusters, cvi.n_clusters)
-    for ix = 1:(cvi.n_clusters - 1)
-        for jx = ix + 1 : cvi.n_clusters
-            cvi.R[ix, jx] = (cvi.S[ix] + cvi.S[jx]) / cvi.D[ix, jx]
+    if cvi.n_clusters > 1
+        cvi.R = zeros(cvi.n_clusters, cvi.n_clusters)
+        for ix = 1:(cvi.n_clusters - 1)
+            for jx = ix + 1 : cvi.n_clusters
+                cvi.R[ix, jx] = (cvi.S[ix] + cvi.S[jx]) / cvi.D[ix, jx]
+            end
         end
+        cvi.R = cvi.R + transpose(cvi.R)
+        cvi.criterion_value = sum(maximum(cvi.R, dims=2)) / cvi.n_clusters
+    else
+        cvi.criterion_value = 0
     end
-    cvi.R = cvi.R + transpose(cvi.R)
-    cvi.criterion_value = sum(maximum(cvi.R, dims=2)) / cvi.n_clusters
 end # evaluate(cvi::DB)
