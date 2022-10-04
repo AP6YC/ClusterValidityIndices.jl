@@ -6,6 +6,10 @@ _dev/
 results/*
 !**/.gitkeep
 
+# DemoCards intermediate compilation directories
+docs/src/democards/
+docs/src/examples/
+
 # Julia package ignores
 *.jl.*.cov
 *.jl.cov

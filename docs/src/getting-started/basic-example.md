@@ -27,7 +27,7 @@ Because Julia is column-major in memory and our data samples are potentially lar
 !!! note "Note"
     Before ClusterValidityIndices.jl v0.3.0, all the CVIs assume that the labels are presented sequentially initially, starting with index 1 (e.g., 1, 1, 2, 2, 3, 2, 2, 1, 3, 4, 4 ...).
     You may repeat previously seen label indices, but skipping label indices (e.g., 1, 2, 4) results in undefined behavior.
-    If your data does not accomodate this,we may circumvent this by relabelling the data monotonically with
+    If your data does not accomodate this, we may circumvent this by relabelling the data monotonically with
 
     ```julia
     labels = relabel_cvi_data(labels)
