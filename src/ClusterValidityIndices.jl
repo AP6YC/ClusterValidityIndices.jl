@@ -7,6 +7,9 @@ This module exports all of the CVI modules, options, and utilities used by the `
 
 $(EXPORTS)
 
+# License
+
+$(LICENSE)
 """
 module ClusterValidityIndices
 
