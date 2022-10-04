@@ -1,15 +1,15 @@
 using ClusterValidityIndices    # CVI/ICVI
 using AdaptiveResonance         # DDVFA
 using MLDatasets                # Iris dataset
+using DataFrames                # DataFrames, necessary for MLDatasets.Iris()
 using MLDataUtils               # Shuffling and splitting
 using Printf                    # Formatted number printing
 using Plots                     # Plots frontend
-pyplot()                        # Use the pyplot backend
 
-Iris.download(i_accept_the_terms_of_use=true)
-features, labels = Iris.features(), Iris.labels()
+iris = Iris(as_df=false)
+features, labels = iris.features, iris.targets
 
-labels = convertlabel(LabelEnc.Indices{Int}, labels)
+labels = convertlabel(LabelEnc.Indices{Int}, vec(labels))
 unique(labels)
 
 # Create a Distributed Dual-Vigilance Fuzzy ART (DDVFA) module with default options

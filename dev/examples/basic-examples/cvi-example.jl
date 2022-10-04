@@ -1,13 +1,14 @@
 using ClusterValidityIndices    # CVI/ICVI
 using Clustering                # DBSCAN
 using MLDatasets                # Iris dataset
+using DataFrames                # DataFrames, necessary for MLDatasets.Iris()
 using MLDataUtils               # Shuffling and splitting
 using Printf                    # Formatted number printing
 
-Iris.download(i_accept_the_terms_of_use=true)
-features, labels = Iris.features(), Iris.labels()
+iris = Iris(as_df=false)
+features, labels = iris.features, iris.targets
 
-labels = convertlabel(LabelEnc.Indices{Int}, labels)
+labels = convertlabel(LabelEnc.Indices{Int}, vec(labels))
 unique(labels)
 
 results = fuzzy_cmeans(features, 3, 2)
