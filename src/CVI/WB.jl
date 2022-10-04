@@ -27,8 +27,6 @@ Int. J. Intell. Syst., pp. 1-23, 2018.
 """
 
 """
-    WB
-
 The stateful information of the WB-Index (WB) Cluster Validity Index.
 
 # References
@@ -55,8 +53,6 @@ mutable struct WB <: CVI
 end # WB <: CVI
 
 """
-    WB()
-
 Default constructor for the WB-Index (WB) Cluster Validity Index.
 """
 function WB()

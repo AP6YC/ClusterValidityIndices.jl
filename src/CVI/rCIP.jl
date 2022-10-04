@@ -28,8 +28,6 @@ John Wiley & Sons, 2000.
 """
 
 """
-    rCIP
-
 The stateful information of the (Renyi's) representative Cross Information Potential (rCIP) Cluster Validity Index.
 
 # References
@@ -55,8 +53,6 @@ mutable struct rCIP <: CVI
 end # rCIP <: CVI
 
 """
-    rCIP()
-
 Default constructor for the (Renyi's) representative Cross Information Potential (rCIP) Cluster Validity Index.
 """
 function rCIP()

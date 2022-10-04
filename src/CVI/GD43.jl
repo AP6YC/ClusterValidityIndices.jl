@@ -22,12 +22,9 @@ Int. J. Intell. Syst., pp. 1-23, 2018.
 compact well-separated clusters," J. Cybern., vol. 3, no. 3 , pp. 32-57, 1973.
 [5] J. C. Bezdek and N. R. Pal, "Some new indexes of cluster validity," IEEE
 Trans. Syst., Man, and Cybern., vol. 28, no. 3, pp. 301-315, Jun. 1998.
-
 """
 
 """
-    GD43
-
 The stateful information of the Generalized Dunn's Index 43 (GD43) Cluster Validity Index.
 
 # References
@@ -54,8 +51,6 @@ mutable struct GD43 <: CVI
 end # GD43 <: CVI
 
 """
-    GD43()
-
 Default constructor for the Generalized Dunn's Index 43 (GD43) Cluster Validity Index.
 """
 function GD43()

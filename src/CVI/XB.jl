@@ -21,8 +21,6 @@ Int. J. Intell. Syst., pp. 1-23, 2018.
 """
 
 """
-    XB
-
 The stateful information of the Xie-Beni (XB) Cluster Validity Index.
 
 # References
@@ -47,8 +45,6 @@ mutable struct XB <: CVI
 end # XB <: CVI
 
 """
-    XB()
-
 Default constructor for the Xie-Beni (XB) Cluster Validity Index.
 """
 function XB()

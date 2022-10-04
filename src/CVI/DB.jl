@@ -21,8 +21,6 @@ Int. J. Intell. Syst., pp. 1-23, 2018.
 """
 
 """
-    DB
-
 The stateful information of the Davies-Bouldin (DB) Cluster Validity Index.
 
 # References
@@ -47,8 +45,6 @@ mutable struct DB <: CVI
 end # DB <: CVI
 
 """
-    DB()
-
 Default constructor for the Davies-Bouldin (DB) Cluster Validity Index.
 """
 function DB()

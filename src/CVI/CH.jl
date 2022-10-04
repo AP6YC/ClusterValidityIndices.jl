@@ -58,8 +58,6 @@ mutable struct CH <: CVI
 end # CH <: CVI
 
 """
-    CH()
-
 Default constructor for the Calinski-Harabasz (CH) Cluster Validity Index.
 """
 function CH()

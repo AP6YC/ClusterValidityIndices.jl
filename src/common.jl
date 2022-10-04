@@ -9,14 +9,32 @@ Description:
 # DOCSTRING TEMPLATES
 # --------------------------------------------------------------------------- #
 
+# Types template
 @template TYPES =
 """
 $(TYPEDEF)
 
+# Summary
 $(DOCSTRING)
 
-# Typed Fields
+# Fields
 $(TYPEDFIELDS)
+
+# Constructors
+$(TYPEDSIGNATURES)
+"""
+
+# Template for functions, macros, and methods (i.e., constructors)
+@template (FUNCTIONS, METHODS, MACROS) =
+"""
+$(SIGNATURES)
+
+# Summary
+$(TYPEDSIGNATURES)
+$(DOCSTRING)
+
+# Method List / Definition Locations
+$(METHODLIST)
 """
 
 # --------------------------------------------------------------------------- #
@@ -25,9 +43,8 @@ $(TYPEDFIELDS)
 
 # Type for all CVIs
 """
-    CVI
-
 Abstract supertype for all CVI objects.
+All index instantiations are subtypes of `CVI`.
 """
 abstract type CVI end
 

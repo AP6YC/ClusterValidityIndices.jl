@@ -17,8 +17,6 @@ Recognit., vol. 41, no. 3, pp. 995-1011, 2008.
 """
 
 """
-    PS
-
 The stateful information of the Partition Separation (PS) Cluster Validity Index.
 
 # References
@@ -40,8 +38,6 @@ mutable struct PS <: CVI
 end # PS <: CVI
 
 """
-    PS()
-
 Default constructor for the Partition Separation (PS) Cluster Validity Index.
 """
 function PS()

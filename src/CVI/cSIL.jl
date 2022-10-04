@@ -21,8 +21,6 @@ Eds. Berlin, Heidelberg: Springer, 2012, pp. 406-419.
 """
 
 """
-    cSIL
-
 The stateful information of the Centroid-based Silhouette (cSIL) Cluster Validity Index.
 
 # References
@@ -45,8 +43,6 @@ mutable struct cSIL <: CVI
 end # cSIL <: CVI
 
 """
-    cSIL()
-
 Default constructor for the Centroid-based Silhouette (cSIL) Cluster Validity Index.
 """
 function cSIL()

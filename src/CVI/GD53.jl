@@ -25,8 +25,6 @@ Trans. Syst., Man, and Cybern., vol. 28, no. 3, pp. 301-315, Jun. 1998.
 """
 
 """
-    GD53
-
 The stateful information of the Generalized Dunn's Index 53 (GD53) Cluster Validity Index.
 
 # References
@@ -53,8 +51,6 @@ mutable struct GD53 <: CVI
 end # GD53 <: CVI
 
 """
-    GD53()
-
 Default constructor for the Generalized Dunn's Index 53 (GD53) Cluster Validity Index.
 """
 function GD53()
