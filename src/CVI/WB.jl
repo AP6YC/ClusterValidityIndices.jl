@@ -73,9 +73,6 @@ function WB()
     )
 end # WB()
 
-"""
-    setup!(cvi::WB, sample::Vector{T}) where {T<:Real}
-"""
 function setup!(cvi::WB, sample::Vector{T}) where {T<:Real}
     # Get the feature dimension
     cvi.dim = length(sample)

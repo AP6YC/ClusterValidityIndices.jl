@@ -61,9 +61,6 @@ function cSIL()
     )
 end # cSIL()
 
-"""
-    setup!(cvi::cSIL, sample::Vector{T}) where {T<:RealFP}
-"""
 function setup!(cvi::cSIL, sample::Vector{T}) where {T<:RealFP}
     # Get the feature dimension
     cvi.dim = length(sample)

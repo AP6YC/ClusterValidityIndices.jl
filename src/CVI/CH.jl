@@ -68,9 +68,6 @@ function CH()
     )
 end # CH()
 
-"""
-    setup!(cvi::CH, sample::Vector{T}) where {T<:RealFP}
-"""
 function setup!(cvi::CH, sample::Vector{T}) where {T<:RealFP}
     # Get the feature dimension
     cvi.dim = length(sample)

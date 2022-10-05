@@ -22,11 +22,6 @@ Order = [:type]
 
 ## [Docs](@id dev-index-docs)
 
-<!-- ```@autodocs
-Modules = [ClusterValidityIndices]
-Private = true
-``` -->
-
 ```@docs
 ClusterValidityIndices.setup!
 ClusterValidityIndices.get_internal_label!

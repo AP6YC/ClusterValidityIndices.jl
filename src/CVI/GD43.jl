@@ -71,9 +71,6 @@ function GD43()
     )
 end # GD43()
 
-"""
-    setup!(cvi::GD43, sample::Vector{T}) where {T<:RealFP}
-"""
 function setup!(cvi::GD43, sample::Vector{T}) where {T<:RealFP}
     # Get the feature dimension
     cvi.dim = length(sample)

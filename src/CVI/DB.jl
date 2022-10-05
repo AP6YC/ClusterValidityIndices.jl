@@ -65,9 +65,6 @@ function DB()
     )
 end # DB()
 
-"""
-    setup!(cvi::DB, sample::Vector{T}) where {T<:RealFP}
-"""
 function setup!(cvi::DB, sample::Vector{T}) where {T<:RealFP}
     # Get the feature dimension
     cvi.dim = length(sample)

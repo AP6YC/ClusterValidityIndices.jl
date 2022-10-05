@@ -71,9 +71,6 @@ function rCIP()
     )
 end # rCIP()
 
-"""
-    setup!(cvi::rCIP, sample::Vector{T}) where {T<:RealFP}
-"""
 function setup!(cvi::rCIP, sample::Vector{T}) where {T<:RealFP}
     # Get the feature dimension
     cvi.dim = length(sample)

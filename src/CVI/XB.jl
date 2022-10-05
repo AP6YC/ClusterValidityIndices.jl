@@ -65,9 +65,6 @@ function XB()
     )
 end # XB()
 
-"""
-    setup!(cvi::XB, sample::Vector{T}) where {T<:RealFP}
-"""
 function setup!(cvi::XB, sample::Vector{T}) where {T<:RealFP}
     # Get the feature dimension
     cvi.dim = length(sample)

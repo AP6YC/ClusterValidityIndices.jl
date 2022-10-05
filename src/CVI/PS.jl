@@ -56,9 +56,6 @@ function PS()
     )
 end # PS()
 
-"""
-    setup!(cvi::PS, sample::Vector{T}) where {T<:RealFP}
-"""
 function setup!(cvi::PS, sample::Vector{T}) where {T<:RealFP}
     # Get the feature dimension
     cvi.dim = length(sample)

@@ -71,9 +71,6 @@ function GD53()
     )
 end # GD53()
 
-"""
-    setup!(cvi::GD53, sample::Vector{T}) where {T<:RealFP}
-"""
 function setup!(cvi::GD53, sample::Vector{T}) where {T<:RealFP}
     # Get the feature dimension
     cvi.dim = length(sample)
