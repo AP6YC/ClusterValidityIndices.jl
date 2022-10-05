@@ -7,7 +7,7 @@ Each of these entries link to the docstrings in the [Docs](@ref index-docs) sect
 ## [Methods](@id dev-index-methods)
 
 ```@index
-Pages   = ["man/dev-index.md"]
+Pages   = ["src/man/dev-index.md"]
 Modules = [ClusterValidityIndices]
 Order = [:function]
 ```
@@ -15,14 +15,14 @@ Order = [:function]
 ## [Types](@id dev-index-types)
 
 ```@index
-Pages   = ["man/dev-index.md"]
+Pages   = ["src/man/dev-index.md"]
 Modules = [ClusterValidityIndices]
 Order = [:type]
 ```
 
 ## [Docs](@id dev-index-docs)
 
-```@docs
-ClusterValidityIndices.setup!
-ClusterValidityIndices.get_internal_label!
+```@autodocs
+Modules = [ClusterValidityIndices]
+Public = false
 ```
