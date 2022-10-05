@@ -19,10 +19,10 @@ $(DOCSTRING)
 
 # Fields
 $(TYPEDFIELDS)
-
-# Constructors
-$(TYPEDSIGNATURES)
 """
+
+# # Constructors
+# $(TYPEDSIGNATURES)
 
 # Template for functions, macros, and methods (i.e., constructors)
 @template (FUNCTIONS, METHODS, MACROS) =
@@ -79,9 +79,9 @@ const Float = (Sys.WORD_SIZE == 64 ? Float64 : Float32)
 # Internal label mapping for incremental CVIs
 const LabelMap = Dict{Int, Int}
 
-# -------------------------------------------
+# --------------------------------------------------------------------------- #
 # Methods
-# -------------------------------------------
+# --------------------------------------------------------------------------- #
 
 """
     get_icvi!(cvi::CVI, sample::RealVector, label::Integer)
@@ -90,8 +90,8 @@ Compute and return the criterion value incrementally.
 
 # Arguments
 - `cvi::CVI`: the stateful information of the ICVI providing the criterion value.
-- `sample::RealVector`: the sample provided to the external. clustering algorithm.
-- `label::Integer`: the label prescribed to the `sample` by the external clustering algorithm.
+- `sample::RealVector`: a vector of features used in clustering the sample.
+- `label::Integer`: the cluster label prescribed to the sample by the clustering algorithm.
 
 # Examples
 ```julia
@@ -245,3 +245,10 @@ julia> my_criterion_value = my_cvi.criterion_value
 ```
 """
 evaluate!(cvi::CVI)
+
+@doc raw"""
+    setup!(cvi::CVI, sample::Vector{T}) where {T<:RealFP}
+
+Internal method, sets up the CVI based upon the type of the provided sample.
+"""
+setup!(cvi::CVI, sample::Vector{T}) where {T<:RealFP}

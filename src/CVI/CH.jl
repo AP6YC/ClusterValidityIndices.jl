@@ -22,17 +22,7 @@ cluster validity indices for performance monitoring of streaming data clustering
 Int. J. Intell. Syst., pp. 1-23, 2018.
 """
 
-const common_string = """
-
-# Arguments
-- `cvi::CVI`: the CVI object.
-- `sample::RealVector`: a vector of features used in clustering the sample.
-- `label::Integer`: the cluster label prescribed to the sample by the clustering algorithm.
 """
-
-"""
-    CH
-
 The stateful information of the Calinski-Harabasz (CH) Cluster Validity Index
 
 # References

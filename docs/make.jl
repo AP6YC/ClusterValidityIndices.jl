@@ -42,7 +42,8 @@ makedocs(
             # "Examples" => "man/examples.md",
             demopage,
             "Contributing" => "man/contributing.md",
-            "Index" => "man/full-index.md"
+            "Index" => "man/full-index.md",
+            "Internals" => "man/dev-index.md",
         ]
     ],
     repo="https://github.com/AP6YC/ClusterValidityIndices.jl/blob/{commit}{path}#L{line}",
