@@ -36,8 +36,14 @@ for ix in eachindex(labels)
 end
 ```
 
+# Imports
+
+The following names are imported by the package as dependencies:
+$(IMPORTS)
+
 # Exports
 
+The following names are exported and available when `using` the package:
 $(EXPORTS)
 """
 module ClusterValidityIndices
