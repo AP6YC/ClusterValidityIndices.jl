@@ -10,9 +10,22 @@ using
     DemoCards,
     Pkg
 
-# Inlude the local package
-# push!(LOAD_PATH, "../src/")
-Pkg.develop(path="..")
+# Get the current workind directory's base name
+current_dir = basename(pwd())
+
+# If using the CI method `julia --project=docs/ docs/make.jl`
+#   or `julia --startup-file=no --project=docs/ docs/make.jl`
+if current_dir == "ClusterValidityIndices"
+    push!(LOAD_PATH, "../src/")
+# Otherwise, we are already in the docs project and need to dev the above package
+elseif current_dir == "docs"
+    Pkg.develop(path="..")
+# Otherwise, building docs from the wrong path
+else
+    error("Unrecognized docs setup path")
+end
+
+# Include the package
 using ClusterValidityIndices
 
 # Generate the demo files
