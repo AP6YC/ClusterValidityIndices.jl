@@ -1,3 +1,13 @@
+"""
+    test_cvis.jl
+
+# Description
+A single test set for the testing the functionality of all CVIS modules.
+
+# Authors
+- Sasha Petrenko <sap625@mst.edu>
+"""
+
 @testset "CVIs" begin
     @info "CVI Testing"
 

@@ -57,7 +57,8 @@ module ClusterValidityIndices
 # Full usings (which supports comma-separated import notation)
 using
     DocStringExtensions,   # Docstring utilities
-    LinearAlgebra
+    LinearAlgebra,
+    NumericalTypeAliases
 
 # Partial usings (which does not yet support comma-separated import notation)
 using Statistics: mean
@@ -107,10 +108,5 @@ export
     # CVI utilities
     sort_cvi_data,
     relabel_cvi_data
-
-    # Not exported
-    # get_cvi_data
-    # get_bernoulli_subset
-    # showtypetree
 
 end
