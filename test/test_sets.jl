@@ -1,13 +1,36 @@
+"""
+    test_sets.jl
+
+# Description
+Aggregate of all test sets for the `ClusterValidityIndices.jl` package.
+These tests include testing package functionality as well as individual CVI module functionality.
+
+# Authors
+- Sasha Petrenko <sap625@mst.edu>
+"""
+
+# --------------------------------------------------------------------------- #
+# USINGS
+# --------------------------------------------------------------------------- #
+
 using ClusterValidityIndices
 using Test
 using Logging
 using Printf
+
+# --------------------------------------------------------------------------- #
+# SETUP
+# --------------------------------------------------------------------------- #
 
 # Set the log level
 LogLevel(Logging.Info)
 
 # Include the test utilities
 include("utils.jl")
+
+# --------------------------------------------------------------------------- #
+# TEST SETS
+# --------------------------------------------------------------------------- #
 
 @testset "ClusterValidityIndices.jl" begin
     # Run all of the CVI tests

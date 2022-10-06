@@ -109,9 +109,4 @@ export
     sort_cvi_data,
     relabel_cvi_data
 
-    # Not exported
-    # get_cvi_data
-    # get_bernoulli_subset
-    # showtypetree
-
 end

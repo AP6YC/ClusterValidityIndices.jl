@@ -1,20 +1,15 @@
+"""
+    utils.jl
+
+# Description
+Utilities for unit tests of the `ClusterValidityIndices.jl` package.
+
+# Authors
+- Sasha Petrenko <sap625@mst.edu>
+"""
+
 using Random
 using DelimitedFiles
-
-"""
-    showtypetree(T, level=0)
-
-Show the tree of subtypes for a type.
-```julia
-showtypetree(Number)
-```
-"""
-function showtypetree(T, level=0)
-    println("\t" ^ level, T)
-    for t in subtypes(T)
-        showtypetree(t, level+1)
-    end
-end # showtypetree(T, level=0)
 
 """
     get_cvi_data(data_file::String)
