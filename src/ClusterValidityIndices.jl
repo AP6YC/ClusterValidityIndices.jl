@@ -53,9 +53,14 @@ module ClusterValidityIndices
 # --------------------------------------------------------------------------- #
 
 # Package dependencies
-using DocStringExtensions   # Docstring utilities
+
+# Full usings (which supports comma-separated import notation)
+using
+    DocStringExtensions,   # Docstring utilities
+    LinearAlgebra
+
+# Partial usings (which does not yet support comma-separated import notation)
 using Statistics: mean
-using LinearAlgebra
 
 # --------------------------------------------------------------------------- #
 # INCLUDES

@@ -5,11 +5,14 @@ This file builds the documentation for the ClusterValidityIndices.jl package
 using Documenter.jl and other tools.
 """
 
-using Documenter
-using DemoCards
+using
+    Documenter,
+    DemoCards,
+    Pkg
 
 # Inlude the local package
-push!(LOAD_PATH, "../src/")
+# push!(LOAD_PATH, "../src/")
+Pkg.develop(path="..")
 using ClusterValidityIndices
 
 # Generate the demo files
