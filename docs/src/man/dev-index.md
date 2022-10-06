@@ -7,7 +7,7 @@ Each of these entries link to the docstrings in the [Docs](@ref index-docs) sect
 ## [Methods](@id dev-index-methods)
 
 ```@index
-Pages   = ["src/man/dev-index.md"]
+Pages   = ["dev-index.md"]
 Modules = [ClusterValidityIndices]
 Order = [:function]
 ```
@@ -15,7 +15,7 @@ Order = [:function]
 ## [Types](@id dev-index-types)
 
 ```@index
-Pages   = ["src/man/dev-index.md"]
+Pages   = ["dev-index.md"]
 Modules = [ClusterValidityIndices]
 Order = [:type]
 ```
