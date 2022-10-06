@@ -36,15 +36,15 @@ $(local_references)
 """
 mutable struct cSIL <: CVI
     label_map::LabelMap
-    dim::Integer
-    n_samples::Integer
-    n::IntegerVector        # dim
-    v::RealMatrix           # dim x n_clusters
-    CP::RealVector          # dim
-    G::RealMatrix           # dim x n_clusters
-    S::RealMatrix           # n_clusters x n_clusters
-    sil_coefs::RealVector   # dim
-    n_clusters::Integer
+    dim::Int
+    n_samples::Int
+    n::Vector{Int}             # dim
+    v::Matrix{Float}           # dim x n_clusters
+    CP::Vector{Float}          # dim
+    G::Matrix{Float}           # dim x n_clusters
+    S::Matrix{Float}           # n_clusters x n_clusters
+    sil_coefs::Vector{Float}   # dim
+    n_clusters::Int
     criterion_value::Float
 end # cSIL <: CVI
 
@@ -58,26 +58,28 @@ function cSIL()
         LabelMap(),                     # label_map
         0,                              # dim
         0,                              # n_samples
-        Array{Integer, 1}(undef, 0),    # n
-        Array{Float, 2}(undef, 0, 0),   # v
-        Array{Float, 1}(undef, 0),      # CP
-        Array{Float, 2}(undef, 0, 0),   # G
-        Array{Float, 2}(undef, 0, 0),   # S
-        Array{Float, 1}(undef, 0),      # sil_coefs
+        Vector{Int}(undef, 0),          # n
+        Matrix{Float}(undef, 0, 0),     # v
+        Vector{Float}(undef, 0),        # CP
+        Matrix{Float}(undef, 0, 0),     # G
+        Matrix{Float}(undef, 0, 0),     # S
+        Vector{Float}(undef, 0),        # sil_coefs
         0,                              # n_clusters
         0.0                             # criterion_value
     )
 end # cSIL()
 
-function setup!(cvi::cSIL, sample::Vector{T}) where {T<:RealFP}
+# Setup function
+function setup!(cvi::cSIL, sample::RealVector)
     # Get the feature dimension
     cvi.dim = length(sample)
     # Initialize the augmenting 2-D arrays with the correct feature dimension
     # NOTE: R is emptied and calculated in evaluate!, so it is not defined here
-    cvi.v = Array{T, 2}(undef, cvi.dim, 0)
-    cvi.G = Array{T, 2}(undef, cvi.dim, 0)
-end # setup!(cvi::cSIL, sample::Vector{T}) where {T<:RealFP}
+    cvi.v = Matrix{Float}(undef, cvi.dim, 0)
+    cvi.G = Matrix{Float}(undef, cvi.dim, 0)
+end # setup!(cvi::cSIL, sample::Vector{Float})
 
+# Incremental parameter update function
 function param_inc!(cvi::cSIL, sample::RealVector, label::Integer)
     # Get the internal label
     i_label = get_internal_label!(cvi.label_map, label)
@@ -185,6 +187,7 @@ function param_inc!(cvi::cSIL, sample::RealVector, label::Integer)
     cvi.n_samples = n_samples_new
 end # param_inc!(cvi::cSIL, sample::RealVector, label::Integer)
 
+# Batch parameter update function
 function param_batch!(cvi::cSIL, data::RealMatrix, labels::IntegerVector)
     cvi.dim, cvi.n_samples = size(data)
     # u = findfirst.(isequal.(unique(labels)), [labels])
@@ -211,6 +214,7 @@ function param_batch!(cvi::cSIL, data::RealMatrix, labels::IntegerVector)
     end
 end # param_batch!(cvi::cSIL, data::RealMatrix, labels::IntegerVector)
 
+# Criterion value evaluation function
 function evaluate!(cvi::cSIL)
     cvi.sil_coefs = zeros(cvi.n_clusters)
     if !isempty(cvi.S) && cvi.n_clusters > 1
