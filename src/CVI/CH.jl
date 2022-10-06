@@ -1,14 +1,15 @@
 """
     CH.jl
 
+# Description
 This is a Julia port of a MATLAB implementation of batch and incremental
 Calinski-Harabasz (CH) Cluster Validity Index.
 
-Authors:
+# Authors
 MATLAB implementation: Leonardo Enzo Brito da Silva
 Julia port: Sasha Petrenko <sap625@mst.edu>
 
-REFERENCES
+# References
 [1] L. E. Brito da Silva, N. M. Melton, and D. C. Wunsch II, "Incremental
 Cluster Validity Indices for Hard Partitions: Extensions  and  Comparative
 Study," ArXiv  e-prints, Feb 2019, arXiv:1902.06711v1 [cs.LG].

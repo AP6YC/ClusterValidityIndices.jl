@@ -1,14 +1,15 @@
 """
     XB.jl
 
+# Description
 This is a Julia port of a MATLAB implementation of batch and incremental
 Xie-Beni (XB) Cluster Validity Index.
 
-Authors:
+# Authors
 MATLAB implementation: Leonardo Enzo Brito da Silva
 Julia port: Sasha Petrenko <sap625@mst.edu>
 
-REFERENCES
+# References
 [1] X. L. Xie and G. Beni, "A Validity Measure for Fuzzy Clustering," IEEE
 Transactions on Pattern Analysis and Machine Intelligence, vol. 13, no. 8,
 pp. 841-847, 1991.

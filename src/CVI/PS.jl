@@ -1,14 +1,15 @@
 """
     PS.jl
 
+# Description
 This is a Julia port of a MATLAB implementation of batch and incremental
 Partition Separation (PS) Cluster Validity Index.
 
-Authors:
+# Authors
 MATLAB implementation: Leonardo Enzo Brito da Silva
 Julia port: Sasha Petrenko <sap625@mst.edu>
 
-REFERENCES
+# References
 [1] Miin-Shen Yang and Kuo-Lung Wu, "A new validity index for fuzzy clustering,"
 10th IEEE International Conference on Fuzzy Systems. (Cat. No.01CH37297), Melbourne,
 Victoria, Australia, 2001, pp. 89-92, vol.1.

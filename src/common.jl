@@ -76,7 +76,9 @@ const RealFP = Union{Float32, Float64}
 # System's largest native floating point variable
 const Float = (Sys.WORD_SIZE == 64 ? Float64 : Float32)
 
-# Internal label mapping for incremental CVIs
+"""
+Internal label mapping for incremental CVIs.
+"""
 const LabelMap = Dict{Int, Int}
 
 # --------------------------------------------------------------------------- #
@@ -84,8 +86,6 @@ const LabelMap = Dict{Int, Int}
 # --------------------------------------------------------------------------- #
 
 """
-    get_icvi!(cvi::CVI, sample::RealVector, label::Integer)
-
 Compute and return the criterion value incrementally.
 
 # Arguments
@@ -123,8 +123,6 @@ function get_icvi!(cvi::CVI, sample::RealVector, label::Integer)
 end # get_icvi!(cvi::CVI, sample::RealVector, label::Integer)
 
 """
-    get_cvi!(cvi::CVI, data::RealMatrix, labels::IntegerVector)
-
 Compute and return the criterion value in batch mode.
 
 # Arguments
@@ -156,8 +154,6 @@ function get_cvi!(cvi::CVI, data::RealMatrix, labels::IntegerVector)
 end # get_cvi!(cvi::CVI, data::RealMatrix, labels::IntegerVector)
 
 """
-    get_internal_label!(label_map::LabelMap, label::Int)
-
 Get the internal label and update the label map if the label is new.
 """
 function get_internal_label!(label_map::LabelMap, label::Int)
@@ -178,8 +174,6 @@ end # get_internal_label!(label_map::LabelMap, label::Int)
 # -------------------------------------------
 
 @doc raw"""
-    param_inc!(cvi::CVI, sample::RealVector, label::Integer)
-
 Compute the CVI parameters incrementally.
 
 This method updates only internal parameters of the ICVI algorithm incrementally.
@@ -201,8 +195,6 @@ julia> param_inc!(my_cvi, data[:, 1], labels[1])
 param_inc!(cvi::CVI, sample::RealVector, label::Integer)
 
 @doc raw"""
-    param_batch!(cvi::CVI, data::RealMatrix, labels::IntegerVector)
-
 Compute the CVI parameters in batch.
 
 This method updates only the internal parameters of the CVI algorithm in batch.
@@ -224,8 +216,6 @@ julia> param_batch!(my_cvi, data, labels)
 param_batch!(cvi::CVI, data::RealMatrix, labels::IntegerVector)
 
 @doc raw"""
-    evaluate!(cvi::CVI)
-
 Compute the criterion value of the CVI.
 
 After computation, the resulting criterion value can be extracted from `cvi.criterion_value`.

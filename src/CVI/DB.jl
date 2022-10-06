@@ -1,14 +1,15 @@
 """
     DB.jl
 
+# Description
 This is a Julia port of a MATLAB implementation of batch and incremental
 Davies-Bouldin (DB) Cluster Validity Index.
 
-Authors:
+# Authors
 MATLAB implementation: Leonardo Enzo Brito da Silva
 Julia port: Sasha Petrenko <sap625@mst.edu>
 
-REFERENCES
+# References
 [1] D. L. Davies and D. W. Bouldin, "A cluster separation measure,"
 IEEE Transaction on Pattern Analysis and Machine Intelligence, vol. 1,
 no. 2, pp. 224-227, Feb. 1979.
