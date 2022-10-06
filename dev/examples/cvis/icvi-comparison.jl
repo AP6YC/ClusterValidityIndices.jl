@@ -5,6 +5,7 @@ using DataFrames                # DataFrames, necessary for MLDatasets.Iris()
 using MLDataUtils               # Shuffling and splitting
 using Printf                    # Formatted number printing
 using Plots                     # Plots frontend
+gr()                            # Use the default GR backend explicitly
 
 iris = Iris(as_df=false)
 features, labels = iris.features, iris.targets
@@ -64,7 +65,7 @@ function plot_cvis(range)
     # Iterate over the range of ICVI indices provided
     for jx = range
         # Plot the ICVI criterion values versus sample index
-        plot!(p, 1:n_samples, criterion_values[jx, :], label = typeof(icvis[jx]))
+        plot!(p, 1:n_samples, criterion_values[jx, :], label = string(typeof(icvis[jx])))
     end
     # Return the plotting object for IJulia display
     return p
@@ -75,6 +76,8 @@ plot_cvis(1:n_icvi)
 
 # Exclude CH and cSIL
 plot_cvis(3:n_icvi)
+
+png("assets/icvi-comparision") #hide
 
 # This file was generated using Literate.jl, https://github.com/fredrikekre/Literate.jl
 
