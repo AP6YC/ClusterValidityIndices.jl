@@ -57,7 +57,8 @@ module ClusterValidityIndices
 # Full usings (which supports comma-separated import notation)
 using
     DocStringExtensions,   # Docstring utilities
-    LinearAlgebra
+    LinearAlgebra,
+    NumericalTypeAliases
 
 # Partial usings (which does not yet support comma-separated import notation)
 using Statistics: mean
