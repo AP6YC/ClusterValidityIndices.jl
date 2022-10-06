@@ -35,3 +35,4 @@ The [Background](@ref) provides an overview of the problem statement of CVIs and
 The [Package Guide](@ref) provides a tutorial to the full usage of the package, while [Examples](@ref examples) gives many sample workflows using a variety of CVI modules.
 
 Instructions on how to contribute to the package are found in [Contributing](@ref), and docstrings for every element of the package is listed in the [Index](@ref main-index).
+Names internal to the package are also listed under the [Developer Index](@ref dev-main-index).

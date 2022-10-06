@@ -35,16 +35,15 @@ julia --project=.
     The above immediately activates the project when starting up Julia, but you may also separately startup the julia and activate the package with the interactive
     package manager via the `]` syntax:
 
-    ```julia
-    julia
+    ```julia-repl
     julia> ]
-    (@v1.6) pkg> activate .
+    (@v1.8) pkg> activate .
     (ClusterValidityIndices) pkg>
     ```
 
 You may run the package's unit tests after the above setup in Julia with
 
-```julia
+```julia-repl
 julia> using Pkg
 julia> Pkg.instantiate()
 julia> Pkg.test()
@@ -52,7 +51,7 @@ julia> Pkg.test()
 
 or interactively though the Julia package manager with
 
-```julia
+```julia-repl
 julia> ]
 (ClusterValidityIndices) pkg> instantiate
 (ClusterValidityIndices) pkg> test
@@ -87,9 +86,7 @@ ClusterValidityIndices.jl
 ├── .github/workflows       // GitHub: workflows for testing and documentation.
 ├── data                    // Data: CI and example data location.
 ├── docs                    // Docs: GitHub pages documentation files.
-├── examples                // Source: example scripts for CVI usage.
 ├── paper                   // Docs: JOSS paper and bib files.
-├── results                 // Data: destination for example-generated files.
 ├── src                     // Source: scripts and common helper functions.
 │   └─── CVI                //      All CVI and ICVI definitions
 ├── test                    // Test: unit, integration, and environment tests.

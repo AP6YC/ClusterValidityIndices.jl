@@ -7,7 +7,7 @@ All internal names are listed in the [Index](@ref dev-index-methods), and each o
 
 ## Index
 
-This section contains a list of names that link to their corresponding [Documentation](@ref dev-index-docs).
+This section contains a list of internal names that link to their corresponding [Documentation](@ref dev-index-docs).
 
 ### [Methods](@id dev-index-methods)
 
@@ -34,6 +34,8 @@ Order = [:constant]
 ```
 
 ### [Docs](@id dev-index-docs)
+
+Documentation for all internal names are listed below.
 
 ```@autodocs
 Modules = [ClusterValidityIndices]
