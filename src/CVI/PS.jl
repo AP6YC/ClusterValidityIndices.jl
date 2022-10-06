@@ -17,12 +17,17 @@ Victoria, Australia, 2001, pp. 89-92, vol.1.
 Recognit., vol. 41, no. 3, pp. 995-1011, 2008.
 """
 
-"""
-The stateful information of the Partition Separation (PS) Cluster Validity Index.
-
+# References string
+local_references = """
 # References
 1. Miin-Shen Yang and Kuo-Lung Wu, "A new validity index for fuzzy clustering," 10th IEEE International Conference on Fuzzy Systems. (Cat. No.01CH37297), Melbourne, Victoria, Australia, 2001, pp. 89-92, vol.1.
 2. E. Lughofer, "Extensions of vector quantization for incremental clustering," Pattern Recognit., vol. 41, no. 3, pp. 995-1011, 2008.
+"""
+
+"""
+The stateful information of the Partition Separation (PS) Cluster Validity Index.
+
+$(local_references)
 """
 mutable struct PS <: CVI
     label_map::LabelMap
@@ -40,6 +45,8 @@ end # PS <: CVI
 
 """
 Default constructor for the Partition Separation (PS) Cluster Validity Index.
+
+$(local_references)
 """
 function PS()
     PS(

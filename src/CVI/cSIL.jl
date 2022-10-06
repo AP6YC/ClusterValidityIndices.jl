@@ -21,6 +21,7 @@ Scalable Uncertainty Management, E. Hüllermeier, S. Link, T. Fober et al.,
 Eds. Berlin, Heidelberg: Springer, 2012, pp. 406-419.
 """
 
+# References string
 local_references = """
 # References
 1. L. E. Brito da Silva, N. M. Melton, and D. C. Wunsch II, "Incremental Cluster Validity Indices for Hard Partitions: Extensions  and  Comparative Study," ArXiv  e-prints, Feb 2019, arXiv:1902.06711v1 [cs.LG].

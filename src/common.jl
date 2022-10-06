@@ -78,6 +78,8 @@ const Float = (Sys.WORD_SIZE == 64 ? Float64 : Float32)
 
 """
 Internal label mapping for incremental CVIs.
+
+Alias for a dictionary mapping of integers to integers as cluster labels.
 """
 const LabelMap = Dict{Int, Int}
 
