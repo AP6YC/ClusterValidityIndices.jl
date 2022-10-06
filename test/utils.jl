@@ -12,11 +12,11 @@ using Random
 using DelimitedFiles
 
 """
-    get_cvi_data(data_file::String)
+    get_cvi_data(data_file::AbstractString)
 
 Get the cvi data specified by the data_file path.
 """
-function get_cvi_data(data_file::String)
+function get_cvi_data(data_file::AbstractString)
     # Parse the data
     data = readdlm(data_file, ',')
     data = permutedims(data)
@@ -24,7 +24,7 @@ function get_cvi_data(data_file::String)
     train_y = convert(Array{Int}, data[3, :])
 
     return train_x, train_y
-end # get_cvi_data(data_file::String)
+end # get_cvi_data(data_file::AbstractString)
 
 """
     get_bernoulli_subset(data::ClusterValidityIndices.RealMatrix, labels::ClusterValidityIndices.IntegerVector, p::Real)
