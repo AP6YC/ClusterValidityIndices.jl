@@ -1,14 +1,15 @@
 """
     cSIL.jl
 
+# Description
 This is a Julia port of a MATLAB implementation of batch and incremental
 Centroid-based Silhouette (cSIL) Cluster Validity Index.
 
-Authors:
+# Authors
 MATLAB implementation: Leonardo Enzo Brito da Silva
 Julia port: Sasha Petrenko <sap625@mst.edu>
 
-REFERENCES
+# References
 [1] L. E. Brito da Silva, N. M. Melton, and D. C. Wunsch II, "Incremental
 Cluster Validity Indices for Hard Partitions: Extensions  and  Comparative
 Study," ArXiv  e-prints, Feb 2019, arXiv:1902.06711v1 [cs.LG].
@@ -20,15 +21,18 @@ Scalable Uncertainty Management, E. Hüllermeier, S. Link, T. Fober et al.,
 Eds. Berlin, Heidelberg: Springer, 2012, pp. 406-419.
 """
 
-"""
-    cSIL
-
-The stateful information of the Centroid-based Silhouette (cSIL) Cluster Validity Index.
-
+# References string
+local_references = """
 # References
 1. L. E. Brito da Silva, N. M. Melton, and D. C. Wunsch II, "Incremental Cluster Validity Indices for Hard Partitions: Extensions  and  Comparative Study," ArXiv  e-prints, Feb 2019, arXiv:1902.06711v1 [cs.LG].
 2. P. J. Rousseeuw, "Silhouettes: A graphical aid to the interpretation and validation of cluster analysis," Journal of Computational and Applied Mathematics, vol. 20, pp. 53-65, 1987.
 3. M. Rawashdeh and A. Ralescu, "Center-wise intra-inter silhouettes," in Scalable Uncertainty Management, E. Hüllermeier, S. Link, T. Fober et al., Eds. Berlin, Heidelberg: Springer, 2012, pp. 406-419.
+"""
+
+"""
+The stateful information of the Centroid-based Silhouette (cSIL) Cluster Validity Index.
+
+$(local_references)
 """
 mutable struct cSIL <: CVI
     label_map::LabelMap
@@ -45,9 +49,9 @@ mutable struct cSIL <: CVI
 end # cSIL <: CVI
 
 """
-    cSIL()
-
 Default constructor for the Centroid-based Silhouette (cSIL) Cluster Validity Index.
+
+$(local_references)
 """
 function cSIL()
     cSIL(
@@ -65,9 +69,6 @@ function cSIL()
     )
 end # cSIL()
 
-"""
-    setup!(cvi::cSIL, sample::Vector{T}) where {T<:RealFP}
-"""
 function setup!(cvi::cSIL, sample::Vector{T}) where {T<:RealFP}
     # Get the feature dimension
     cvi.dim = length(sample)

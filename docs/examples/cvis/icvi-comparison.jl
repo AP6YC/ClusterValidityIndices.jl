@@ -1,7 +1,7 @@
 # ---
 # title: Multi-ICVI Comparisons
 # id: icvi_comparison
-# cover: ../assets/logo.png
+# cover: assets/icvi-comparision.png
 # date: 2021-12-7
 # author: "[Sasha Petrenko](https://github.com/AP6YC)"
 # julia: 1.6
@@ -27,7 +27,7 @@ using DataFrames                # DataFrames, necessary for MLDatasets.Iris()
 using MLDataUtils               # Shuffling and splitting
 using Printf                    # Formatted number printing
 using Plots                     # Plots frontend
-# pyplot()                        # Use the pyplot backend
+gr()                            # Use the default GR backend explicitly
 
 # We will download the Iris dataset for its small size and benchmark use for clustering algorithms.
 iris = Iris(as_df=false)
@@ -104,7 +104,7 @@ function plot_cvis(range)
     ## Iterate over the range of ICVI indices provided
     for jx = range
         ## Plot the ICVI criterion values versus sample index
-        plot!(p, 1:n_samples, criterion_values[jx, :], label = typeof(icvis[jx]))
+        plot!(p, 1:n_samples, criterion_values[jx, :], label = string(typeof(icvis[jx])))
     end
     ## Return the plotting object for IJulia display
     return p
@@ -113,7 +113,10 @@ end
 ## Plot all of the ICVIs tested here
 plot_cvis(1:n_icvi)
 
-# We see from the final values that the CH and cSIL metrics behave very differently from the other metrics, so we should plot them separately to see them in better detail
+# We see from the final values that the CH and cSIL metrics behave very differently from the other metrics, so we should plot them separately to see them in better detail.
 
 ## Exclude CH and cSIL
 plot_cvis(3:n_icvi)
+
+# This plot shows that the icvis all have unique behaviors as the clustering process continues incrementally.
+png("assets/icvi-comparision") #hide

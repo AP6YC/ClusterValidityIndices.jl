@@ -1,14 +1,15 @@
 """
     DB.jl
 
+# Description
 This is a Julia port of a MATLAB implementation of batch and incremental
 Davies-Bouldin (DB) Cluster Validity Index.
 
-Authors:
+# Authors
 MATLAB implementation: Leonardo Enzo Brito da Silva
 Julia port: Sasha Petrenko <sap625@mst.edu>
 
-REFERENCES
+# References
 [1] D. L. Davies and D. W. Bouldin, "A cluster separation measure,"
 IEEE Transaction on Pattern Analysis and Machine Intelligence, vol. 1,
 no. 2, pp. 224-227, Feb. 1979.
@@ -20,15 +21,18 @@ cluster validity indices for performance monitoring of streaming data clustering
 Int. J. Intell. Syst., pp. 1-23, 2018.
 """
 
-"""
-    DB
-
-The stateful information of the Davies-Bouldin (DB) Cluster Validity Index.
-
+# References string
+local_references = """
 # References
 1. D. L. Davies and D. W. Bouldin, "A cluster separation measure," IEEE Transaction on Pattern Analysis and Machine Intelligence, vol. 1, no. 2, pp. 224-227, Feb. 1979.
 2. M. Moshtaghi, J. C. Bezdek, S. M. Erfani, C. Leckie, and J. Bailey, "Online Cluster Validity Indices for Streaming Data," ArXiv e-prints, 2018, arXiv:1801.02937v1 [stat.ML]. [Online].
 3. M. Moshtaghi, J. C. Bezdek, S. M. Erfani, C. Leckie, J. Bailey, "Online cluster validity indices for performance monitoring of streaming data clustering," Int. J. Intell. Syst., pp. 1-23, 2018.
+"""
+
+"""
+The stateful information of the Davies-Bouldin (DB) Cluster Validity Index.
+
+$(local_references)
 """
 mutable struct DB <: CVI
     label_map::LabelMap
@@ -47,9 +51,9 @@ mutable struct DB <: CVI
 end # DB <: CVI
 
 """
-    DB()
-
 Default constructor for the Davies-Bouldin (DB) Cluster Validity Index.
+
+$(local_references)
 """
 function DB()
     DB(
@@ -69,9 +73,6 @@ function DB()
     )
 end # DB()
 
-"""
-    setup!(cvi::DB, sample::Vector{T}) where {T<:RealFP}
-"""
 function setup!(cvi::DB, sample::Vector{T}) where {T<:RealFP}
     # Get the feature dimension
     cvi.dim = length(sample)

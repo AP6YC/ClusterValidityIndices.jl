@@ -1,14 +1,15 @@
 """
     rCIP.jl
 
+# Description
 This is a Julia port of a MATLAB implementation of batch and incremental
 (Renyi's) representative Cross Information Potential (rCIP) Cluster Validity Index.
 
-Authors:
+# Authors
 MATLAB implementation: Leonardo Enzo Brito da Silva
 Julia port: Sasha Petrenko <sap625@mst.edu>
 
-REFERENCES
+# References
 [1] L. E. Brito da Silva, N. M. Melton, and D. C. Wunsch II, "Incremental
 Cluster Validity Indices for Hard Partitions: Extensions  and  Comparative
 Study," ArXiv  e-prints, Feb 2019, arXiv:1902.06711v1 [cs.LG].
@@ -27,11 +28,8 @@ vol. 40, no. 10, pp. 4190-4205, Aug. 2013.
 John Wiley & Sons, 2000.
 """
 
-"""
-    rCIP
-
-The stateful information of the (Renyi's) representative Cross Information Potential (rCIP) Cluster Validity Index.
-
+# References string
+local_references = """
 # References
 1. L. E. Brito da Silva, N. M. Melton, and D. C. Wunsch II, "Incremental Cluster Validity Indices for Hard Partitions: Extensions  and  Comparative Study," ArXiv  e-prints, Feb 2019, arXiv:1902.06711v1 [cs.LG].
 2. E. Gokcay and J. C. Principe, "A new clustering evaluation function using Renyi's information potential," in Proc. Int. Conf. Acoust., Speech, Signal Process. (ICASSP), vol. 6. Jun. 2000, pp. 3490-3493.
@@ -39,6 +37,12 @@ The stateful information of the (Renyi's) representative Cross Information Poten
 4. D. Araújo, A. D. Neto, and A. Martins, "Representative cross information potential clustering," Pattern Recognit. Lett., vol. 34, no. 16, pp. 2181-2191, Dec. 2013.
 5. D. Araújo, A. D. Neto, and A. Martins, "Information-theoretic clustering: A representative and evolutionary approach," Expert Syst. Appl., vol. 40, no. 10, pp. 4190-4205, Aug. 2013.
 6. R. O. Duda, P. E. Hart, and D. G. Stork, Pattern Classification, 2nd ed. John Wiley & Sons, 2000.
+"""
+
+"""
+The stateful information of the (Renyi's) representative Cross Information Potential (rCIP) Cluster Validity Index.
+
+$(local_references)
 """
 mutable struct rCIP <: CVI
     label_map::LabelMap
@@ -55,9 +59,9 @@ mutable struct rCIP <: CVI
 end # rCIP <: CVI
 
 """
-    rCIP()
-
 Default constructor for the (Renyi's) representative Cross Information Potential (rCIP) Cluster Validity Index.
+
+$(local_references)
 """
 function rCIP()
     rCIP(
@@ -75,9 +79,6 @@ function rCIP()
     )
 end # rCIP()
 
-"""
-    setup!(cvi::rCIP, sample::Vector{T}) where {T<:RealFP}
-"""
 function setup!(cvi::rCIP, sample::Vector{T}) where {T<:RealFP}
     # Get the feature dimension
     cvi.dim = length(sample)

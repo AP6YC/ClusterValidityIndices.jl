@@ -5,11 +5,28 @@ This file builds the documentation for the ClusterValidityIndices.jl package
 using Documenter.jl and other tools.
 """
 
-using Documenter
-using DemoCards
+using
+    Documenter,
+    DemoCards,
+    Pkg
 
-# Inlude the local package
-push!(LOAD_PATH, "../src/")
+# Get the current workind directory's base name
+current_dir = basename(pwd())
+@info "Current directory is $(current_dir)"
+
+# If using the CI method `julia --project=docs/ docs/make.jl`
+#   or `julia --startup-file=no --project=docs/ docs/make.jl`
+if occursin("ClusterValidityIndices", current_dir)
+    push!(LOAD_PATH, "../src/")
+# Otherwise, we are already in the docs project and need to dev the above package
+elseif occursin("docs", current_dir)
+    Pkg.develop(path="..")
+# Otherwise, building docs from the wrong path
+else
+    error("Unrecognized docs setup path")
+end
+
+# Include the package
 using ClusterValidityIndices
 
 # Generate the demo files
@@ -42,7 +59,8 @@ makedocs(
             # "Examples" => "man/examples.md",
             demopage,
             "Contributing" => "man/contributing.md",
-            "Index" => "man/full-index.md"
+            "Index" => "man/full-index.md",
+            "Internals" => "man/dev-index.md",
         ]
     ],
     repo="https://github.com/AP6YC/ClusterValidityIndices.jl/blob/{commit}{path}#L{line}",

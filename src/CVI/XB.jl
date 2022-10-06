@@ -1,14 +1,15 @@
 """
     XB.jl
 
+# Description
 This is a Julia port of a MATLAB implementation of batch and incremental
 Xie-Beni (XB) Cluster Validity Index.
 
-Authors:
+# Authors
 MATLAB implementation: Leonardo Enzo Brito da Silva
 Julia port: Sasha Petrenko <sap625@mst.edu>
 
-REFERENCES
+# References
 [1] X. L. Xie and G. Beni, "A Validity Measure for Fuzzy Clustering," IEEE
 Transactions on Pattern Analysis and Machine Intelligence, vol. 13, no. 8,
 pp. 841-847, 1991.
@@ -20,15 +21,18 @@ cluster validity indices for performance monitoring of streaming data clustering
 Int. J. Intell. Syst., pp. 1-23, 2018.
 """
 
-"""
-    XB
-
-The stateful information of the Xie-Beni (XB) Cluster Validity Index.
-
+# References string
+local_references = """
 # References
 1. X. L. Xie and G. Beni, "A Validity Measure for Fuzzy Clustering," IEEE Transactions on Pattern Analysis and Machine Intelligence, vol. 13, no. 8, pp. 841-847, 1991.
 2. M. Moshtaghi, J. C. Bezdek, S. M. Erfani, C. Leckie, and J. Bailey, "Online Cluster Validity Indices for Streaming Data," ArXiv e-prints, 2018, arXiv:1801.02937v1 [stat.ML]. [Online].
 3. M. Moshtaghi, J. C. Bezdek, S. M. Erfani, C. Leckie, J. Bailey, "Online cluster validity indices for performance monitoring of streaming data clustering," Int. J. Intell. Syst., pp. 1-23, 2018.
+"""
+
+"""
+The stateful information of the Xie-Beni (XB) Cluster Validity Index.
+
+$(local_references)
 """
 mutable struct XB <: CVI
     label_map::LabelMap
@@ -47,9 +51,9 @@ mutable struct XB <: CVI
 end # XB <: CVI
 
 """
-    XB()
-
 Default constructor for the Xie-Beni (XB) Cluster Validity Index.
+
+$(local_references)
 """
 function XB()
     XB(
@@ -69,9 +73,6 @@ function XB()
     )
 end # XB()
 
-"""
-    setup!(cvi::XB, sample::Vector{T}) where {T<:RealFP}
-"""
 function setup!(cvi::XB, sample::Vector{T}) where {T<:RealFP}
     # Get the feature dimension
     cvi.dim = length(sample)
