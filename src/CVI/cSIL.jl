@@ -107,15 +107,15 @@ function param_inc!(cvi::cSIL, sample::RealVector, label::Integer)
                 # Column "bmu_temp" - D_new
                 C = (
                     CP_new
-                    + (transpose(cvi.v[:, cl]) * cvi.v[:, cl])
-                    - 2 * (transpose(G_new) * cvi.v[:, cl])
+                    + dot(cvi.v[:, cl], cvi.v[:, cl])
+                    - 2 * dot(G_new, cvi.v[:, cl])
                 )
                 S_col_new[cl] = C
                 # Row "bmu_temp" - E
                 C = (
                     cvi.CP[cl]
-                    + cvi.n[cl] * (transpose(v_new) * v_new)
-                    - 2 * (transpose(cvi.G[:, cl]) * v_new)
+                    + cvi.n[cl] * dot(v_new, v_new)
+                    - 2 * dot(cvi.G[:, cl], v_new)
                 )
                 S_row_new[cl] = C / cvi.n[cl]
             end
@@ -139,7 +139,7 @@ function param_inc!(cvi::cSIL, sample::RealVector, label::Integer)
             (1 - 1 / n_new) .* cvi.v[:, i_label]
             + (1 / n_new) .* sample
         )
-        CP_new = cvi.CP[i_label] + (transpose(sample) * sample)
+        CP_new = cvi.CP[i_label] + dot(sample, sample)
         G_new = cvi.G[:, i_label] + sample
         # Compute S_new
         S_row_new = zeros(cvi.n_clusters)
@@ -153,16 +153,16 @@ function param_inc!(cvi::cSIL, sample::RealVector, label::Integer)
             diff_x_v = sample - cvi.v[:, cl]
             C = (
                 cvi.CP[i_label]
-                + (transpose(diff_x_v) * diff_x_v)
-                + cvi.n[i_label] * (transpose(cvi.v[:, cl]) * cvi.v[:, cl])
-                - 2 * (transpose(G_new) * cvi.v[:, cl])
+                + dot(diff_x_v, diff_x_v)
+                + cvi.n[i_label] * dot(cvi.v[:, cl], cvi.v[:, cl])
+                - 2 * dot(G_new, cvi.v[:, cl])
             )
             S_col_new[cl] = C / n_new
             # Row "bmu_temp" - E
             C = (
                 cvi.CP[cl]
-                + cvi.n[cl] * (transpose(v_new) * v_new)
-                - 2 * (transpose(cvi.G[:, cl]) * v_new)
+                + cvi.n[cl] * dot(v_new, v_new)
+                - 2 * dot(cvi.G[:, cl], v_new)
             )
             S_row_new[cl] = C / cvi.n[cl]
         end
@@ -170,9 +170,9 @@ function param_inc!(cvi::cSIL, sample::RealVector, label::Integer)
         diff_x_v = sample - v_new
         C = (
             cvi.CP[i_label]
-            + (transpose(diff_x_v) * diff_x_v)
-            + cvi.n[i_label] * (transpose(v_new) * v_new)
-            - 2 * (transpose(cvi.G[:, i_label]) * v_new)
+            + dot(diff_x_v, diff_x_v)
+            + cvi.n[i_label] * dot(v_new, v_new)
+            - 2 * dot(cvi.G[:, i_label], v_new)
         )
         S_col_new[i_label] = C / n_new
         S_row_new[i_label] = S_col_new[i_label]
