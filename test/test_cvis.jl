@@ -50,55 +50,18 @@ A single test set for the testing the functionality of all CVIS modules.
         n_samples[data_path] = length(local_labels)
     end
 
-    # Incremental
-    @info "------- CVI Incremental -------"
-    cvi_i = Dict()
-    for data_path in data_paths
-        @info "Data: $data_path"
-        cvi_i[data_path] = deepcopy(cvis)
-        for cvi in cvi_i[data_path]
-            # @info "ICVI: $(typeof(cvi))"
-            for ix = 1:n_samples[data_path]
-                sample = data[data_path][:, ix]
-                label = labels[data_path][ix]
-                # param_inc!(cvi, data[:, ix], labels[ix])
-                param_inc!(cvi, sample, label)
-                evaluate!(cvi)
-            end
-        end
-    end
-
-    # Batch
-    @info "------- CVI Batch -------"
-    cvi_b = Dict()
-    for data_path in data_paths
-        @info "Data: $data_path"
-        cvi_b[data_path] = deepcopy(cvis)
-        for cvi in cvi_b[data_path]
-            # @info "CVI: $(typeof(cvi))"
-            param_batch!(cvi, data[data_path], labels[data_path])
-            evaluate!(cvi)
-        end
-    end
-
     # Incremental porcelain
     @info "------- ICVI Porcelain -------"
     cvi_ip = Dict()
-    # cvs_ip = Dict()
     for data_path in data_paths
         @info "Data: $data_path"
         cvi_ip[data_path] = deepcopy(cvis)
-        # cvs_ip[data_path] = zeros(n_samples[data_path], n_cvis)
-        # for cx = 1:n_cvis
         for cvi in cvi_ip[data_path]
             for ix = 1:n_samples[data_path]
                 sample = data[data_path][:, ix]
                 label = labels[data_path][ix]
-                # _ = get_icvi!(cvi_ip[data_path][cx], sample, label)
                 _ = get_icvi!(cvi, sample, label)
-                # cvs_ip[data_path][ix, cx] = cv
             end
-            # @info "CVI: $(typeof(cvi)), index: $(@sprintf("%.5f", cvi.criterion_value))"
             @info "CVI: $(typeof(cvi)), index: $(@sprintf("%.12f", cvi.criterion_value))"
         end
     end
@@ -121,26 +84,8 @@ A single test set for the testing the functionality of all CVIS modules.
     # Test that all permutations are equivalent
     for data_path in data_paths
         for cx = 1:n_cvis
-            # I to B
-            @test isapprox(cvi_i[data_path][cx].criterion_value,
-                cvi_b[data_path][cx].criterion_value,
-                atol=tolerance
-            )
-
             # IP to BP
             @test isapprox(cvi_ip[data_path][cx].criterion_value,
-                cvi_bp[data_path][cx].criterion_value,
-                atol=tolerance
-            )
-
-            # I to IP
-            @test isapprox(cvi_i[data_path][cx].criterion_value,
-                cvi_ip[data_path][cx].criterion_value,
-                atol=tolerance
-            )
-
-            # B to BP
-            @test isapprox(cvi_b[data_path][cx].criterion_value,
                 cvi_bp[data_path][cx].criterion_value,
                 atol=tolerance
             )

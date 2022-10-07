@@ -9,6 +9,13 @@ Description:
 # DOCSTRING TEMPLATES
 # --------------------------------------------------------------------------- #
 
+# Default template if not specified (i.e., constants and modules)
+# @template DEFAULT =
+# """
+# $(SIGNATURES)
+# $(DOCSTRING)
+# """
+
 # Types template
 @template TYPES =
 """
@@ -20,9 +27,6 @@ $(DOCSTRING)
 # Fields
 $(TYPEDFIELDS)
 """
-
-# # Constructors
-# $(TYPEDSIGNATURES)
 
 # Template for functions, macros, and methods (i.e., constructors)
 @template (FUNCTIONS, METHODS, MACROS) =
