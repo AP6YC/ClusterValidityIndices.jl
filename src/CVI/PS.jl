@@ -31,15 +31,15 @@ $(local_references)
 """
 mutable struct PS <: CVI
     label_map::LabelMap
-    dim::Integer
-    n_samples::Integer
-    n::IntegerVector        # dim
-    v::RealMatrix           # dim x n_clusters
-    D::RealMatrix           # n_clusters x n_clusters
-    v_bar::RealVector       # dim
+    dim::Int
+    n_samples::Int
+    n::Vector{Int}              # dim
+    v::Matrix{Float}            # dim x n_clusters
+    D::Matrix{Float}            # n_clusters x n_clusters
+    v_bar::Vector{Float}        # dim
     beta_t::Float
-    PS_i::RealVector        # n_clusters
-    n_clusters::Integer
+    PS_i::Vector{Float}         # n_clusters
+    n_clusters::Int
     criterion_value::Float
 end # PS <: CVI
 
@@ -53,24 +53,26 @@ function PS()
         LabelMap(),                     # label_map
         0,                              # dim
         0,                              # n_samples
-        Array{Integer, 1}(undef, 0),    # n
-        Array{Float, 2}(undef, 0, 0),   # v
-        Array{Float, 2}(undef, 0, 0),   # D
-        Array{Float, 1}(undef, 0),      # v_bar
+        Vector{Int}(undef, 0),          # n
+        Matrix{Float}(undef, 0, 0),     # v
+        Matrix{Float}(undef, 0, 0),     # D
+        Vector{Float}(undef, 0),        # v_bar
         0.0,                            # beta_t
-        Array{Float, 1}(undef, 0),      # PS_i
+        Vector{Float}(undef, 0),        # PS_i
         0,                              # n_clusters
         0.0                             # criterion_value
     )
 end # PS()
 
-function setup!(cvi::PS, sample::Vector{T}) where {T<:RealFP}
+# Setup function
+function setup!(cvi::PS, sample::RealVector)
     # Get the feature dimension
     cvi.dim = length(sample)
     # Initialize the 2-D arrays with the correct feature dimension
-    cvi.v = Array{T, 2}(undef, cvi.dim, 0)
-end # setup!(cvi::PS, sample::Vector{T}) where {T<:RealFP}
+    cvi.v = Matrix{Float}(undef, cvi.dim, 0)
+end # setup!(cvi::PS, sample::RealVector)
 
+# Incremental parameter update function
 function param_inc!(cvi::PS, sample::RealVector, label::Integer)
     # Get the internal label
     i_label = get_internal_label!(cvi.label_map, label)
@@ -123,6 +125,7 @@ function param_inc!(cvi::PS, sample::RealVector, label::Integer)
     cvi.n_samples = n_samples_new
 end # param_inc!(cvi::PS, sample::RealVector, label::Integer)
 
+# Batch parameter update function
 function param_batch!(cvi::PS, data::RealMatrix, labels::IntegerVector)
     cvi.dim, cvi.n_samples = size(data)
     # Take the average across all samples, but cast to 1-D vector
@@ -144,6 +147,7 @@ function param_batch!(cvi::PS, data::RealMatrix, labels::IntegerVector)
     cvi.D = cvi.D + transpose(cvi.D)
 end # param_batch!(cvi::PS, data::RealMatrix, labels::IntegerVector)
 
+# Criterion value evaluation function
 function evaluate!(cvi::PS)
     if cvi.n_clusters > 1
         cvi.v_bar = vec(mean(cvi.v, dims=2))
