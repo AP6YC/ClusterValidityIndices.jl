@@ -16,7 +16,17 @@ include("rCIP.jl")
 include("WB.jl")
 include("XB.jl")
 
-# List of implemented CVIs, useful for iteration
+"""
+List of implemented CVIs, useful for iteration.
+Each element is the struct abbreviated name for the CVI, which can be instantiated for iteration with the empty constructor.
+
+For example:
+
+```julia
+using ClusterValidityIndices
+instantiated_cvis = [local_cvi() for local_cvi in CVI_MODULES]
+```
+"""
 const CVI_MODULES = [
     CH,
     cSIL,
