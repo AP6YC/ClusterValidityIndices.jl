@@ -44,12 +44,12 @@ mutable struct GD53 <: CVI
     label_map::LabelMap
     dim::Int
     n_samples::Int
-    mu_data::Vector{Float}     # dim
-    n::Vector{Int}        # dim
-    v::Matrix{Float}           # dim x n_clusters
-    CP::Vector{Float}          # dim
-    G::Matrix{Float}           # dim x n_clusters
-    D::Matrix{Float}           # n_clusters x n_clusters
+    mu_data::Vector{Float}      # dim
+    n::Vector{Int}              # dim
+    v::Matrix{Float}            # dim x n_clusters
+    CP::Vector{Float}           # dim
+    G::Matrix{Float}            # dim x n_clusters
+    D::Matrix{Float}            # n_clusters x n_clusters
     inter::Float
     intra::Float
     n_clusters::Int

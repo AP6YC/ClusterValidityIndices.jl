@@ -38,12 +38,12 @@ mutable struct cSIL <: CVI
     label_map::LabelMap
     dim::Int
     n_samples::Int
-    n::Vector{Int}             # dim
-    v::Matrix{Float}           # dim x n_clusters
-    CP::Vector{Float}          # dim
-    G::Matrix{Float}           # dim x n_clusters
-    S::Matrix{Float}           # n_clusters x n_clusters
-    sil_coefs::Vector{Float}   # dim
+    n::Vector{Int}              # dim
+    v::Matrix{Float}            # dim x n_clusters
+    CP::Vector{Float}           # dim
+    G::Matrix{Float}            # dim x n_clusters
+    S::Matrix{Float}            # n_clusters x n_clusters
+    sil_coefs::Vector{Float}    # dim
     n_clusters::Int
     criterion_value::Float
 end # cSIL <: CVI

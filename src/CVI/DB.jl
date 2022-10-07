@@ -38,14 +38,14 @@ mutable struct DB <: CVI
     label_map::LabelMap
     dim::Int
     n_samples::Int
-    mu_data::Vector{Float}         # dim
-    n::Vector{Int}                 # dim
-    v::Matrix{Float}               # dim x n_clusters
-    CP::Vector{Float}              # dim
-    S::Vector{Float}               # dim
-    R::Matrix{Float}               # dim x n_clusters
-    G::Matrix{Float}               # dim x n_clusters
-    D::Matrix{Float}               # n_clusters x n_clusters
+    mu_data::Vector{Float}          # dim
+    n::Vector{Int}                  # dim
+    v::Matrix{Float}                # dim x n_clusters
+    CP::Vector{Float}               # dim
+    S::Vector{Float}                # dim
+    R::Matrix{Float}                # dim x n_clusters
+    G::Matrix{Float}                # dim x n_clusters
+    D::Matrix{Float}                # n_clusters x n_clusters
     n_clusters::Int
     criterion_value::Float
 end # DB <: CVI
