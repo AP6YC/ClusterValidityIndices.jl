@@ -160,6 +160,8 @@ This project has implementations of the following CVIs in both batch and increme
 - **WB**: WB-index
 - **XB**: Xie-Beni
 
+The exported constant `CVI_MODULES` also contains a list of these CVIs for convenient iteration.
+
 ## Usage
 
 The usage of these CVIs requires an understanding of:
