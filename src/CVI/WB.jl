@@ -46,12 +46,12 @@ mutable struct WB <: CVI
     label_map::LabelMap
     dim::Int
     n_samples::Int
-    mu::Vector{Float}          # dim
-    n::Vector{Int}        # dim
-    v::Matrix{Float}           # dim x n_clusters
-    CP::Vector{Float}          # dim
-    SEP::Vector{Float}         # dim
-    G::Matrix{Float}           # dim x n_clusters
+    mu::Vector{Float}           # dim
+    n::Vector{Int}              # dim
+    v::Matrix{Float}            # dim x n_clusters
+    CP::Vector{Float}           # dim
+    SEP::Vector{Float}          # dim
+    G::Matrix{Float}            # dim x n_clusters
     BGSS::Float
     WGSS::Float
     n_clusters::Int
