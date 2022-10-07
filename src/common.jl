@@ -136,7 +136,7 @@ Get the internal label and update the label map if the label is new.
 
 # Arguments
 - `label_map::LabelMap`: label map to extract the internal label from.
-- `label::Int`: the external label that corresponds to an internal label.
+- `label::Integer`: the external label that corresponds to an internal label.
 """
 function get_internal_label!(label_map::LabelMap, label::Integer)
     # If the label map contains the key, return that internal label
@@ -223,6 +223,6 @@ Internal method, sets up the CVI based upon the type of the provided sample.
 
 # Arguments
 - `cvi::CVI`: the CVI to setup to the correct dimensions.
-- `sample::Vector{T<:RealFP}`: The sample to use as a basis for setting up the CVI.
+- `sample::RealVector`: The sample to use as a basis for setting up the CVI.
 """
 setup!(cvi::CVI, sample::RealVector)

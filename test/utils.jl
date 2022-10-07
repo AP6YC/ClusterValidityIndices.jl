@@ -28,7 +28,7 @@ function get_cvi_data(data_file::AbstractString)
 end # get_cvi_data(data_file::AbstractString)
 
 """
-    get_bernoulli_subset(data::RealMatrix, labels::IntegerVector, p::RealFP)
+    get_bernoulli_subset(data::RealMatrix, labels::IntegerVector, p::Real)
 """
 function get_bernoulli_subset(data::RealMatrix, labels::IntegerVector, p::Real)
     # Get the dimensions of the data
@@ -39,4 +39,4 @@ function get_bernoulli_subset(data::RealMatrix, labels::IntegerVector, p::Real)
 
     # Return the subset
     return data[:, subset], labels[subset]
-end # get_bernoulli_subset(data::RealMatrix, labels::IntegerVector, p::RealFP)
+end # get_bernoulli_subset(data::RealMatrix, labels::IntegerVector, p::Real)
