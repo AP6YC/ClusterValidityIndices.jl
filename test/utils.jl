@@ -10,6 +10,7 @@ Utilities for unit tests of the `ClusterValidityIndices.jl` package.
 
 using Random
 using DelimitedFiles
+using NumericalTypeAliases
 
 """
     get_cvi_data(data_file::AbstractString)
@@ -27,15 +28,15 @@ function get_cvi_data(data_file::AbstractString)
 end # get_cvi_data(data_file::AbstractString)
 
 """
-    get_bernoulli_subset(data::ClusterValidityIndices.RealMatrix, labels::ClusterValidityIndices.IntegerVector, p::Real)
+    get_bernoulli_subset(data::RealMatrix, labels::IntegerVector, p::RealFP)
 """
-function get_bernoulli_subset(data::ClusterValidityIndices.RealMatrix, labels::ClusterValidityIndices.IntegerVector, p::Real)
+function get_bernoulli_subset(data::RealMatrix, labels::IntegerVector, p::Real)
     # Get the dimensions of the data
-    dim, n_samples = size(data)
+    _, n_samples = size(data)
 
     # Get a random subsamplin of the data
     subset = randsubseq(1:n_samples, p)
 
     # Return the subset
     return data[:, subset], labels[subset]
-end # get_bernoulli_subset(data::ClusterValidityIndices.RealMatrix, labels::ClusterValidityIndices.IntegerVector, p::Real)
+end # get_bernoulli_subset(data::RealMatrix, labels::IntegerVector, p::RealFP)
