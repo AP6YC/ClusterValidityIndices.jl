@@ -46,15 +46,15 @@ $(local_references)
 """
 mutable struct rCIP <: CVI
     label_map::LabelMap
-    dim::Integer
-    n_samples::Integer
-    n::IntegerVector            # dim
-    v::RealMatrix               # dim x n_clusters
+    dim::Int
+    n_samples::Int
+    n::Vector{Int}              # dim
+    v::Matrix{Float}            # dim x n_clusters
     sigma::Array{Float, 3}      # dim x dim x n_clusters
     constant::Float
-    D::RealMatrix               # n_clusters x n_clusters
-    delta_term::RealMatrix      # dim x dim
-    n_clusters::Integer
+    D::Matrix{Float}            # n_clusters x n_clusters
+    delta_term::Matrix{Float}   # dim x dim
+    n_clusters::Int
     criterion_value::Float
 end # rCIP <: CVI
 
@@ -68,30 +68,32 @@ function rCIP()
         LabelMap(),                         # label_map
         0,                                  # dim
         0,                                  # n_samples
-        Array{Integer, 1}(undef, 0),        # n
-        Array{Float, 2}(undef, 0, 0),       # v
+        Vector{Int}(undef, 0),              # n
+        Matrix{Float}(undef, 0, 0),         # v
         Array{Float, 3}(undef, 0, 0, 0),    # sigma
         0.0,                                # constant
-        Array{Float, 2}(undef, 0, 0),       # D
-        Array{Float, 2}(undef, 0, 0),       # delta_term
+        Matrix{Float}(undef, 0, 0),         # D
+        Matrix{Float}(undef, 0, 0),         # delta_term
         0,                                  # n_clusters
         0.0                                 # criterion_value
     )
 end # rCIP()
 
-function setup!(cvi::rCIP, sample::Vector{T}) where {T<:RealFP}
+# Setup function
+function setup!(cvi::rCIP, sample::RealVector)
     # Get the feature dimension
     cvi.dim = length(sample)
     # Initialize the 2-D and 3-D arrays with the correct feature dimension
-    cvi.v = Array{T, 2}(undef, cvi.dim, 0)
-    cvi.sigma = Array{T, 3}(undef, cvi.dim, cvi.dim, 0)
+    cvi.v = Matrix{Float}(undef, cvi.dim, 0)
+    cvi.sigma = Array{Float, 3}(undef, cvi.dim, cvi.dim, 0)
     # Calculate the delta term
     epsilon = 12
     delta = 10 ^ (-epsilon / cvi.dim)
     cvi.delta_term = Matrix{Float}(LinearAlgebra.I, cvi.dim, cvi.dim) .* delta
     cvi.constant = 1 / sqrt((2 * pi) ^ cvi.dim)
-end # setup!(cvi::rCIP, sample::Vector{T}) where {T<:RealFP}
+end # setup!(cvi::rCIP, sample::RealVector)
 
+# Incremental parameter update function
 function param_inc!(cvi::rCIP, sample::RealVector, label::Integer)
     # Get the internal label
     i_label = get_internal_label!(cvi.label_map, label)
@@ -168,6 +170,7 @@ function param_inc!(cvi::rCIP, sample::RealVector, label::Integer)
     cvi.n_samples = n_samples_new
 end # param_inc!(cvi::rCIP, sample::RealVector, label::Integer)
 
+# Incremental parameter update function
 function param_batch!(cvi::rCIP, data::RealMatrix, labels::IntegerVector)
     cvi.dim, cvi.n_samples = size(data)
     cvi.constant = 1 / sqrt((2 * pi) ^ cvi.dim)
@@ -213,6 +216,7 @@ function param_batch!(cvi::rCIP, data::RealMatrix, labels::IntegerVector)
     cvi.D = cvi.D + transpose(cvi.D)
 end # param_batch!(cvi::rCIP, data::RealMatrix, labels::IntegerVector)
 
+# Criterion value evaluation function
 function evaluate!(cvi::rCIP)
     # Assume a symmetric dimension
     dim = size(cvi.D)[1]

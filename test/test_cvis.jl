@@ -35,9 +35,7 @@ A single test set for the testing the functionality of all CVIS modules.
     data, labels, n_samples = Dict(), Dict(), Dict()
 
     # Sanitize all the data
-    # p = 0.1
-    p = 1
-    @info "p is a $(typeof(p))"
+    p = 1.0
 
     @info "Subsampling data at rate: $p"
     for data_path in data_paths

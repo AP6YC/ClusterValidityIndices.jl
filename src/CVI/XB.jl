@@ -36,17 +36,17 @@ $(local_references)
 """
 mutable struct XB <: CVI
     label_map::LabelMap
-    dim::Integer
-    n_samples::Integer
-    mu_data::RealVector     # dim
-    n::IntegerVector        # dim
-    v::RealMatrix           # dim x n_clusters
-    CP::RealVector          # dim
+    dim::Int
+    n_samples::Int
+    mu_data::Vector{Float}      # dim
+    n::Vector{Int}              # dim
+    v::Matrix{Float}            # dim x n_clusters
+    CP::Vector{Float}           # dim
     SEP::Float
-    G::RealMatrix           # dim x n_clusters
-    D::RealMatrix           # n_clusters x n_clusters
+    G::Matrix{Float}            # dim x n_clusters
+    D::Matrix{Float}            # n_clusters x n_clusters
     WGSS::Float
-    n_clusters::Integer
+    n_clusters::Int
     criterion_value::Float
 end # XB <: CVI
 
@@ -60,27 +60,29 @@ function XB()
         LabelMap(),                     # label_map
         0,                              # dim
         0,                              # n_samples
-        Array{Float, 1}(undef, 0),      # mu_data
-        Array{Integer, 1}(undef, 0),    # n
-        Array{Float, 2}(undef, 0, 0),   # v
-        Array{Float, 1}(undef, 0),      # CP
+        Vector{Float}(undef, 0),        # mu_data
+        Vector{Int}(undef, 0),          # n
+        Matrix{Float}(undef, 0, 0),     # v
+        Vector{Float}(undef, 0),        # CP
         0.0,                            # SEP
-        Array{Float, 2}(undef, 0, 0),   # G
-        Array{Float, 2}(undef, 0, 0),   # D
+        Matrix{Float}(undef, 0, 0),     # G
+        Matrix{Float}(undef, 0, 0),     # D
         0.0,                            # WGSS
         0,                              # n_clusters
         0.0                             # criterion_value
     )
 end # XB()
 
-function setup!(cvi::XB, sample::Vector{T}) where {T<:RealFP}
+# Setup function
+function setup!(cvi::XB, sample::RealVector)
     # Get the feature dimension
     cvi.dim = length(sample)
     # Initialize the 2-D arrays with the correct feature dimension
-    cvi.v = Array{T, 2}(undef, cvi.dim, 0)
-    cvi.G = Array{T, 2}(undef, cvi.dim, 0)
+    cvi.v = Matrix{Float}(undef, cvi.dim, 0)
+    cvi.G = Matrix{Float}(undef, cvi.dim, 0)
 end # setup!(cvi::XB, sample::Vector{T}) where {T<:RealFP}
 
+# Incremental parameter update function
 function param_inc!(cvi::XB, sample::RealVector, label::Integer)
     # Get the internal label
     i_label = get_internal_label!(cvi.label_map, label)
@@ -160,6 +162,7 @@ function param_inc!(cvi::XB, sample::RealVector, label::Integer)
     cvi.mu_data = mu_data_new
 end # param_inc!(cvi::XB, sample::RealVector, label::Integer)
 
+# Incremental parameter update function
 function param_batch!(cvi::XB, data::RealMatrix, labels::IntegerVector)
     cvi.dim, cvi.n_samples = size(data)
     # Take the average across all samples, but cast to 1-D vector
@@ -188,6 +191,7 @@ function param_batch!(cvi::XB, data::RealMatrix, labels::IntegerVector)
     cvi.D = cvi.D + transpose(cvi.D)
 end # param_batch!(cvi::XB, data::RealMatrix, labels::IntegerVector)
 
+# Criterion value evaluation function
 function evaluate!(cvi::XB)
     if cvi.n_clusters > 1
         cvi.WGSS = sum(cvi.CP)
