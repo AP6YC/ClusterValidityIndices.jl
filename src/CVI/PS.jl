@@ -155,7 +155,7 @@ function evaluate!(cvi::PS)
         cvi.PS_i = zeros(cvi.n_clusters)
         for ix = 1:cvi.n_clusters
             delta_v = cvi.v[:, ix] - cvi.v_bar
-            cvi.beta_t = cvi.beta_t + transpose(delta_v) * delta_v
+            cvi.beta_t = cvi.beta_t + dot(delta_v, delta_v)
         end
         cvi.beta_t /= cvi.n_clusters
         n_max = maximum(cvi.n)
