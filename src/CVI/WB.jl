@@ -44,17 +44,17 @@ $(local_references)
 """
 mutable struct WB <: CVI
     label_map::LabelMap
-    dim::Integer
-    n_samples::Integer
-    mu::RealVector          # dim
-    n::IntegerVector        # dim
-    v::RealMatrix           # dim x n_clusters
-    CP::RealVector          # dim
-    SEP::RealVector         # dim
-    G::RealMatrix           # dim x n_clusters
+    dim::Int
+    n_samples::Int
+    mu::Vector{Float}          # dim
+    n::Vector{Int}        # dim
+    v::Matrix{Float}           # dim x n_clusters
+    CP::Vector{Float}          # dim
+    SEP::Vector{Float}         # dim
+    G::Matrix{Float}           # dim x n_clusters
     BGSS::Float
     WGSS::Float
-    n_clusters::Integer
+    n_clusters::Int
     criterion_value::Float
 end # WB <: CVI
 
@@ -68,12 +68,12 @@ function WB()
         LabelMap(),                     # label_map
         0,                              # dim
         0,                              # n_samples
-        Array{Float, 1}(undef, 0),      # mu
-        Array{Integer, 1}(undef, 0),    # n
-        Array{Float, 2}(undef, 0, 0),   # v
-        Array{Float, 1}(undef, 0),      # CP
-        Array{Float, 1}(undef, 0),      # SEP
-        Array{Float, 2}(undef, 0, 0),   # G
+        Vector{Float}(undef, 0),        # mu
+        Vector{Int}(undef, 0),          # n
+        Matrix{Float}(undef, 0, 0),     # v
+        Vector{Float}(undef, 0),        # CP
+        Vector{Float}(undef, 0),        # SEP
+        Matrix{Float}(undef, 0, 0),     # G
         0.0,                            # BGSS
         0.0,                            # WGSS
         0,                              # n_clusters
@@ -81,15 +81,17 @@ function WB()
     )
 end # WB()
 
-function setup!(cvi::WB, sample::Vector{T}) where {T<:Real}
+# Setup function
+function setup!(cvi::WB, sample::RealVector)
     # Get the feature dimension
     cvi.dim = length(sample)
     # Initialize the augmenting 2-D arrays with the correct feature dimension
     # NOTE: R is emptied and calculated in evaluate!, so it is not defined here
-    cvi.v = Array{T, 2}(undef, cvi.dim, 0)
-    cvi.G = Array{T, 2}(undef, cvi.dim, 0)
-end # setup!(cvi::WB, sample::Vector{T}) where {T<:Real}
+    cvi.v = Matrix{Float}(undef, cvi.dim, 0)
+    cvi.G = Matrix{Float}(undef, cvi.dim, 0)
+end # setup!(cvi::WB, sample::RealVector)
 
+# Incremental parameter update function
 function param_inc!(cvi::WB, sample::RealVector, label::Integer)
     # Get the internal label
     i_label = get_internal_label!(cvi.label_map, label)
@@ -149,6 +151,7 @@ function param_inc!(cvi::WB, sample::RealVector, label::Integer)
     )
 end # param_inc!(cvi::WB, sample::RealVector, label::Integer)
 
+# Batch parameter update function
 function param_batch!(cvi::WB, data::RealMatrix, labels::IntegerVector)
     cvi.dim, cvi.n_samples = size(data)
     # Take the average across all samples, but cast to 1-D vector
@@ -170,6 +173,7 @@ function param_batch!(cvi::WB, data::RealMatrix, labels::IntegerVector)
     end
 end # param_batch!(cvi::WB, data::RealMatrix, labels::IntegerVector)
 
+# Criterion value evaluation function
 function evaluate!(cvi::WB)
     # Within group sum of scatters
     if cvi.n_clusters > 1
