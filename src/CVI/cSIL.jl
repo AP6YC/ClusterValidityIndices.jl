@@ -77,7 +77,7 @@ function setup!(cvi::cSIL, sample::RealVector)
     # NOTE: R is emptied and calculated in evaluate!, so it is not defined here
     cvi.v = Matrix{Float}(undef, cvi.dim, 0)
     cvi.G = Matrix{Float}(undef, cvi.dim, 0)
-end # setup!(cvi::cSIL, sample::Vector{Float})
+end # setup!(cvi::cSIL, sample::RealVector)
 
 # Incremental parameter update function
 function param_inc!(cvi::cSIL, sample::RealVector, label::Integer)

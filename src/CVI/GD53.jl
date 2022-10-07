@@ -42,17 +42,17 @@ $(local_references)
 """
 mutable struct GD53 <: CVI
     label_map::LabelMap
-    dim::Integer
-    n_samples::Integer
-    mu_data::RealVector     # dim
-    n::IntegerVector        # dim
-    v::RealMatrix           # dim x n_clusters
-    CP::RealVector          # dim
-    G::RealMatrix           # dim x n_clusters
-    D::RealMatrix           # n_clusters x n_clusters
+    dim::Int
+    n_samples::Int
+    mu_data::Vector{Float}     # dim
+    n::Vector{Int}        # dim
+    v::Matrix{Float}           # dim x n_clusters
+    CP::Vector{Float}          # dim
+    G::Matrix{Float}           # dim x n_clusters
+    D::Matrix{Float}           # n_clusters x n_clusters
     inter::Float
     intra::Float
-    n_clusters::Integer
+    n_clusters::Int
     criterion_value::Float
 end # GD53 <: CVI
 
@@ -66,12 +66,12 @@ function GD53()
         LabelMap(),                     # label_map
         0,                              # dim
         0,                              # n_samples
-        Array{Float, 1}(undef, 0),      # mu_data
-        Array{Integer, 1}(undef, 0),    # n
-        Array{Float, 2}(undef, 0, 0),   # v
-        Array{Float, 1}(undef, 0),      # CP
-        Array{Float, 2}(undef, 0, 0),   # G
-        Array{Float, 2}(undef, 0, 0),   # D
+        Vector{Float}(undef, 0),      # mu_data
+        Vector{Int}(undef, 0),    # n
+        Matrix{Float}(undef, 0, 0),   # v
+        Vector{Float}(undef, 0),      # CP
+        Matrix{Float}(undef, 0, 0),   # G
+        Matrix{Float}(undef, 0, 0),   # D
         0.0,                            # inter
         0.0,                            # intra
         0,                              # n_clusters
@@ -79,15 +79,17 @@ function GD53()
     )
 end # GD53()
 
-function setup!(cvi::GD53, sample::Vector{T}) where {T<:RealFP}
+# Setup function
+function setup!(cvi::GD53, sample::RealVector)
     # Get the feature dimension
     cvi.dim = length(sample)
     # Initialize the augmenting 2-D arrays with the correct feature dimension
     # NOTE: R is emptied and calculated in evaluate!, so it is not defined here
-    cvi.v = Array{T, 2}(undef, cvi.dim, 0)
-    cvi.G = Array{T, 2}(undef, cvi.dim, 0)
-end # setup!(cvi::GD53, sample::Vector{T}) where {T<:RealFP}
+    cvi.v = Matrix{Float}(undef, cvi.dim, 0)
+    cvi.G = Matrix{Float}(undef, cvi.dim, 0)
+end # setup!(cvi::GD53, sample::RealVector)
 
+# Incremental parameter update function
 function param_inc!(cvi::GD53, sample::RealVector, label::Integer)
     # Get the internal label
     i_label = get_internal_label!(cvi.label_map, label)
@@ -164,6 +166,7 @@ function param_inc!(cvi::GD53, sample::RealVector, label::Integer)
     cvi.mu_data = mu_data_new
 end # param_inc!(cvi::GD53, sample::RealVector, label::Integer)
 
+# Batch parameter update function
 function param_batch!(cvi::GD53, data::RealMatrix, labels::IntegerVector)
     cvi.dim, cvi.n_samples = size(data)
     # Take the average across all samples, but cast to 1-D vector
@@ -193,6 +196,7 @@ function param_batch!(cvi::GD53, data::RealMatrix, labels::IntegerVector)
     cvi.D = cvi.D + transpose(cvi.D)
 end # param_batch!(cvi::GD53, data::RealMatrix, labels::IntegerVector)
 
+# Criterion value evaluation function
 function evaluate!(cvi::GD53)
     if cvi.n_clusters > 1
         cvi.intra = 2 * maximum(cvi.CP ./ cvi.n)
