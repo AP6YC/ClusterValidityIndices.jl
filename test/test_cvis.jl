@@ -12,18 +12,10 @@ A single test set for the testing the functionality of all CVIS modules.
 Constructs and returns a list of all cvis
 """
 function construct_cvis()
-    # Construct the cvis
-    cvis = [
-        CH(),
-        cSIL(),
-        DB(),
-        GD43(),
-        GD53(),
-        PS(),
-        rCIP(),
-        WB(),
-        XB(),
-    ]
+    # Construct the cvis as a list
+    cvis = [local_cvi() for local_cvi in CVI_MODULES]
+
+    # Return a list of constructed CVIs
     return cvis
 end
 

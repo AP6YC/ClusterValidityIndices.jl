@@ -107,6 +107,7 @@ export
 
     # CVI utilities
     sort_cvi_data,
-    relabel_cvi_data
+    relabel_cvi_data,
+    CVI_MODULES
 
 end

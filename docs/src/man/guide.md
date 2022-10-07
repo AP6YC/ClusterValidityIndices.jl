@@ -53,6 +53,22 @@ or in batch with `get_cvi`
 criterion_value = get_cvi(data, labels)
 ```
 
+## [Implemented CVIs](@id implemented-cvis)
+
+The `ClusterValidityIndices.jl` package has the following CVIs implemented:
+
+- **CH**: Calinski-Harabasz
+- **cSIL**: Centroid-based Silhouette
+- **DB**: Davies-Bouldin
+- **GD43**: Generalized Dunn's Index 43
+- **GD53**: Generalized Dunn's Index 53
+- **PS**: Partition Separation
+- **rCIP**: (Renyi's) representative Cross Information Potential
+- **WB**: WB-index
+- **XB**: Xie-Beni
+
+The exported constant `CVI_MODULES` also contains a list of these CVIs for convenient iteration.
+
 ## [Usage](@id usage)
 
 The usage of these CVIs requires an understanding of:
