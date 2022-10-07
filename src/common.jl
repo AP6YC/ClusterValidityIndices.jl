@@ -16,6 +16,15 @@ Description:
 # $(DOCSTRING)
 # """
 
+# Constants template
+@template CONSTANTS =
+"""
+$(FUNCTIONNAME)
+
+# Description
+$(DOCSTRING)
+"""
+
 # Types template
 @template TYPES =
 """
