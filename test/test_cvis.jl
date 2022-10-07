@@ -85,3 +85,13 @@ end
         end
     end
 end
+
+@testset "Edge Cases" begin
+    @info "Testing CVI Edge Cases"
+
+    # Test rCIP provided a single sample of any one cluster in batch update
+    local_cvi = rCIP()
+    local_data = [1 2 3; 4 5 6] / 2
+    local_labels = [1, 1, 2]
+    _ = get_cvi!(local_cvi, local_data, local_labels)
+end
