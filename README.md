@@ -53,15 +53,10 @@ Please read the [documentation](https://ap6yc.github.io/ClusterValidityIndices.j
 - [ClusterValidityIndices](#clustervalidityindices)
   - [Table of Contents](#table-of-contents)
   - [Overview](#overview)
-  - [Installation](#installation)
-  - [Quickstart](#quickstart)
-  - [Implemented CVI/ICVIs](#implemented-cviicvis)
+    - [Installation](#installation)
+    - [Quickstart](#quickstart)
+    - [Implemented CVI/ICVIs](#implemented-cviicvis)
     - [Examples](#examples)
-  - [Detailed Usage](#detailed-usage)
-    - [Data](#data)
-    - [Instantiation](#instantiation)
-    - [Incremental vs. Batch](#incremental-vs-batch)
-    - [Advanced Usage](#advanced-usage)
   - [Structure](#structure)
   - [Contributing](#contributing)
   - [Acknowledgements](#acknowledgements)
@@ -79,7 +74,7 @@ This outline begins with [a list of CVIs](#implemented-cviicvis) that are implem
 [Quickstart](#quickstart) provides an overview of how to use this project, while [Structure](#structure) outlines the project file structure, giving context to the locations of every component of the project.
 [Usage](#usage) outlines the general syntax and workflow of the CVIs/ICVIs.
 
-## Installation
+### Installation
 
 This project is distributed as a Julia package, available on [JuliaHub](https://juliahub.com/).
 Its usage follows the usual Julia package installation procedure, interactively:
@@ -103,10 +98,10 @@ julia> ]
 (@v1.8) pkg> add https://github.com/AP6YC/ClusterValidityIndices.jl
 ```
 
-## Quickstart
+### Quickstart
 
 This section provides a quick overview of how to use the project.
-For more detailed code usage, please see [Usage](#usage).
+For more detailed code usage, please see the [Detailed Usage](@ref usage).
 
 First, import the package with:
 
@@ -125,7 +120,7 @@ my_cvi = DB()
 All CVIs are implemented with acronyms of their literature names.
 A list of all of these are found in the [Implemented CVIs/ICVIs](#implemented-cviicvis) section.
 
-Then, get data from a clustering process.
+Next, get data from a clustering process.
 This is a set of samples of features that are clustered and prescribed cluster labels.
 
 > **Note**
@@ -135,7 +130,7 @@ This is a set of samples of features that are clustered and prescribed cluster l
 > Labels are vectors of integers where each number corresponds to its own cluster.
 
 ```julia
-# Random data as an example with ten samples
+# Random data as an example; 10 samples with feature dimenison 3
 dim = 3
 n_samples = 10
 data = rand(dim, n_samples)
@@ -149,7 +144,7 @@ Compute in batch by providing a matrix of samples and a vector of labels:
 criterion_value = get_cvi(my_cvi, data, labels)
 ```
 
-or incrementally by passing one sample and label at a time:
+or incrementally with the same function by passing one sample and label at a time:
 
 ```julia
 # Create a container for the values and iterate
@@ -163,7 +158,7 @@ end
 >
 > Each module has a batch and incremental implementation, but `ClusterValidityIndices.jl` does not yet support switching between batch and incremental modes with the same CVI object.
 
-## Implemented CVI/ICVIs
+### Implemented CVI/ICVIs
 
 This project has implementations of the following CVIs in both batch and incremental variants:
 
@@ -185,113 +180,6 @@ A [basic example](https://ap6yc.github.io/ClusterValidityIndices.jl/dev/getting-
 
 Futhermore, there are a variety of examples in the [Examples](https://ap6yc.github.io/ClusterValidityIndices.jl/dev/examples/) section of the documentation for a variety of use cases of the project.
 Each of these is made using the [`DemoCards.jl`](https://github.com/johnnychen94/DemoCards.jl) package and can be opened, saved, and run as a Julia notebook.
-
-## Detailed Usage
-
-The usage of these CVIs involves the following:
-
-- [Data](#data) assumptions of the CVIs.
-- [How to instantiate](#instantiation) the CVIs.
-- [Incremental vs. batch](#incremental-vs-batch) evaluation.
-- [Advanced usage](#advanced-usage) for under-the-hood.
-
-### Data
-
-Because Julia is programmed in a column-major fashion, all CVIs make the assumption that the first dimension (columns) contains features, while the second dimension (rows) contains samples.
-This is more important for batch operation, as incremental operation accepts 1-D sample of features at each time step by definition.
-
-For example,
-
-```julia
-# Load data from somewhere
-data = load_data()
-# The data shape is dimsion x samples
-dim, n_samples = size(data)
-```
-
-### Instantiation
-
-The names of each CVI are capital abbreviations of their literature names, often based upon the surname of the principal authors of the papers that introduce the metrics.
-Every CVI is a subtype of the abstract type `CVI`, and they are all are instantiated with the empty constructor:
-
-```julia
-my_cvi = DB()
-```
-
-### Incremental vs. Batch
-
-The CVIs in this project all contain *incremental* and *batch* implementations.
-When evaluated in incremental mode, they are often called ICVIs (incremental cluster validity indices) in the literature.
-For simplicity, all `CVI` objects have batch and incremental implementations and are simply referred to as CVIs in the documentation.
-
-Either way, you use `get_cvi!`, and the magic of Julia's multiple dispatch handles which implementation to use.
-To update in batch, you must provide a 2D matrix of samples along with a vector of integer labels.
-To update incrementally, simply provide a single sample with an integer label.
-
-```julia
-# Batch
-get_cvi!(cvi::CVI, data::RealMatrix, labels::IntegerVector)
-# Incremental
-get_cvi!(cvi::CVI, sample::RealVector, label::Integer)
-```
-
-In both incremental and batch modes, the parameter update requires:
-
-- The CVI being updated.
-- The sample (or array of samples).
-- The label(s) that was/were prescribed by the clustering algorithm to the sample(s).
-
-### Advanced Usage
-
-The CVIs in this project all contain internal *parameters* that must be updated.
-Each update function modifies the CVI, so they use the Julia nomenclature convention of appending an exclamation point to indicate as much.
-
-- `param_inc!`/`param_batch!`: updates the internal parameters of the CVI.
-- `evaluate!`: computes the criterion value itself.
-- `cvi.criterion_value`: contains the last criterion value after evaluation.
-
-More concretely, they are
-
-```julia
-# Incremental updating
-param_inc!(cvi::CVI, sample::RealVector, label::Integer)
-# Batch updating
-param_batch!(cvi::CVI, data::RealMatrix, labels::IntegerVector)
-```
-
-After updating their internal parameters, they both compute their most recent criterion values with
-
-```julia
-evaluate!(cvi::CVI)
-```
-
-For example, we may instantiate and load our data
-
-```julia
-cvi = DB()
-data = load_data()
-labels = get_cluster_labels(data)
-dim, n_samples = size(data)
-```
-
-then update the parameters incrementally with
-
-```julia
-criterion_values = zeros(n_samples)
-for ix = 1:n_samples
-    param_inc!(cvi, data[:, ix], labels[ix])
-    evaluate!(cvi)
-    criterion_values[ix] = cvi.criterion_value
-end
-```
-
-or in batch with
-
-```julia
-param_batch!(cvi, data, labels)
-evaluate!(cvi)
-criterion_value = cvi.criterion_value
-```
 
 ## Structure
 
@@ -334,7 +222,8 @@ Patch versions are for bug fixes, minor versions are for backward-compatible cha
 
 ### Authors
 
-This package is developed and maintained by [Sasha Petrenko](https://github.com/AP6YC) with sponsorship by the [Applied Computational Intelligence Laboratory (ACIL)](https://acil.mst.edu/). This project is supported by grants from the [Night Vision Electronic Sensors Directorate](https://c5isr.ccdc.army.mil/inside_c5isr_center/nvesd/), the [DARPA Lifelong Learning Machines (L2M) program](https://www.darpa.mil/program/lifelong-learning-machines), [Teledyne Technologies](http://www.teledyne.com/), and the [National Science Foundation](https://www.nsf.gov/).
+This package is developed and maintained by [Sasha Petrenko](https://github.com/AP6YC) with sponsorship by the [Applied Computational Intelligence Laboratory (ACIL)](https://acil.mst.edu/).
+This project is supported by grants from the [Night Vision Electronic Sensors Directorate](https://c5isr.ccdc.army.mil/inside_c5isr_center/nvesd/), the [DARPA Lifelong Learning Machines (L2M) program](https://www.darpa.mil/program/lifelong-learning-machines), [Teledyne Technologies](http://www.teledyne.com/), and the [National Science Foundation](https://www.nsf.gov/).
 The material, findings, and conclusions here do not necessarily reflect the views of these entities.
 
 The users [@rMassimiliano](https://github.com/rMassimiliano) and [@malmaud](https://github.com/malmaud) have graciously contributed their time with reviews and feedback that has greatly improved the project.
