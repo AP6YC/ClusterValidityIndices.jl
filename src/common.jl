@@ -33,10 +33,9 @@ $(TYPEDFIELDS)
 # Template for functions, macros, and methods (i.e., constructors)
 @template (FUNCTIONS, METHODS, MACROS) =
 """
-$(SIGNATURES)
+$(TYPEDSIGNATURES)
 
 # Summary
-$(TYPEDSIGNATURES)
 $(DOCSTRING)
 
 # Method List / Definition Locations
@@ -104,7 +103,7 @@ function get_icvi!(cvi::CVI, sample::RealVector, label::Integer)
 
     # Return that value
     return cvi.criterion_value
-end # get_icvi!(cvi::CVI, sample::RealVector, label::Integer)
+end
 
 """
 Compute and return the criterion value in batch mode.
@@ -135,7 +134,7 @@ function get_cvi!(cvi::CVI, data::RealMatrix, labels::IntegerVector)
 
     # Return that value
     return cvi.criterion_value
-end # get_cvi!(cvi::CVI, data::RealMatrix, labels::IntegerVector)
+end
 
 """
 Get the internal label and update the label map if the label is new.
@@ -155,7 +154,7 @@ function get_internal_label!(label_map::LabelMap, label::Integer)
     end
 
     return internal_label
-end # get_internal_label!(label_map::LabelMap, label::Int)
+end
 
 # --------------------------------------------------------------------------- #
 # COMMON DOCUMENTATION
