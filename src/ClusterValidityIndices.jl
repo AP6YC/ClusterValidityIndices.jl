@@ -102,7 +102,6 @@ export
     param_inc!,
     param_batch!,
     evaluate!,
-    get_icvi!,
     get_cvi!,
 
     # CVI utilities

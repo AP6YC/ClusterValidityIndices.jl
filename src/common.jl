@@ -1,8 +1,8 @@
 """
     common.jl
 
-Description:
-    All common types, aliases, structs, and methods for the ClusterValidityIndices.jl package.
+# Description:
+All common types, aliases, structs, and methods for the ClusterValidityIndices.jl package.
 """
 
 # --------------------------------------------------------------------------- #
@@ -94,7 +94,7 @@ for ix = 1:n_samples
 end
 ```
 """
-function get_icvi!(cvi::CVI, sample::RealVector, label::Integer)
+function get_cvi!(cvi::CVI, sample::RealVector, label::Integer)
     # Update the ICVI parameters
     param_inc!(cvi, sample, label)
 

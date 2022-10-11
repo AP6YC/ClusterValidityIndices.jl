@@ -74,7 +74,7 @@ end
     for ix in eachindex(local_labels)
         sample = local_data[:, ix]
         label = local_labels[ix]
-        _ = get_icvi!(cvi, sample, label)
+        _ = get_cvi!(cvi, sample, label)
     end
 
     @info "Task map: " cvi.label_map
