@@ -55,13 +55,13 @@ Please read the [documentation](https://ap6yc.github.io/ClusterValidityIndices.j
   - [Overview](#overview)
   - [Installation](#installation)
   - [Quickstart](#quickstart)
-    - [Examples](#examples)
   - [Implemented CVI/ICVIs](#implemented-cviicvis)
-  - [Usage](#usage)
+    - [Examples](#examples)
+  - [Detailed Usage](#detailed-usage)
     - [Data](#data)
     - [Instantiation](#instantiation)
     - [Incremental vs. Batch](#incremental-vs-batch)
-    - [Updating](#updating)
+    - [Advanced Usage](#advanced-usage)
     - [Criterion Values](#criterion-values)
     - [Porcelain](#porcelain)
   - [Structure](#structure)
@@ -76,7 +76,7 @@ Cluster Validity Indices (CVIs) are designed to be metrics of performance for un
 In the absense of supervisory labels (i.e., ground truth), clustering algorithms - or any truly unsupervised learning algorithms - have no way to definitively know the stability of their learning and accuracy of their performance.
 As a result, CVIs exist to provide metrics of partitioning stability/validity through the use of only the original data samples and the cluster labels prescribed by the clustering algorithm.
 
-This Julia package contains an outline of the conceptual usage of CVIs along with many example scripts.
+This Julia package contains an outline of the conceptual usage of CVIs along with many [example scripts in the documentation](https://ap6yc.github.io/ClusterValidityIndices.jl/dev/examples/).
 This outline begins with [a list of CVIs](#implemented-cviicvis) that are implemented in the lastest version of the project.
 [Quickstart](#quickstart) provides an overview of how to use this project, while [Structure](#structure) outlines the project file structure, giving context to the locations of every component of the project.
 [Usage](#usage) outlines the general syntax and workflow of the CVIs/ICVIs.
@@ -86,21 +86,23 @@ This outline begins with [a list of CVIs](#implemented-cviicvis) that are implem
 This project is distributed as a Julia package, available on [JuliaHub](https://juliahub.com/).
 Its usage follows the usual Julia package installation procedure, interactively:
 
-```julia
-] add ClusterValidityIndices
+```julia-repl
+julia> ]
+(@v1.8) pkg> add ClusterValidityIndices
 ```
 
 or programmatically:
 
-```julia
-using Pkg
-Pkg.add("ClusterValidityIndices")
+```julia-repl
+julia> using Pkg
+julia> Pkg.add("ClusterValidityIndices")
 ```
 
 You may also add the package directly from GitHub to get the latest changes between releases:
 
-```julia
-] add https://github.com/AP6YC/ClusterValidityIndices.jl
+```julia-repl
+julia> ]
+(@v1.8) pkg> add https://github.com/AP6YC/ClusterValidityIndices.jl
 ```
 
 ## Quickstart
@@ -108,43 +110,60 @@ You may also add the package directly from GitHub to get the latest changes betw
 This section provides a quick overview of how to use the project.
 For more detailed code usage, please see [Usage](#usage).
 
-First, assume that you have a dataset of features/data and labels prescribed by some clustering algorithm:
+First, import the package with:
 
 ```julia
-data_file = "path/to/data.csv"
-data, labels = get_cvi_data(data_file)
+# Import the package
+using ClusterValidityIndices
 ```
 
-All CVIs in this package are acronymed (see [Implemented Modules](#implemented-cviicvis)).
-You can create a new CVI structure with a default constructor:
+CVI objects are instantiated with empty constructors:
 
 ```julia
-# Davies-Bouldin (DB)
+# Create a Davies-Bouldin (DB) CVI object
 my_cvi = DB()
 ```
 
-The output of CVIs are called *criterion values*, and they can be computed incrementally with `get_icvi`
+All CVIs are implemented with acronyms of their literature names.
+A list of all of these are found in the [Implemented CVIs/ICVIs](#implemented-cviicvis) section.
+
+Then, get data from a clustering process.
+This is a set of samples of features that are clustered and prescribed cluster labels.
+
+> **Note**
+>
+> The `ClusterValidityIndices.jl` package assumes data to be in the form of Float matrices where columns are samples and rows are features.
+> An individual sample is a single vector of features.
+> Labels are vectors of integers where each number corresponds to its own cluster.
 
 ```julia
-n_samples = length(labels)
+# Random data as an example with ten samples
+dim = 3
+n_samples = 10
+data = rand(dim, n_samples)
+labels = collect(1:n_samples)
+```
+
+The output of CVIs are called *criterion values*, and they can be computed both incrementally and in batch with `get_cvi`.
+Compute in batch by providing a matrix of samples and a vector of labels:
+
+```julia
+criterion_value = get_cvi(my_cvi, data, labels)
+```
+
+or incrementally by passing one sample and label at a time:
+
+```julia
+# Create a container for the values and iterate
 criterion_values = zeros(n_samples)
 for i = 1:n_samples
-    criterion_values[i] = get_icvi(data[:, i], labels[i])
+    criterion_values[i] = get_cvi(my_cvi, data[:, i], labels[i])
 end
 ```
 
-or in batch with `get_cvi`
-
-```julia
-criterion_value = get_cvi(data, labels)
-```
-
-### Examples
-
-A [basic example](https://ap6yc.github.io/ClusterValidityIndices.jl/dev/getting-started/basic-example/) of the package usage is found in the documentation illustrating top-down usage of the package.
-
-Futhermore, there are a variety of examples in the [Examples](https://ap6yc.github.io/ClusterValidityIndices.jl/dev/examples/) section of the documentation for a variety of use cases of the project.
-Each of these is made using the [`DemoCards.jl`](https://github.com/johnnychen94/DemoCards.jl) package and can be opened, saved, and run as a Julia notebook.
+> **Note**
+>
+> Each module has a batch and incremental implementation, but `ClusterValidityIndices.jl` does not yet support switching between batch and incremental modes with the same CVI object.
 
 ## Implemented CVI/ICVIs
 
@@ -162,16 +181,21 @@ This project has implementations of the following CVIs in both batch and increme
 
 The exported constant `CVI_MODULES` also contains a list of these CVIs for convenient iteration.
 
-## Usage
+### Examples
 
-The usage of these CVIs requires an understanding of:
+A [basic example](https://ap6yc.github.io/ClusterValidityIndices.jl/dev/getting-started/basic-example/) of the package usage is found in the documentation illustrating top-down usage of the package.
+
+Futhermore, there are a variety of examples in the [Examples](https://ap6yc.github.io/ClusterValidityIndices.jl/dev/examples/) section of the documentation for a variety of use cases of the project.
+Each of these is made using the [`DemoCards.jl`](https://github.com/johnnychen94/DemoCards.jl) package and can be opened, saved, and run as a Julia notebook.
+
+## Detailed Usage
+
+The usage of these CVIs involves the following:
 
 - [Data](#data) assumptions of the CVIs.
 - [How to instantiate](#instantiation) the CVIs.
 - [Incremental vs. batch](#incremental-vs-batch) evaluation.
-- [Updating](#updating) internal CVI parameters.
-- [Computing and extracting](#criterion-values) the criterion values.
-- [Porcelain functions](#porcelain) that are available to simplify operation.
+- [Advanced usage](#advanced-usage) for under-the-hood.
 
 ### Data
 
@@ -187,87 +211,42 @@ data = load_data()
 dim, n_samples = size(data)
 ```
 
-> **Note**
->
-> As of ClusterValidityIndices.jl v0.1.3, all the CVIs assume that the labels are presented sequentially initially, starting with index 1 (e.g., 1, 1, 2, 2, 3, 2, 2, 1, 3, 4, 4 ...).
-> You may repeat previously seen label indices, but skipping label indices (e.g., 1, 2, 4) results in undefined behavior.
-In this project, this is ameliorated with the function
-
-```julia
-relabel_cvi_data(labels::IntegerVector)
-```
-
-For example,
-
-```julia
-data_file = "path/to/data.csv"
-data, labels = get_cvi_data(data_file)
-labels = relabel_cvi_data(labels)
-```
-
-Alternatively, you may pairwise sort the entirety of the data with
-
-```julia
-sort_cvi_data(data::RealMatrix, labels::IntegerVector)
-```
-
-> **Note**
->
-> `sort_cvi_data` reorders the input data as well, which will lead to different ICVI results than with `relabel_cvi_data`.
-
 ### Instantiation
 
 The names of each CVI are capital abbreviations of their literature names, often based upon the surname of the principal authors of the papers that introduce the metrics.
-All CVIs are implemented with the default constructor, such as
+Every CVI is a subtype of the abstract type `CVI`, and they are all are instantiated with the empty constructor:
 
 ```julia
-cvi = DB()
+my_cvi = DB()
 ```
 
 ### Incremental vs. Batch
 
 The CVIs in this project all contain *incremental* and *batch* implementations.
-When evaluated in incremental mode, they are often called ICVIs (incremental cluster validity indices).
-In this documentation, CVI means batch and ICVI means incremental, though both are `CVI` objects.
+When evaluated in incremental mode, they are often called ICVIs (incremental cluster validity indices) in the literature.
+For simplicity, all `CVI` objects have batch and incremental implementations and are simply referred to as CVIs in the documentation.
 
-The functions that differ between the two modes are how they are updated:
-
-```julia
-# Incremental
-param_inc!(cvi::CVI, sample::RealVector, label::Integer)
-# Batch
-param_batch!(cvi::CVI, data::RealMatrix, labels::IntegerVector)
-```
-
-After updating their internal parameters, they both compute their most recent criterion values with
+Either way, you use `get_cvi!`, and the magic of Julia's multiple dispatch handles which implementation to use.
+To update in batch, you must provide a 2D matrix of samples along with a vector of integer labels.
+To update incrementally, simply provide a single sample with an integer label.
 
 ```julia
-evaluate!(cvi::CVI)
-```
-
-To simplify the process, both modes have their respective "porcelain" functions to update the internal parameters, evaluate the criterion value, and return it:
-
-```julia
-# Incremental
-get_icvi!(cvi::CVI, sample::RealVector, label::Integer)
 # Batch
 get_cvi!(cvi::CVI, data::RealMatrix, labels::IntegerVector)
+# Incremental
+get_cvi!(cvi::CVI, sample::RealVector, label::Integer)
 ```
-
-> **Note**
->
-> Any CVI object can be updated incrementally or in batch, as the CVIs are equivalent to their ICVI counterparts after all data is presented.
-
-### Updating
-
-The CVIs in this project all contain internal *parameters* that must be updated.
-Each update function modifies the CVI, so they use the Julia nomenclature convention of appending an exclamation point to indicate as much.
 
 In both incremental and batch modes, the parameter update requires:
 
-- The CVI being updates
-- The sample (or array of samples)
-- The label(s) that was/were prescribed by the clustering algorithm to the sample(s)
+- The CVI being updated.
+- The sample (or array of samples).
+- The label(s) that was/were prescribed by the clustering algorithm to the sample(s).
+
+### Advanced Usage
+
+The CVIs in this project all contain internal *parameters* that must be updated.
+Each update function modifies the CVI, so they use the Julia nomenclature convention of appending an exclamation point to indicate as much.
 
 More concretely, they are
 
@@ -278,7 +257,7 @@ param_inc!(cvi::C, sample::RealVector, label::Integer)
 param_batch!(cvi::C, data::RealMatrix, labels::IntegerVector)
 ```
 
-Every CVI is a subtype of the abstract type `CVI`.
+
 For example, we may instantiate and load our data
 
 ```julia
@@ -305,21 +284,22 @@ or in batch with
 param_batch!(cvi, data, labels)
 ```
 
-Furthermore, any CVI can alternate between being updated in incremental or batch modes, such as
+
 
 ```julia
-# Create a new CVI
-cvi_mixed = DB()
-
-# Update on half of the data incrementally
-i_split = n_samples/2
-for ix = 1:i_split
-    param_inc!(cvi, data[:, ix], labels[ix])
-end
-
-# Update on the other half all at once
-param_batch!(cvi, data[:, (i_split+1):end])
+# Incremental
+param_inc!(cvi::CVI, sample::RealVector, label::Integer)
+# Batch
+param_batch!(cvi::CVI, data::RealMatrix, labels::IntegerVector)
 ```
+
+After updating their internal parameters, they both compute their most recent criterion values with
+
+```julia
+evaluate!(cvi::CVI)
+```
+
+
 
 ### Criterion Values
 
