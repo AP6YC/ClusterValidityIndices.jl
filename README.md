@@ -62,8 +62,6 @@ Please read the [documentation](https://ap6yc.github.io/ClusterValidityIndices.j
     - [Instantiation](#instantiation)
     - [Incremental vs. Batch](#incremental-vs-batch)
     - [Advanced Usage](#advanced-usage)
-    - [Criterion Values](#criterion-values)
-    - [Porcelain](#porcelain)
   - [Structure](#structure)
   - [Contributing](#contributing)
   - [Acknowledgements](#acknowledgements)
@@ -248,15 +246,24 @@ In both incremental and batch modes, the parameter update requires:
 The CVIs in this project all contain internal *parameters* that must be updated.
 Each update function modifies the CVI, so they use the Julia nomenclature convention of appending an exclamation point to indicate as much.
 
+- `param_inc!`/`param_batch!`: updates the internal parameters of the CVI.
+- `evaluate!`: computes the criterion value itself.
+- `cvi.criterion_value`: contains the last criterion value after evaluation.
+
 More concretely, they are
 
 ```julia
 # Incremental updating
-param_inc!(cvi::C, sample::RealVector, label::Integer)
+param_inc!(cvi::CVI, sample::RealVector, label::Integer)
 # Batch updating
-param_batch!(cvi::C, data::RealMatrix, labels::IntegerVector)
+param_batch!(cvi::CVI, data::RealMatrix, labels::IntegerVector)
 ```
 
+After updating their internal parameters, they both compute their most recent criterion values with
+
+```julia
+evaluate!(cvi::CVI)
+```
 
 For example, we may instantiate and load our data
 
@@ -270,67 +277,6 @@ dim, n_samples = size(data)
 then update the parameters incrementally with
 
 ```julia
-# Iterate over all samples
-for ix = 1:n_samples
-    sample = data[:, ix]
-    label = labels[ix]
-    param_inc!(cvi, sample, labels)
-end
-```
-
-or in batch with
-
-```julia
-param_batch!(cvi, data, labels)
-```
-
-
-
-```julia
-# Incremental
-param_inc!(cvi::CVI, sample::RealVector, label::Integer)
-# Batch
-param_batch!(cvi::CVI, data::RealMatrix, labels::IntegerVector)
-```
-
-After updating their internal parameters, they both compute their most recent criterion values with
-
-```julia
-evaluate!(cvi::CVI)
-```
-
-
-
-### Criterion Values
-
-The CVI parameters are separate from the criterion values that they produce.
-This is partly because in batch mode computing the criterion value is only relevant at the last step, which eliminates unnecessarily computing it at every step.
-This is also provide granularity to the user that may only which to extract the criterion value occasionally during incremental mode.
-
-Because the criterion values only depend on the internal CVI parameters, they are computed (and internally stored) with
-
-```julia
-evaluate!(cvi::C) where {C<:CVI}
-```
-
-To extract them, you must then simply grab the criterion value from the CVI struct with
-
-```julia
-criterion_value = cvi.criterion_value
-```
-
-For example, after loading the data
-
-```julia
-cvi = DB()
-data = load_data()
-labels = get_cluster_labels(data)
-dim, n_samples = size(data)
-```
-
-we may extract and return the criterion value at every step with
-
-```julia
 criterion_values = zeros(n_samples)
 for ix = 1:n_samples
     param_inc!(cvi, data[:, ix], labels[ix])
@@ -339,41 +285,12 @@ for ix = 1:n_samples
 end
 ```
 
-or we may get it at the end in batch mode with
+or in batch with
 
 ```julia
 param_batch!(cvi, data, labels)
 evaluate!(cvi)
 criterion_value = cvi.criterion_value
-```
-
-### Porcelain
-
-Taken from the `git` convention of calling low-level operations *plumbing* and high-level user-land functions *porcelain*, the package comes with a small set of *porcelain* function that do common operations all at once for the user.
-
-For example, you may compute, evalute, and return the criterion value all at once with the functions `get_icvi!` and `get_cvi`.
-Exactly as in the usage for updating the parameters, the functions take the cvi, sample(s), and clustered label(s) as input:
-
-```julia
-# Incremental
-get_icvi!(cvi::CVI, x::RealVector, y::Integer)
-# Batch
-get_cvi!(cvi::CVI, x::RealMatrix, y::IntegerVector)
-```
-
-For example, after loading the data you may get the criterion value at each step with
-
-```julia
-criterion_values = zeros(n_samples)
-for ix = 1:n_samples
-    criterion_values[ix] = get_icvi!(cvi, data[:, ix], labels[ix])
-end
-```
-
-or you may get the final criterion value in batch mode with
-
-```julia
-criterion_value = get_cvi!(cvi, data, labels)
 ```
 
 ## Structure
