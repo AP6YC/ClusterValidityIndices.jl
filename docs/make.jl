@@ -14,6 +14,9 @@ using
 current_dir = basename(pwd())
 @info "Current directory is $(current_dir)"
 
+# GR errors
+ENV["GKSwstype"] = "100"
+
 # If using the CI method `julia --project=docs/ docs/make.jl`
 #   or `julia --startup-file=no --project=docs/ docs/make.jl`
 if occursin("ClusterValidityIndices", current_dir)
