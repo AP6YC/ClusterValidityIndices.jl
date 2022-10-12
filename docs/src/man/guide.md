@@ -1,22 +1,37 @@
 # Package Guide
 
-## Installation
+The package guide is broken into the following sections:
 
-The CVI package can be installed using the Julia package manager.
-From the Julia REPL, type ']' to enter the Pkg REPL mode and run
+- [Installation](@ref guide-installation): instructions for the package.
+- [Quickstart](@ref guide-quickstart): a simple rundown of the package usage to get it running.
+- [Implemented CVIs](@ref implemented-cvis): a list of all batch and incremental CVIs available in the package.
+- [Usage](@ref usage): a deep dive of the package and its detailed usage.
 
-```julia
-pkg> add CVI
+## [Installation](@id guide-installation)
+
+This project is distributed as a [Julia](https://julialang.org/) package and hosted on [JuliaHub][pkgeval-url], Julia's package manager repository.
+As such, this package's usage follows the usual Julia package installation procedure, interactively:
+
+```julia-repl
+julia> ]
+(@v1.8) pkg> add ClusterValidityIndices
 ```
 
-Alternatively, it can be added to your environment in a script with
+or programmatically:
 
-```julia
-using Pkg
-Pkg.add("ClusterValidityIndices")
+```julia-repl
+julia> using Pkg
+julia> Pkg.add("ClusterValidityIndices")
 ```
 
-## Quickstart
+You may also add the package directly from GitHub to get the latest changes between releases:
+
+```julia-repl
+julia> ]
+(@v1.8) pkg> add https://github.com/AP6YC/ClusterValidityIndices.jl
+```
+
+## [Quickstart](@id guide-quickstart)
 
 This section provides a quick overview of how to use the project.
 For more detailed code usage, please see the [Usage](@ref usage) section.
@@ -97,12 +112,12 @@ The exported constant `CVI_MODULES` also contains a list of these CVIs for conve
 
 The usage of these CVIs covers the following:
 
-- [Data](@ref data) assumptions of the CVIs.
-- [How to instantiate](@ref instantiation) the CVIs.
-- [Incremental vs. batch](@ref inc-batch) evaluation.
-- [Advanced usage](@ref advanced-usage) for under-the-hood.
+- [Data](@ref guide-data) assumptions of the CVIs.
+- [How to instantiate](@ref guide-instantiation) the CVIs.
+- [Incremental vs. batch](@ref guide-inc-batch) evaluation.
+- [Advanced usage](@ref guide-advanced-usage) for under-the-hood.
 
-### Data
+### [Data](@id guide-data)
 
 Because Julia is programmed in a column-major fashion, all CVIs make the assumption that the first dimension (columns) contains features, while the second dimension (rows) contains samples.
 This is more important for batch operation, as incremental operation accepts 1-D sample of features at each time step by definition.
@@ -116,7 +131,7 @@ data = load_data()
 dim, n_samples = size(data)
 ```
 
-### Instantiation
+### [Instantiation](@id guide-instantiation)
 
 The names of each CVI are capital abbreviations of their literature names, often based upon the surname of the principal authors of the papers that introduce the metrics.
 Every CVI is a subtype of the abstract type `CVI`, and they are all are instantiated with the empty constructor:
@@ -125,7 +140,7 @@ Every CVI is a subtype of the abstract type `CVI`, and they are all are instanti
 my_cvi = DB()
 ```
 
-### [Incremental vs. Batch](@id inc-batch)
+### [Incremental vs. Batch](@id guide-inc-batch)
 
 The CVIs in this project all contain *incremental* and *batch* implementations.
 When evaluated in incremental mode, they are often called ICVIs (incremental cluster validity indices) in the literature.
@@ -148,7 +163,7 @@ In both incremental and batch modes, the parameter update requires:
 - The sample (or array of samples).
 - The label(s) that was/were prescribed by the clustering algorithm to the sample(s).
 
-### [Advanced Usage](@id advanced-usage)
+### [Advanced Usage](@id guide-advanced-usage)
 
 The CVIs in this project all contain internal *parameters* that must be updated.
 Each update function modifies the CVI, so they use the Julia nomenclature convention of appending an exclamation point to indicate as much.

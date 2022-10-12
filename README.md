@@ -76,8 +76,8 @@ This outline begins with [a list of CVIs](#implemented-cviicvis) that are implem
 
 ### Installation
 
-This project is distributed as a Julia package, available on [JuliaHub](https://juliahub.com/).
-Its usage follows the usual Julia package installation procedure, interactively:
+This project is distributed as a [Julia](https://julialang.org/) package and hosted on [JuliaHub][pkgeval-url], Julia's package manager repository.
+As such, this package's usage follows the usual Julia package installation procedure, interactively:
 
 ```julia-repl
 julia> ]
