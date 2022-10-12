@@ -96,17 +96,17 @@ end
 
 The `ClusterValidityIndices.jl` package has the following CVIs implemented:
 
-- **[`CH`](@ref ClusterValidityIndices.CH)**: Calinski-Harabasz
-- **[`cSIL`](@ref ClusterValidityIndices.cSIL)**: Centroid-based Silhouette
-- **[`DB`](@ref ClusterValidityIndices.DB)**: Davies-Bouldin
-- **[`GD43`](@ref ClusterValidityIndices.GD43)**: Generalized Dunn's Index 43
-- **[`GD53`](@ref ClusterValidityIndices.GD53)**: Generalized Dunn's Index 53
-- **[`PS`](@ref ClusterValidityIndices.PS)**: Partition Separation
-- **[`rCIP`](@ref ClusterValidityIndices.rCIP)**: (Renyi's) representative Cross Information Potential
-- **[`WB`](@ref ClusterValidityIndices.WB)**: WB-index
-- **[`XB`](@ref ClusterValidityIndices.XB)**: Xie-Beni
+- **[`CH`](@ref ClusterValidityIndices.CH)**: Calinski-Harabasz.
+- **[`cSIL`](@ref ClusterValidityIndices.cSIL)**: Centroid-based Silhouette.
+- **[`DB`](@ref ClusterValidityIndices.DB)**: Davies-Bouldin.
+- **[`GD43`](@ref ClusterValidityIndices.GD43)**: Generalized Dunn's Index 43.
+- **[`GD53`](@ref ClusterValidityIndices.GD53)**: Generalized Dunn's Index 53.
+- **[`PS`](@ref ClusterValidityIndices.PS)**: Partition Separation.
+- **[`rCIP`](@ref ClusterValidityIndices.rCIP)**: (Renyi's) representative Cross Information Potential.
+- **[`WB`](@ref ClusterValidityIndices.WB)**: WB-index.
+- **[`XB`](@ref ClusterValidityIndices.XB)**: Xie-Beni.
 
-The exported constant `CVI_MODULES` also contains a list of these CVIs for convenient iteration.
+The exported constant [`CVI_MODULES`](@ref ClusterValidityIndices.CVI_MODULES) also contains a list of these CVIs for convenient iteration.
 
 ## [Usage](@id usage)
 
