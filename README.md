@@ -1,4 +1,4 @@
-# ClusterValidityIndices
+[![clustervalidityindices-header](docs/src/assets/header.png)][docs-dev-url]
 
 A Julia package for Cluster Validity Indices (CVI) algorithms.
 
@@ -50,18 +50,17 @@ Please read the [documentation](https://ap6yc.github.io/ClusterValidityIndices.j
 
 ## Table of Contents
 
-- [ClusterValidityIndices](#clustervalidityindices)
-  - [Table of Contents](#table-of-contents)
-  - [Overview](#overview)
-    - [Installation](#installation)
-    - [Quickstart](#quickstart)
-    - [Implemented CVI/ICVIs](#implemented-cviicvis)
-    - [Examples](#examples)
-  - [Structure](#structure)
-  - [Contributing](#contributing)
-  - [Acknowledgements](#acknowledgements)
-    - [Authors](#authors)
-  - [License](#license)
+- [Table of Contents](#table-of-contents)
+- [Overview](#overview)
+  - [Installation](#installation)
+  - [Quickstart](#quickstart)
+  - [Implemented CVI/ICVIs](#implemented-cviicvis)
+  - [Examples](#examples)
+- [Structure](#structure)
+- [Contributing](#contributing)
+- [Acknowledgements](#acknowledgements)
+  - [Authors](#authors)
+- [License](#license)
 
 ## Overview
 
