@@ -172,6 +172,8 @@ This project has implementations of the following CVIs in both batch and increme
 - **[`WB`][8]**: WB-index
 - **[`XB`][9]**: Xie-Beni
 
+The exported constant [`CVI_MODULES`][10] also contains a list of these CVIs for convenient iteration.
+
 [1]: https://AP6YC.github.io/ClusterValidityIndices.jl/dev/man/full-index/#ClusterValidityIndices.CH
 [2]: https://AP6YC.github.io/ClusterValidityIndices.jl/dev/man/full-index/#ClusterValidityIndices.cSIL
 [3]: https://AP6YC.github.io/ClusterValidityIndices.jl/dev/man/full-index/#ClusterValidityIndices.DB
@@ -181,8 +183,7 @@ This project has implementations of the following CVIs in both batch and increme
 [7]: https://AP6YC.github.io/ClusterValidityIndices.jl/dev/man/full-index/#ClusterValidityIndices.rCIP
 [8]: https://AP6YC.github.io/ClusterValidityIndices.jl/dev/man/full-index/#ClusterValidityIndices.WB
 [9]: https://AP6YC.github.io/ClusterValidityIndices.jl/dev/man/full-index/#ClusterValidityIndices.XB
-
-The exported constant `CVI_MODULES` also contains a list of these CVIs for convenient iteration.
+[10]: https://AP6YC.github.io/ClusterValidityIndices.jl/dev/man/full-index/#ClusterValidityIndices.CVI_MODULES
 
 ### Examples
 
