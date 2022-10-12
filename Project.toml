@@ -1,27 +1,28 @@
 name = "ClusterValidityIndices"
 uuid = "2fefd308-f647-4698-a2f0-e90cfcbca9ad"
 authors = ["Sasha Petrenko <sap625@mst.edu>"]
-version = "0.4.2"
+version = "0.5.0"
 
 [deps]
 DocStringExtensions = "ffbed154-4ef7-542d-bbb7-c09d3a79fcae"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 Logging = "56ddb016-857b-54e1-b83d-db4d58db5568"
+NumericalTypeAliases = "be9b823e-291e-41a1-b8ce-806204e78f92"
 ProgressBars = "49802e3a-d2f1-5c88-81d8-b72133a6f568"
 Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
 
 [compat]
 DocStringExtensions = "0.8, 0.9"
+NumericalTypeAliases = "0.1, 0.2"
 ProgressBars = "0.7, 0.8, 1"
 julia = "1"
 
 [extras]
 DelimitedFiles = "8bb1440f-4735-579b-a4ab-409b98df4dab"
-Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
+Printf = "de0858da-6303-5e67-8744-51eddeeeb8d7"
 SafeTestsets = "1bc83da4-3b8d-516f-aca4-4fe02f6d838f"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
-UnicodePlots = "b8865327-cd53-5732-bb35-84acbb429228"
 
 [targets]
-test = ["Test", "SafeTestsets", "DelimitedFiles", "Plots", "UnicodePlots"]
+test = ["Test", "SafeTestsets", "DelimitedFiles", "Printf"]

@@ -35,16 +35,15 @@ julia --project=.
     The above immediately activates the project when starting up Julia, but you may also separately startup the julia and activate the package with the interactive
     package manager via the `]` syntax:
 
-    ```julia
-    julia
+    ```julia-repl
     julia> ]
-    (@v1.6) pkg> activate .
+    (@v1.8) pkg> activate .
     (ClusterValidityIndices) pkg>
     ```
 
 You may run the package's unit tests after the above setup in Julia with
 
-```julia
+```julia-repl
 julia> using Pkg
 julia> Pkg.instantiate()
 julia> Pkg.test()
@@ -52,7 +51,7 @@ julia> Pkg.test()
 
 or interactively though the Julia package manager with
 
-```julia
+```julia-repl
 julia> ]
 (ClusterValidityIndices) pkg> instantiate
 (ClusterValidityIndices) pkg> test
@@ -60,7 +59,7 @@ julia> ]
 
 ## GitFlow
 
-As of verson `0.3.1`, the `ClusterValidityIndices.jl` package follows the [GitFlow](https://nvie.com/posts/a-successful-git-branching-model/) git working model.
+The `ClusterValidityIndices.jl` package follows the [GitFlow](https://nvie.com/posts/a-successful-git-branching-model/) git working model.
 The [original post](https://nvie.com/posts/a-successful-git-branching-model/) by Vincent Driessen outlines this methodology quite well, while [Atlassian](https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow) has a good tutorial as well.
 In summary:
 
@@ -87,9 +86,7 @@ ClusterValidityIndices.jl
 ├── .github/workflows       // GitHub: workflows for testing and documentation.
 ├── data                    // Data: CI and example data location.
 ├── docs                    // Docs: GitHub pages documentation files.
-├── examples                // Source: example scripts for CVI usage.
 ├── paper                   // Docs: JOSS paper and bib files.
-├── results                 // Data: destination for example-generated files.
 ├── src                     // Source: scripts and common helper functions.
 │   └─── CVI                //      All CVI and ICVI definitions
 ├── test                    // Test: unit, integration, and environment tests.
@@ -104,6 +101,25 @@ ClusterValidityIndices.jl
 ```
 
 All CVIs are implemented in separate files in the `src/CVI/` directory, and they are imported to `src/ClusterValidityIndices.jl` through imports in `src/CVI/CVI.jl`.
+
+### Dependencies
+
+Several dependencies directly affect the look and functionality of the project's codebase, so their special considerations are listed below.
+
+#### NumericalTypeAliases.jl
+
+The `ClusterValidityIndices.jl` package uses the [`NumericalTypeAliases.jl`](https://github.com/AP6YC/NumericalTypeAliases.jl) package for the definition of convenient aliases for numerical types, such as those restricting real-valued matrices and integer-valued vectors.
+
+#### DocStringExtensions.jl
+
+The `ClusterValidityIndices.jl` package makes heavy use of [`DocStringExtensions.jl`](https://github.com/JuliaDocs/DocStringExtensions.jl) for the documentation of its CVIs.
+This includes the definitions of docstring templates that depend on the type being documented.
+
+Documentation for the project uses the following workflow:
+
+1. Each type and function requires a description, possible arguments list, and citations (where applicable).
+2. Signatures and methodlists autopopulate, so they should not be explicitly written at the risk of duplication.
+3. Types should have docstrings for every field, which should include boundary values where applicable.
 
 ### CVI Module Workflow
 

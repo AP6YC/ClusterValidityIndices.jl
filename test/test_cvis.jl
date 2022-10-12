@@ -1,22 +1,29 @@
+"""
+    test_cvis.jl
+
+# Description
+A single test set for the testing the functionality of all CVIS modules.
+
+# Authors
+- Sasha Petrenko <sap625@mst.edu>
+"""
+
+"""
+Constructs and returns a list of all cvis
+"""
+function construct_cvis()
+    # Construct the cvis as a list
+    cvis = [local_cvi() for local_cvi in CVI_MODULES]
+
+    # Return a list of constructed CVIs
+    return cvis
+end
+
 @testset "CVIs" begin
     @info "CVI Testing"
 
     # Set the approximation CVI tolerance for all comparisons
     tolerance = 1e-1
-
-    # Construct the cvis
-    cvis = [
-        WB(),
-        GD43(),
-        GD53(),
-        cSIL(),
-        CH(),
-        XB(),
-        DB(),
-        PS(),
-        rCIP(),
-    ]
-    n_cvis = length(cvis)
 
     # Grab all the data paths for testing
     data_paths = readdir("../data", join=true)
@@ -25,8 +32,7 @@
     data, labels, n_samples = Dict(), Dict(), Dict()
 
     # Sanitize all the data
-    p = 0.1
-    @info "p is a $(typeof(p))"
+    p = 1.0
 
     @info "Subsampling data at rate: $p"
     for data_path in data_paths
@@ -42,97 +48,50 @@
     end
 
     # Incremental
-    @info "------- CVI Incremental -------"
-    cvi_i = Dict()
-    for data_path in data_paths
-        @info "Data: $data_path"
-        cvi_i[data_path] = deepcopy(cvis)
-        for cvi in cvi_i[data_path]
-            # @info "ICVI: $(typeof(cvi))"
-            for ix = 1:n_samples[data_path]
-                sample = data[data_path][:, ix]
-                label = labels[data_path][ix]
-                # param_inc!(cvi, data[:, ix], labels[ix])
-                param_inc!(cvi, sample, label)
-                evaluate!(cvi)
-            end
-        end
-    end
-
-    # Batch
-    @info "------- CVI Batch -------"
-    cvi_b = Dict()
-    for data_path in data_paths
-        @info "Data: $data_path"
-        cvi_b[data_path] = deepcopy(cvis)
-        for cvi in cvi_b[data_path]
-            # @info "CVI: $(typeof(cvi))"
-            param_batch!(cvi, data[data_path], labels[data_path])
-            evaluate!(cvi)
-        end
-    end
-
-    # Incremental porcelain
-    @info "------- ICVI Porcelain -------"
+    @info "------- Incremental CVI -------"
     cvi_ip = Dict()
-    # cvs_ip = Dict()
     for data_path in data_paths
         @info "Data: $data_path"
-        cvi_ip[data_path] = deepcopy(cvis)
-        # cvs_ip[data_path] = zeros(n_samples[data_path], n_cvis)
-        # for cx = 1:n_cvis
+        cvi_ip[data_path] = construct_cvis()
         for cvi in cvi_ip[data_path]
             for ix = 1:n_samples[data_path]
                 sample = data[data_path][:, ix]
                 label = labels[data_path][ix]
-                # _ = get_icvi!(cvi_ip[data_path][cx], sample, label)
-                _ = get_icvi!(cvi, sample, label)
-                # cvs_ip[data_path][ix, cx] = cv
+                _ = get_cvi!(cvi, sample, label)
             end
+            @info "CVI: $(typeof(cvi)), index: $(@sprintf("%.12f", cvi.criterion_value))"
         end
     end
 
-    # Batch porcelain
-    @info "------- CVI Porcelain -------"
+    # Batch
+    @info "------- Batch CVI -------"
     cvi_bp = Dict()
     for data_path in data_paths
         @info "Data: $data_path"
-        cvi_bp[data_path] = deepcopy(cvis)
-        # cvs_b = zeros(n_cvis)
-        # for cx = 1:n_cvis
+        cvi_bp[data_path] = construct_cvis()
         for cvi in cvi_bp[data_path]
-            # cvs_b[cx] = get_cvi!(cvi_bp[cx], data, labels)
-            # _ = get_cvi!(cvi_bp[data_path][cx], data[data_path], labels[data_path])
             _ = get_cvi!(cvi, data[data_path], labels[data_path])
         end
     end
 
     # Test that all permutations are equivalent
     for data_path in data_paths
-        for cx = 1:n_cvis
-            # I to B
-            @test isapprox(cvi_i[data_path][cx].criterion_value,
-                cvi_b[data_path][cx].criterion_value,
-                atol=tolerance
-            )
-
+        for cx in eachindex(cvi_ip[data_path])
             # IP to BP
             @test isapprox(cvi_ip[data_path][cx].criterion_value,
                 cvi_bp[data_path][cx].criterion_value,
                 atol=tolerance
             )
-
-            # I to IP
-            @test isapprox(cvi_i[data_path][cx].criterion_value,
-                cvi_ip[data_path][cx].criterion_value,
-                atol=tolerance
-            )
-
-            # B to BP
-            @test isapprox(cvi_b[data_path][cx].criterion_value,
-                cvi_bp[data_path][cx].criterion_value,
-                atol=tolerance
-            )
         end
     end
+end
+
+@testset "Edge Cases" begin
+    @info "Testing CVI Edge Cases"
+
+    # Test rCIP provided a single sample of any one cluster in batch update
+    local_cvi = rCIP()
+    local_data = [1 2 3; 4 5 6] / 2
+    local_labels = [1, 1, 2]
+    _ = get_cvi!(local_cvi, local_data, local_labels)
 end

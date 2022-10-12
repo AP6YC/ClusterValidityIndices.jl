@@ -10,7 +10,7 @@
 
 # ## Overview
 
-# This demo is a simple example of how to use CVIs incrementally.
+# This demo is a simple example of how to use CVIs incrementally (ICVI).
 # Here, we load a simple dataset and run a basic clustering algorithm to prescribe a set of clusters to the features.
 # We will take advantage of the fact that we can compute a criterion value at every step by running the ICVI alongside an online clustering algorithm.
 # This simple example demonstrates the usage of a single ICVI, but it may be substituted for any other ICVI in the `ClusterValidityIndices.jl` package.
@@ -24,16 +24,16 @@
 using ClusterValidityIndices    # CVI/ICVI
 using AdaptiveResonance         # DDVFA
 using MLDatasets                # Iris dataset
+using DataFrames                # DataFrames, necessary for MLDatasets.Iris()
 using MLDataUtils               # Shuffling and splitting
 using Printf                    # Formatted number printing
-using Plots
 
 # We will download the Iris dataset for its small size and benchmark use for clustering algorithms.
-Iris.download(i_accept_the_terms_of_use=true)
-features, labels = Iris.features(), Iris.labels()
+iris = Iris(as_df=false)
+features, labels = iris.features, iris.targets
 
-# Because the MLDatasets package gives us Iris labels as strings, we will use the `MLDataUtils.convertlabel` method with the `MLLabelUtils.LabelEnc.Indices` type to get a list of integers representing each class:
-labels = convertlabel(LabelEnc.Indices{Int}, labels)
+# Because the MLDatasets package gives us Iris labels as strings, we will use the `MLDataUtils.convertlabel` method with the `MLLabelUtils.LabelEnc.Indices` type to get a list of integers representing each class:}
+labels = convertlabel(LabelEnc.Indices{Int}, vec(labels))
 unique(labels)
 
 # ### ART Online Clustering
@@ -71,7 +71,7 @@ for ix = 1:n_samples
     ## Cluster the sample online
     c_labels[ix] = train!(art, sample)
     ## Get the new criterion value (ICVI output)
-    criterion_values[ix] = get_icvi!(icvi, sample, c_labels[ix])
+    criterion_values[ix] = get_cvi!(icvi, sample, c_labels[ix])
 end
 
 ## See the list of criterion values

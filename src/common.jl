@@ -1,66 +1,80 @@
 """
     common.jl
 
-Description:
-    All common types, aliases, structs, and methods for the ClusterValidityIndices.jl package.
+# Description:
+All common types, aliases, structs, and methods for the ClusterValidityIndices.jl package.
 """
 
-# -------------------------------------------
-# Abstract types
-# -------------------------------------------
+# --------------------------------------------------------------------------- #
+# DOCSTRING TEMPLATES
+# --------------------------------------------------------------------------- #
+
+# Constants template
+@template CONSTANTS =
+"""
+$(FUNCTIONNAME)
+
+# Description
+$(DOCSTRING)
+"""
+
+# Types template
+@template TYPES =
+"""
+$(TYPEDEF)
+
+# Summary
+$(DOCSTRING)
+
+# Fields
+$(TYPEDFIELDS)
+"""
+
+# Template for functions, macros, and methods (i.e., constructors)
+@template (FUNCTIONS, METHODS, MACROS) =
+"""
+$(TYPEDSIGNATURES)
+
+# Summary
+$(DOCSTRING)
+
+# Method List / Definition Locations
+$(METHODLIST)
+"""
+
+# --------------------------------------------------------------------------- #
+# ABSTRACT TYPES
+# --------------------------------------------------------------------------- #
 
 # Type for all CVIs
 """
-    CVI
-
 Abstract supertype for all CVI objects.
+All index instantiations are subtypes of `CVI`.
 """
 abstract type CVI end
 
-# -------------------------------------------
-# Aliases
-# -------------------------------------------
-#   **Taken from StatsBase.jl**
-#
-#  These types signficantly reduces the need of using
-#  type parameters in functions (which are often just
-#  for the purpose of restricting the arrays to real)
-#
-# These could be removed when the Base supports
-# covariant type notation, i.e. AbstractVector{<:Real}
-
-# Real-numbered aliases
-const RealArray{T<:Real, N} = AbstractArray{T, N}
-const RealVector{T<:Real} = AbstractArray{T, 1}
-const RealMatrix{T<:Real} = AbstractArray{T, 2}
-
-# Integered aliases
-const IntegerArray{T<:Integer, N} = AbstractArray{T, N}
-const IntegerVector{T<:Integer} = AbstractArray{T, 1}
-const IntegerMatrix{T<:Integer} = AbstractArray{T, 2}
-
-# Specifically floating-point aliases
-const RealFP = Union{Float32, Float64}
-
-# System's largest native floating point variable
-const Float = (Sys.WORD_SIZE == 64 ? Float64 : Float32)
-
-# Internal label mapping for incremental CVIs
-const LabelMap = Dict{Int, Int}
-
-# -------------------------------------------
-# Methods
-# -------------------------------------------
+# --------------------------------------------------------------------------- #
+# CONSTANTS
+# --------------------------------------------------------------------------- #
 
 """
-    get_icvi!(cvi::CVI, sample::RealVector, label::Integer)
+Internal label mapping for incremental CVIs.
 
+Alias for a dictionary mapping of integers to integers as cluster labels.
+"""
+const LabelMap = Dict{Int, Int}
+
+# --------------------------------------------------------------------------- #
+# FUNCTIONS
+# --------------------------------------------------------------------------- #
+
+"""
 Compute and return the criterion value incrementally.
 
 # Arguments
 - `cvi::CVI`: the stateful information of the ICVI providing the criterion value.
-- `sample::RealVector`: the sample provided to the external. clustering algorithm.
-- `label::Integer`: the label prescribed to the `sample` by the external clustering algorithm.
+- `sample::RealVector`: a vector of features used in clustering the sample.
+- `label::Integer`: the cluster label prescribed to the sample by the clustering algorithm.
 
 # Examples
 ```julia
@@ -80,7 +94,7 @@ for ix = 1:n_samples
 end
 ```
 """
-function get_icvi!(cvi::CVI, sample::RealVector, label::Integer)
+function get_cvi!(cvi::CVI, sample::RealVector, label::Integer)
     # Update the ICVI parameters
     param_inc!(cvi, sample, label)
 
@@ -89,11 +103,9 @@ function get_icvi!(cvi::CVI, sample::RealVector, label::Integer)
 
     # Return that value
     return cvi.criterion_value
-end # get_icvi!(cvi::CVI, sample::RealVector, label::Integer)
+end
 
 """
-    get_cvi!(cvi::CVI, data::RealMatrix, labels::IntegerVector)
-
 Compute and return the criterion value in batch mode.
 
 # Arguments
@@ -122,14 +134,16 @@ function get_cvi!(cvi::CVI, data::RealMatrix, labels::IntegerVector)
 
     # Return that value
     return cvi.criterion_value
-end # get_cvi!(cvi::CVI, data::RealMatrix, labels::IntegerVector)
+end
 
 """
-    get_internal_label!(label_map::LabelMap, label::Int)
-
 Get the internal label and update the label map if the label is new.
+
+# Arguments
+- `label_map::LabelMap`: label map to extract the internal label from.
+- `label::Integer`: the external label that corresponds to an internal label.
 """
-function get_internal_label!(label_map::LabelMap, label::Int)
+function get_internal_label!(label_map::LabelMap, label::Integer)
     # If the label map contains the key, return that internal label
     if haskey(label_map, label)
         internal_label = label
@@ -140,15 +154,13 @@ function get_internal_label!(label_map::LabelMap, label::Int)
     end
 
     return internal_label
-end # get_internal_label!(label_map::LabelMap, label::Int)
+end
 
-# -------------------------------------------
-# Common Documentation
-# -------------------------------------------
+# --------------------------------------------------------------------------- #
+# COMMON DOCUMENTATION
+# --------------------------------------------------------------------------- #
 
 @doc raw"""
-    param_inc!(cvi::CVI, sample::RealVector, label::Integer)
-
 Compute the CVI parameters incrementally.
 
 This method updates only internal parameters of the ICVI algorithm incrementally.
@@ -170,8 +182,6 @@ julia> param_inc!(my_cvi, data[:, 1], labels[1])
 param_inc!(cvi::CVI, sample::RealVector, label::Integer)
 
 @doc raw"""
-    param_batch!(cvi::CVI, data::RealMatrix, labels::IntegerVector)
-
 Compute the CVI parameters in batch.
 
 This method updates only the internal parameters of the CVI algorithm in batch.
@@ -193,8 +203,6 @@ julia> param_batch!(my_cvi, data, labels)
 param_batch!(cvi::CVI, data::RealMatrix, labels::IntegerVector)
 
 @doc raw"""
-    evaluate!(cvi::CVI)
-
 Compute the criterion value of the CVI.
 
 After computation, the resulting criterion value can be extracted from `cvi.criterion_value`.
@@ -214,3 +222,12 @@ julia> my_criterion_value = my_cvi.criterion_value
 ```
 """
 evaluate!(cvi::CVI)
+
+@doc raw"""
+Internal method, sets up the CVI based upon the type of the provided sample.
+
+# Arguments
+- `cvi::CVI`: the CVI to setup to the correct dimensions.
+- `sample::RealVector`: The sample to use as a basis for setting up the CVI.
+"""
+setup!(cvi::CVI, sample::RealVector)
