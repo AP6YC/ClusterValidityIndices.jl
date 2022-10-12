@@ -162,15 +162,25 @@ end
 
 This project has implementations of the following CVIs in both batch and incremental variants:
 
-- **CH**: Calinski-Harabasz
-- **cSIL**: Centroid-based Silhouette
-- **DB**: Davies-Bouldin
-- **GD43**: Generalized Dunn's Index 43
-- **GD53**: Generalized Dunn's Index 53
-- **PS**: Partition Separation
-- **rCIP**: (Renyi's) representative Cross Information Potential
-- **WB**: WB-index
-- **XB**: Xie-Beni
+- **[`CH`][1]**: Calinski-Harabasz
+- **[`cSIL`][2]**: Centroid-based Silhouette
+- **[`DB`][3]**: Davies-Bouldin
+- **[`GD43`][4]**: Generalized Dunn's Index 43
+- **[`GD53`][5]**: Generalized Dunn's Index 53
+- **[`PS`][6]**: Partition Separation
+- **[`rCIP`][7]**: (Renyi's) representative Cross Information Potential
+- **[`WB`][8]**: WB-index
+- **[`XB`][9]**: Xie-Beni
+
+[1]: https://AP6YC.github.io/ClusterValidityIndices.jl/dev/man/full-index/#ClusterValidityIndices.CH
+[2]: https://AP6YC.github.io/ClusterValidityIndices.jl/dev/man/full-index/#ClusterValidityIndices.cSIL
+[3]: https://AP6YC.github.io/ClusterValidityIndices.jl/dev/man/full-index/#ClusterValidityIndices.DB
+[4]: https://AP6YC.github.io/ClusterValidityIndices.jl/dev/man/full-index/#ClusterValidityIndices.GD43
+[5]: https://AP6YC.github.io/ClusterValidityIndices.jl/dev/man/full-index/#ClusterValidityIndices.GD53
+[6]: https://AP6YC.github.io/ClusterValidityIndices.jl/dev/man/full-index/#ClusterValidityIndices.PS
+[7]: https://AP6YC.github.io/ClusterValidityIndices.jl/dev/man/full-index/#ClusterValidityIndices.rCIP
+[8]: https://AP6YC.github.io/ClusterValidityIndices.jl/dev/man/full-index/#ClusterValidityIndices.WB
+[9]: https://AP6YC.github.io/ClusterValidityIndices.jl/dev/man/full-index/#ClusterValidityIndices.XB
 
 The exported constant `CVI_MODULES` also contains a list of these CVIs for convenient iteration.
 
