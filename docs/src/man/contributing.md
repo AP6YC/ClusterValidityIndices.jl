@@ -59,7 +59,7 @@ julia> ]
 
 ## GitFlow
 
-As of verson `0.3.1`, the `ClusterValidityIndices.jl` package follows the [GitFlow](https://nvie.com/posts/a-successful-git-branching-model/) git working model.
+The `ClusterValidityIndices.jl` package follows the [GitFlow](https://nvie.com/posts/a-successful-git-branching-model/) git working model.
 The [original post](https://nvie.com/posts/a-successful-git-branching-model/) by Vincent Driessen outlines this methodology quite well, while [Atlassian](https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow) has a good tutorial as well.
 In summary:
 
@@ -101,6 +101,25 @@ ClusterValidityIndices.jl
 ```
 
 All CVIs are implemented in separate files in the `src/CVI/` directory, and they are imported to `src/ClusterValidityIndices.jl` through imports in `src/CVI/CVI.jl`.
+
+### Dependencies
+
+Several dependencies directly affect the look and functionality of the project's codebase, so their special considerations are listed below.
+
+#### NumericalTypeAliases.jl
+
+The `ClusterValidityIndices.jl` package uses the [`NumericalTypeAliases.jl`](https://github.com/AP6YC/NumericalTypeAliases.jl) package for the definition of convenient aliases for numerical types, such as those restricting real-valued matrices and integer-valued vectors.
+
+#### DocStringExtensions.jl
+
+The `ClusterValidityIndices.jl` package makes heavy use of [`DocStringExtensions.jl`](https://github.com/JuliaDocs/DocStringExtensions.jl) for the documentation of its CVIs.
+This includes the definitions of docstring templates that depend on the type being documented.
+
+Documentation for the project uses the following workflow:
+
+1. Each type and function requires a description, possible arguments list, and citations (where applicable).
+2. Signatures and methodlists autopopulate, so they should not be explicitly written at the risk of duplication.
+3. Types should have docstrings for every field, which should include boundary values where applicable.
 
 ### CVI Module Workflow
 

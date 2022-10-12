@@ -10,12 +10,12 @@ using
     DemoCards,
     Pkg
 
+# GR errors
+ENV["GKSwstype"] = "100"
+
 # Get the current workind directory's base name
 current_dir = basename(pwd())
 @info "Current directory is $(current_dir)"
-
-# GR errors
-ENV["GKSwstype"] = "100"
 
 # If using the CI method `julia --project=docs/ docs/make.jl`
 #   or `julia --startup-file=no --project=docs/ docs/make.jl`
@@ -36,6 +36,7 @@ using ClusterValidityIndices
 # this is the relative path to docs/
 demopage, postprocess_cb, demo_assets = makedemos("examples")
 
+# Add the favicon to the assets list
 assets = [
     joinpath("assets", "favicon.ico")
 ]
@@ -57,7 +58,7 @@ makedocs(
             "getting-started/what-are-cvis.md",
             "getting-started/basic-example.md",
         ],
-        "Tutorial" => [
+        "Manual" => [
             "Guide" => "man/guide.md",
             # "Examples" => "man/examples.md",
             demopage,
@@ -72,9 +73,10 @@ makedocs(
     # assets=String[],
 )
 
-# 3. postprocess after makedocs
+# Postprocess after makedocs
 postprocess_cb()
 
+# Deploy the documentation, pointing to `develop` as the devbranch`
 deploydocs(
     repo="github.com/AP6YC/ClusterValidityIndices.jl.git",
     devbranch="develop",
