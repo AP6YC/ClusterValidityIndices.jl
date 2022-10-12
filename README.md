@@ -56,7 +56,6 @@ Please read the [documentation](https://ap6yc.github.io/ClusterValidityIndices.j
   - [Quickstart](#quickstart)
   - [Implemented CVI/ICVIs](#implemented-cviicvis)
   - [Examples](#examples)
-- [Structure](#structure)
 - [Contributing](#contributing)
 - [Acknowledgements](#acknowledgements)
   - [Authors](#authors)
@@ -161,15 +160,15 @@ end
 
 This project has implementations of the following CVIs in both batch and incremental variants:
 
-- **[`CH`][1]**: Calinski-Harabasz
-- **[`cSIL`][2]**: Centroid-based Silhouette
-- **[`DB`][3]**: Davies-Bouldin
-- **[`GD43`][4]**: Generalized Dunn's Index 43
-- **[`GD53`][5]**: Generalized Dunn's Index 53
-- **[`PS`][6]**: Partition Separation
-- **[`rCIP`][7]**: (Renyi's) representative Cross Information Potential
-- **[`WB`][8]**: WB-index
-- **[`XB`][9]**: Xie-Beni
+- **[`CH`][1]**: Calinski-Harabasz.
+- **[`cSIL`][2]**: Centroid-based Silhouette.
+- **[`DB`][3]**: Davies-Bouldin.
+- **[`GD43`][4]**: Generalized Dunn's Index 43.
+- **[`GD53`][5]**: Generalized Dunn's Index 53.
+- **[`PS`][6]**: Partition Separation.
+- **[`rCIP`][7]**: (Renyi's) representative Cross Information Potential.
+- **[`WB`][8]**: WB-index.
+- **[`XB`][9]**: Xie-Beni.
 
 The exported constant [`CVI_MODULES`][10] also contains a list of these CVIs for convenient iteration.
 
@@ -190,29 +189,6 @@ A [basic example](https://ap6yc.github.io/ClusterValidityIndices.jl/dev/getting-
 
 Futhermore, there are a variety of examples in the [Examples](https://ap6yc.github.io/ClusterValidityIndices.jl/dev/examples/) section of the documentation for a variety of use cases of the project.
 Each of these is made using the [`DemoCards.jl`](https://github.com/johnnychen94/DemoCards.jl) package and can be opened, saved, and run as a Julia notebook.
-
-## Structure
-
-The following reference describes the role of each top-level folder and file in the project:
-
-```console
-ClusterValidityIndices.jl
-├── .github/workflows       // GitHub: workflows for testing and documentation.
-├── data                    // Data: CI and example data location.
-├── docs                    // Docs: GitHub pages documentation files.
-├── paper                   // Docs: JOSS paper and bib files.
-├── src                     // Source: scripts and common helper functions.
-│   └─── CVI                //      All CVI and ICVI definitions
-├── test                    // Test: unit, integration, and environment tests.
-├── .appveyor               // CI: Appveyor CI script
-├── .gitignore              // Git: .gitignore for the whole project.
-├── CODE_OF_CONDUCT         // Doc: the expectations of contributors to the project.
-├── CONTRIBUTING            // Doc: a summary of contribution guidelines, pointing to these docs.
-├── LICENSE                 // Doc: the license to the project.
-├── Manifest.toml           // Julia: the explicit package versions used (ignored).
-├── Project.toml            // Julia: the Pkg.jl dependencies of the project.
-└── README.md               // Doc: this document.
-```
 
 ## Contributing
 

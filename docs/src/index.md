@@ -2,9 +2,7 @@
 
 ---
 
-# ClusterValidityIndices.jl
-
-These pages serve as the official documentation for the ClusterValidityIndices.jl Julia package.
+These pages serve as the official documentation for the `ClusterValidityIndices.jl` Julia package.
 
 Cluster Validity Indices (CVI) tackle the problem of judging the performance of an unsupervised/clustering algorithm without the availability of truth or supervisory labels, resulting in metrics of under- or over-partitioning.
 Furthermore, Incremental CVIs (ICVI) are variants of these ordinarily batch algorithms that enable an online and computationally tractable method of evaluating the performance of a clustering algorithm as it clusters while being numerically equivalent to their batch counterparts.
