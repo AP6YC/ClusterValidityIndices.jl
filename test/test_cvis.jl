@@ -47,8 +47,8 @@ end
         n_samples[data_path] = length(local_labels)
     end
 
-    # Incremental porcelain
-    @info "------- ICVI Porcelain -------"
+    # Incremental
+    @info "------- Incremental CVI -------"
     cvi_ip = Dict()
     for data_path in data_paths
         @info "Data: $data_path"
@@ -57,14 +57,14 @@ end
             for ix = 1:n_samples[data_path]
                 sample = data[data_path][:, ix]
                 label = labels[data_path][ix]
-                _ = get_icvi!(cvi, sample, label)
+                _ = get_cvi!(cvi, sample, label)
             end
             @info "CVI: $(typeof(cvi)), index: $(@sprintf("%.12f", cvi.criterion_value))"
         end
     end
 
-    # Batch porcelain
-    @info "------- CVI Porcelain -------"
+    # Batch
+    @info "------- Batch CVI -------"
     cvi_bp = Dict()
     for data_path in data_paths
         @info "Data: $data_path"

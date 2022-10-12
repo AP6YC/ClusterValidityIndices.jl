@@ -1,20 +1,22 @@
 """
     common.jl
 
-Description:
-    All common types, aliases, structs, and methods for the ClusterValidityIndices.jl package.
+# Description:
+All common types, aliases, structs, and methods for the ClusterValidityIndices.jl package.
 """
 
 # --------------------------------------------------------------------------- #
 # DOCSTRING TEMPLATES
 # --------------------------------------------------------------------------- #
 
-# Default template if not specified (i.e., constants and modules)
-# @template DEFAULT =
-# """
-# $(SIGNATURES)
-# $(DOCSTRING)
-# """
+# Constants template
+@template CONSTANTS =
+"""
+$(FUNCTIONNAME)
+
+# Description
+$(DOCSTRING)
+"""
 
 # Types template
 @template TYPES =
@@ -31,10 +33,9 @@ $(TYPEDFIELDS)
 # Template for functions, macros, and methods (i.e., constructors)
 @template (FUNCTIONS, METHODS, MACROS) =
 """
-$(SIGNATURES)
+$(TYPEDSIGNATURES)
 
 # Summary
-$(TYPEDSIGNATURES)
 $(DOCSTRING)
 
 # Method List / Definition Locations
@@ -93,7 +94,7 @@ for ix = 1:n_samples
 end
 ```
 """
-function get_icvi!(cvi::CVI, sample::RealVector, label::Integer)
+function get_cvi!(cvi::CVI, sample::RealVector, label::Integer)
     # Update the ICVI parameters
     param_inc!(cvi, sample, label)
 
@@ -102,7 +103,7 @@ function get_icvi!(cvi::CVI, sample::RealVector, label::Integer)
 
     # Return that value
     return cvi.criterion_value
-end # get_icvi!(cvi::CVI, sample::RealVector, label::Integer)
+end
 
 """
 Compute and return the criterion value in batch mode.
@@ -133,7 +134,7 @@ function get_cvi!(cvi::CVI, data::RealMatrix, labels::IntegerVector)
 
     # Return that value
     return cvi.criterion_value
-end # get_cvi!(cvi::CVI, data::RealMatrix, labels::IntegerVector)
+end
 
 """
 Get the internal label and update the label map if the label is new.
@@ -153,7 +154,7 @@ function get_internal_label!(label_map::LabelMap, label::Integer)
     end
 
     return internal_label
-end # get_internal_label!(label_map::LabelMap, label::Int)
+end
 
 # --------------------------------------------------------------------------- #
 # COMMON DOCUMENTATION

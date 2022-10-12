@@ -33,6 +33,14 @@ Modules = [ClusterValidityIndices]
 Order = [:type]
 ```
 
+### [Constants](@id index-constants)
+
+```@index
+Pages   = ["full-index.md"]
+Modules = [ClusterValidityIndices]
+Order = [:constant]
+```
+
 ## [Docs](@id index-docs)
 
 This section lists the documentation for every exported name of the `ClusterValidityIndices.jl` package.
@@ -59,4 +67,12 @@ Order = [:function]
 Modules = [ClusterValidityIndices]
 Private = false
 Order = [:type]
+```
+
+### Constants
+
+```@autodocs
+Modules = [ClusterValidityIndices]
+Private = false
+Order = [:constant]
 ```
