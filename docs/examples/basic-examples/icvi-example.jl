@@ -10,7 +10,7 @@
 
 # ## Overview
 
-# This demo is a simple example of how to use CVIs incrementally.
+# This demo is a simple example of how to use CVIs incrementally (ICVI).
 # Here, we load a simple dataset and run a basic clustering algorithm to prescribe a set of clusters to the features.
 # We will take advantage of the fact that we can compute a criterion value at every step by running the ICVI alongside an online clustering algorithm.
 # This simple example demonstrates the usage of a single ICVI, but it may be substituted for any other ICVI in the `ClusterValidityIndices.jl` package.

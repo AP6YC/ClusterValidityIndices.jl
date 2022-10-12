@@ -120,7 +120,7 @@ The usage of these CVIs covers the following:
 ### [Data](@id guide-data)
 
 Because Julia is programmed in a column-major fashion, all CVIs make the assumption that the first dimension (columns) contains features, while the second dimension (rows) contains samples.
-This is more important for batch operation, as incremental operation accepts 1-D sample of features at each time step by definition.
+This is more important for batch operation, as incremental operation accepts a 1-D sample of features at each time step by definition.
 
 For example,
 
