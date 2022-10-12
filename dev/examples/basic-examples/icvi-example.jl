@@ -35,7 +35,7 @@ for ix = 1:n_samples
     # Cluster the sample online
     c_labels[ix] = train!(art, sample)
     # Get the new criterion value (ICVI output)
-    criterion_values[ix] = get_icvi!(icvi, sample, c_labels[ix])
+    criterion_values[ix] = get_cvi!(icvi, sample, c_labels[ix])
 end
 
 # See the list of criterion values

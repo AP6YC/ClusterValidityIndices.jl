@@ -49,7 +49,7 @@ for ix = 1:n_samples
     c_labels[ix] = train!(art, sample)
     # Get the new criterion values (ICVI output)
     for jx = 1:n_icvi
-        criterion_values[jx, ix] = get_icvi!(icvis[jx], sample, c_labels[ix])
+        criterion_values[jx, ix] = get_cvi!(icvis[jx], sample, c_labels[ix])
     end
 end
 
