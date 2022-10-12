@@ -5,12 +5,20 @@ This file builds the documentation for the ClusterValidityIndices.jl package
 using Documenter.jl and other tools.
 """
 
+# --------------------------------------------------------------------------- #
+# DEPENDENCIES
+# --------------------------------------------------------------------------- #
+
 using
     Documenter,
     DemoCards,
     Pkg
 
-# GR errors
+# --------------------------------------------------------------------------- #
+# SETUP
+# --------------------------------------------------------------------------- #
+
+# Fix GR headless errors
 ENV["GKSwstype"] = "100"
 
 # Get the current workind directory's base name
@@ -31,6 +39,10 @@ end
 
 # Include the package
 using ClusterValidityIndices
+
+# --------------------------------------------------------------------------- #
+# GENERATE
+# --------------------------------------------------------------------------- #
 
 # Generate the demo files
 # this is the relative path to docs/
@@ -75,6 +87,10 @@ makedocs(
 
 # Postprocess after makedocs
 postprocess_cb()
+
+# --------------------------------------------------------------------------- #
+# DEPLOY
+# --------------------------------------------------------------------------- #
 
 # Deploy the documentation, pointing to `develop` as the devbranch`
 deploydocs(
