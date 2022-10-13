@@ -4,8 +4,9 @@ The package guide is broken into the following sections:
 
 - [Installation](@ref guide-installation): instructions for the package.
 - [Quickstart](@ref guide-quickstart): a simple rundown of the package usage to get it running.
-- [Implemented CVIs](@ref implemented-cvis): a list of all batch and incremental CVIs available in the package.
 - [Usage](@ref usage): a deep dive of the package and its detailed usage.
+
+For a list of all implemented batch and incremental CVIs available in the package, see the [Implemented CVI List](@ref cvi-list-page) page.
 
 ## [Installation](@id guide-installation)
 
@@ -52,7 +53,7 @@ my_cvi = DB()
 ```
 
 All CVIs are implemented with acronyms of their literature names.
-A list of all of these are found in the [Implemented CVIs](@ref implemented-cvis) section, and their code details can be found in the [Index](@ref index-types).
+A list of all of these are found in the [Implemented CVI List](@ref cvi-list-page) page, and their code details can be found in the [Index](@ref index-types).
 
 Next, get data from a clustering process.
 This is a set of samples of features that are clustered and prescribed cluster labels.
@@ -91,26 +92,6 @@ end
 > **Note**
 >
 > Each module has a batch and incremental implementation, but `ClusterValidityIndices.jl` does not yet support switching between batch and incremental modes with the same CVI object.
-
-## [Implemented CVIs](@id implemented-cvis)
-
-The `ClusterValidityIndices.jl` package has the following CVIs implemented:
-
-```@meta
-CurrentModule=ClusterValidityIndices
-```
-
-- **[`CH`](@ref)**: Calinski-Harabasz.
-- **[`cSIL`](@ref)**: Centroid-based Silhouette.
-- **[`DB`](@ref)**: Davies-Bouldin.
-- **[`GD43`](@ref)**: Generalized Dunn's Index 43.
-- **[`GD53`](@ref)**: Generalized Dunn's Index 53.
-- **[`PS`](@ref)**: Partition Separation.
-- **[`rCIP`](@ref)**: (Renyi's) representative Cross Information Potential.
-- **[`WB`](@ref)**: WB-index.
-- **[`XB`](@ref)**: Xie-Beni.
-
-The exported constant [`CVI_MODULES`](@ref ClusterValidityIndices.CVI_MODULES) also contains a list of these CVIs for convenient iteration.
 
 ## [Usage](@id usage)
 
