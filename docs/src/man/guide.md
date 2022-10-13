@@ -58,11 +58,10 @@ A list of all of these are found in the [Implemented CVI List](@ref cvi-list-pag
 Next, get data from a clustering process.
 This is a set of samples of features that are clustered and prescribed cluster labels.
 
-> **Note**
->
-> The `ClusterValidityIndices.jl` package assumes data to be in the form of Float matrices where columns are samples and rows are features.
-> An individual sample is a single vector of features.
-> Labels are vectors of integers where each number corresponds to its own cluster.
+!!! note "Note"
+    The `ClusterValidityIndices.jl` package assumes data to be in the form of Float matrices where columns are samples and rows are features.
+    An individual sample is a single vector of features.
+    Labels are vectors of integers where each number corresponds to its own cluster.
 
 ```julia
 # Random data as an example; 10 samples with feature dimenison 3
@@ -89,9 +88,8 @@ for i = 1:n_samples
 end
 ```
 
-> **Note**
->
-> Each module has a batch and incremental implementation, but `ClusterValidityIndices.jl` does not yet support switching between batch and incremental modes with the same CVI object.
+!!! note "Note"
+    Each module has a batch and incremental implementation, but `ClusterValidityIndices.jl` does not yet support switching between batch and incremental modes with the same CVI object.
 
 ## [Usage](@id usage)
 
@@ -200,8 +198,7 @@ evaluate!(cvi)
 criterion_value = cvi.criterion_value
 ```
 
-> **Note**
->
-> Though this advanced usage is already done all at once with `get_cvi!`, one possible use of this advanced usage is saving computation.
-> For example, one might wish to update the CVI internal parameters incrementally each step with `param_inc!` but save the computation of the criterion value itself until it is required with `evaluate!`.
-> In all other instances, it is recommended to utilize the public API with `get_cvi!`.
+!!! note "Note"
+    Though this advanced usage is already done all at once with `get_cvi!`, one possible use of this advanced usage is saving computation.
+    For example, one might wish to update the CVI internal parameters incrementally each step with `param_inc!` but save the computation of the criterion value itself until it is required with `evaluate!`.
+    In all other instances, it is recommended to utilize the public API with `get_cvi!`.
