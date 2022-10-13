@@ -68,7 +68,7 @@ This is a set of samples of features that are clustered and prescribed cluster l
 dim = 3
 n_samples = 10
 data = rand(dim, n_samples)
-labels = collect(1:n_samples)
+labels = repeat(1:2, inner=n_samples)
 ```
 
 The output of CVIs are called *criterion values*, and they can be computed both incrementally and in batch with `get_cvi`.
