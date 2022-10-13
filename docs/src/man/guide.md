@@ -151,6 +151,10 @@ In both incremental and batch modes, the parameter update requires:
 
 ### [Advanced Usage](@id guide-advanced-usage)
 
+!!! note "Note"
+    This section is for advanced usage of the internal API, documented in the [Developer Index](@ref dev-main-index).
+    Though not part of the public API, internal CVI update usage is documented here for advanced use-cases.
+
 The CVIs in this project all contain internal *parameters* that must be updated.
 Each update function modifies the CVI, so they use the Julia nomenclature convention of appending an exclamation point to indicate as much.
 
@@ -162,24 +166,30 @@ More concretely, they are
 
 ```julia
 # Incremental updating
-param_inc!(cvi::CVI, sample::RealVector, label::Integer)
+ClusterValidityIndices.param_inc!(cvi::CVI, sample::RealVector, label::Integer)
 # Batch updating
-param_batch!(cvi::CVI, data::RealMatrix, labels::IntegerVector)
+ClusterValidityIndices.param_batch!(cvi::CVI, data::RealMatrix, labels::IntegerVector)
 ```
 
 After updating their internal parameters, they both compute their most recent criterion values with
 
 ```julia
-evaluate!(cvi::CVI)
+ClusterValidityIndices.evaluate!(cvi::CVI)
 ```
+
+which are then stored `cvi.criterion_value` as a floating point value.
 
 For example, we may instantiate and load our data
 
 ```julia
+# Create a local CVI object
 cvi = DB()
-data = load_data()
-labels = get_cluster_labels(data)
-dim, n_samples = size(data)
+
+# Generate random data as an example; 10 samples with feature dimenison 3
+dim = 3
+n_samples = 10
+data = rand(dim, n_samples)
+labels = repeat(1:2, inner=n_samples)
 ```
 
 then update the parameters incrementally with
@@ -187,8 +197,8 @@ then update the parameters incrementally with
 ```julia
 criterion_values = zeros(n_samples)
 for ix = 1:n_samples
-    param_inc!(cvi, data[:, ix], labels[ix])
-    evaluate!(cvi)
+    ClusterValidityIndices.param_inc!(cvi, data[:, ix], labels[ix])
+    ClusterValidityIndices.evaluate!(cvi)
     criterion_values[ix] = cvi.criterion_value
 end
 ```
@@ -196,8 +206,8 @@ end
 or in batch with
 
 ```julia
-param_batch!(cvi, data, labels)
-evaluate!(cvi)
+ClusterValidityIndices.param_batch!(cvi, data, labels)
+ClusterValidityIndices.evaluate!(cvi)
 criterion_value = cvi.criterion_value
 ```
 

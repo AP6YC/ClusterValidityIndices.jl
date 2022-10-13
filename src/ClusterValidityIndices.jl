@@ -96,9 +96,6 @@ export
     # CONN,
 
     # CVI functions
-    param_inc!,
-    param_batch!,
-    evaluate!,
     get_cvi!,
 
     # CVI utilities
