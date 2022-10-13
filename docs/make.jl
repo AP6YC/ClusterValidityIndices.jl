@@ -72,6 +72,7 @@ makedocs(
         ],
         "Manual" => [
             "Guide" => "man/guide.md",
+            "CVI List" => "man/cvi-list.md",
             # "Examples" => "man/examples.md",
             demopage,
             "Contributing" => "man/contributing.md",
