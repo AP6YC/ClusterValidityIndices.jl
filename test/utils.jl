@@ -25,7 +25,7 @@ function get_cvi_data(data_file::AbstractString)
     train_y = convert(Array{Int}, data[3, :])
 
     return train_x, train_y
-end # get_cvi_data(data_file::AbstractString)
+end
 
 """
     get_bernoulli_subset(data::RealMatrix, labels::IntegerVector, p::Real)
@@ -39,4 +39,4 @@ function get_bernoulli_subset(data::RealMatrix, labels::IntegerVector, p::Real)
 
     # Return the subset
     return data[:, subset], labels[subset]
-end # get_bernoulli_subset(data::RealMatrix, labels::IntegerVector, p::Real)
+end

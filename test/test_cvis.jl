@@ -39,7 +39,6 @@ end
         # Load the data, get a subset, and relabel in order
         local_data, local_labels = get_cvi_data(data_path)
         local_data, local_labels = get_bernoulli_subset(local_data, local_labels, p)
-        local_labels = relabel_cvi_data(local_labels)
 
         # Store the sanitized data
         data[data_path] = local_data
