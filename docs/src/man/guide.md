@@ -71,7 +71,7 @@ data = rand(dim, n_samples)
 labels = repeat(1:2, inner=n_samples)
 ```
 
-The output of CVIs are called *criterion values*, and they can be computed both incrementally and in batch with `get_cvi`.
+The output of CVIs are called *criterion values*, and they can be computed both incrementally and in batch with `get_cvi!`.
 Compute in batch by providing a matrix of samples and a vector of labels:
 
 ```julia
