@@ -5,7 +5,7 @@
 # date: 2022-10-13
 # author: "[Sasha Petrenko](https://github.com/AP6YC)"
 # julia: 1.8
-# description: This demo is a simple example of how to use a CVI in batch mode.
+# description: How to use a CVI incrementally (i.e., ICVI).
 # ---
 
 # ## Overview
@@ -85,7 +85,7 @@ criterion_values
 p = plot(
     1:n_samples,
     criterion_values,
-    linewidth = 10,
+    linewidth = 5,
     title = "Incremental $(typeof(icvi)) Index",
     xlabel = "Sample",
     ylabel = "$(typeof(icvi)) Value",

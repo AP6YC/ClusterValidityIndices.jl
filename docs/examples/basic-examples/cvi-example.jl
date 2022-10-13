@@ -5,7 +5,7 @@
 # date: 2022-10-12
 # author: "[Sasha Petrenko](https://github.com/AP6YC)"
 # julia: 1.8
-# description: This demo is a simple example of how to use a CVI in batch mode.
+# description: How to use a CVI in batch mode.
 # ---
 
 # ## Overview

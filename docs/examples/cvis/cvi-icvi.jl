@@ -5,7 +5,7 @@
 # date: 2022-10-12
 # author: "[Sasha Petrenko](https://github.com/AP6YC)"
 # julia: 1.8
-# description: This demo illustrates how to use incremental training methods vs. batch training for all ART modules. This demo also demonstrates how the final results of each CVI and ICVI are equivalent.
+# description: How to use incremental and batch CVIs, demonstrating how the final results are equivalent.
 # ---
 
 # ## Overview
