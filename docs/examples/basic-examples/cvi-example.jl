@@ -2,9 +2,9 @@
 # title: CVI Simple Example
 # id: cvi_example
 # cover: ../assets/logo.png
-# date: 2021-12-6
+# date: 2022-10-12
 # author: "[Sasha Petrenko](https://github.com/AP6YC)"
-# julia: 1.6
+# julia: 1.8
 # description: This demo is a simple example of how to use a CVI in batch mode.
 # ---
 

@@ -2,9 +2,9 @@
 # title: Multi-ICVI Comparisons
 # id: icvi_comparison
 # cover: assets/icvi-comparision.png
-# date: 2021-12-7
+# date: 2022-10-12
 # author: "[Sasha Petrenko](https://github.com/AP6YC)"
-# julia: 1.6
+# julia: 1.8
 # description: This demo illustrates the differing behavior of each ICVI.
 # ---
 
