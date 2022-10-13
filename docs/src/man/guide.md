@@ -75,16 +75,19 @@ The output of CVIs are called *criterion values*, and they can be computed both 
 Compute in batch by providing a matrix of samples and a vector of labels:
 
 ```julia
-criterion_value = get_cvi(my_cvi, data, labels)
+criterion_value = get_cvi!(my_cvi, data, labels)
 ```
 
 or incrementally with the same function by passing one sample and label at a time:
 
 ```julia
+# Create a fresh CVI object for incremental evaluation
+my_icvi = DB()
+
 # Create a container for the values and iterate
 criterion_values = zeros(n_samples)
 for i = 1:n_samples
-    criterion_values[i] = get_cvi(my_cvi, data[:, i], labels[i])
+    criterion_values[i] = get_cvi!(my_icvi, data[:, i], labels[i])
 end
 ```
 
