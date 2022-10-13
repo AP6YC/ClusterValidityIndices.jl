@@ -57,7 +57,16 @@ mutable struct GD53 <: CVI
 end # GD53 <: CVI
 
 """
-Default constructor for the Generalized Dunn's Index 53 (GD53) Cluster Validity Index.
+Constructor for the Generalized Dunn's Index 53 (GD53) Cluster Validity Index.
+
+# Examples
+
+```julia
+# Import the package
+using ClusterValidityIndices
+# Construct a GD53 module
+my_cvi = GD53()
+```
 
 $(local_references)
 """

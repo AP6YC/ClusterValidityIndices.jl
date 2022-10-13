@@ -51,7 +51,16 @@ mutable struct DB <: CVI
 end # DB <: CVI
 
 """
-Default constructor for the Davies-Bouldin (DB) Cluster Validity Index.
+Constructor for the Davies-Bouldin (DB) Cluster Validity Index.
+
+# Examples
+
+```julia
+# Import the package
+using ClusterValidityIndices
+# Construct a DB module
+my_cvi = DB()
+```
 
 $(local_references)
 """

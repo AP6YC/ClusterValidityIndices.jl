@@ -51,7 +51,16 @@ mutable struct XB <: CVI
 end # XB <: CVI
 
 """
-Default constructor for the Xie-Beni (XB) Cluster Validity Index.
+Constructor for the Xie-Beni (XB) Cluster Validity Index.
+
+# Examples
+
+```julia
+# Import the package
+using ClusterValidityIndices
+# Construct a XB module
+my_cvi = XB()
+```
 
 $(local_references)
 """
