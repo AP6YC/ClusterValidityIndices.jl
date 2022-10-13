@@ -17,3 +17,6 @@ CurrentModule=ClusterValidityIndices
 - **[`XB`](@ref)**: Xie-Beni.
 
 The exported constant [`CVI_MODULES`](@ref ClusterValidityIndices.CVI_MODULES) also contains a list of these CVIs for convenient iteration.
+
+Each of the CVIs are instantiated with the empty constructor, i.e. [`CH()`](@ref) and run with [`get_cvi!`](@ref).
+For details and usage, see the [Package Guide](@ref).
