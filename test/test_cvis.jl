@@ -8,16 +8,9 @@ A single test set for the testing the functionality of all CVIS modules.
 - Sasha Petrenko <sap625@mst.edu>
 """
 
-"""
-Constructs and returns a list of all cvis
-"""
-function construct_cvis()
-    # Construct the cvis as a list
-    cvis = [local_cvi() for local_cvi in CVI_MODULES]
-
-    # Return a list of constructed CVIs
-    return cvis
-end
+# --------------------------------------------------------------------------- #
+# TESTSETS
+# --------------------------------------------------------------------------- #
 
 @testset "CVIs" begin
     @info "CVI Testing"
