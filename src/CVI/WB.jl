@@ -59,7 +59,16 @@ mutable struct WB <: CVI
 end # WB <: CVI
 
 """
-Default constructor for the WB-Index (WB) Cluster Validity Index.
+Constructor for the WB-Index (WB) Cluster Validity Index.
+
+# Examples
+
+```julia
+# Import the package
+using ClusterValidityIndices
+# Construct a WB module
+my_cvi = WB()
+```
 
 $(local_references)
 """

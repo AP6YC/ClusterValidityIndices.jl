@@ -54,7 +54,16 @@ mutable struct CH <: CVI
 end # CH <: CVI
 
 """
-Default constructor for the Calinski-Harabasz (CH) Cluster Validity Index.
+Constructor for the Calinski-Harabasz (CH) Cluster Validity Index.
+
+# Examples
+
+```julia
+# Import the package
+using ClusterValidityIndices
+# Construct a CH module
+my_cvi = CH()
+```
 
 $(local_references)
 """

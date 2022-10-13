@@ -70,9 +70,6 @@ using Statistics: mean
 # Common structures
 include("common.jl")
 
-# CVI utility functions
-include("utils.jl")
-
 # All of the CVI modules
 include("CVI/CVI.jl")
 
@@ -99,14 +96,9 @@ export
     # CONN,
 
     # CVI functions
-    param_inc!,
-    param_batch!,
-    evaluate!,
     get_cvi!,
 
     # CVI utilities
-    sort_cvi_data,
-    relabel_cvi_data,
     CVI_MODULES
 
 end

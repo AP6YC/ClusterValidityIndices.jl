@@ -49,7 +49,16 @@ mutable struct cSIL <: CVI
 end # cSIL <: CVI
 
 """
-Default constructor for the Centroid-based Silhouette (cSIL) Cluster Validity Index.
+Constructor for the Centroid-based Silhouette (cSIL) Cluster Validity Index.
+
+# Examples
+
+```julia
+# Import the package
+using ClusterValidityIndices
+# Construct a cSIL module
+my_cvi = cSIL()
+```
 
 $(local_references)
 """

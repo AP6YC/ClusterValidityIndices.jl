@@ -71,6 +71,12 @@ const LabelMap = Dict{Int, Int}
 """
 Compute and return the criterion value incrementally.
 
+This method takes the CVI object, a single sample as a vector of floats, and a single integer that represents the label prescribed to the sample by your clustering algorithm.
+
+!!! note "Note"
+    You cannot switch to batch mode after incrementally evaluating a CVI.
+    To evaluate in batch, you much create a new CVI object.
+
 # Arguments
 - `cvi::CVI`: the stateful information of the ICVI providing the criterion value.
 - `sample::RealVector`: a vector of features used in clustering the sample.
@@ -80,12 +86,14 @@ Compute and return the criterion value incrementally.
 ```julia
 # Create a new CVI object
 my_cvi = CH()
-# Load in data from some external source
-data = load_some_data()
-# Cluster the data into a set of labels as an integer vector
-labels = my_cluster_algorithm(data)
+
+# Load in random data as an example; 10 samples with feature dimenison 3
+dim = 3
+n_samples = 10
+data = rand(dim, n_samples)
+labels = repeat(1:2, inner=n_samples)
+
 # Iteratively compute and extract the criterion value at every step
-n_samples = length(labels)
 criterion_values = zeros(n_samples)
 for ix = 1:n_samples
     sample = data[:, ix]
@@ -108,6 +116,12 @@ end
 """
 Compute and return the criterion value in batch mode.
 
+This method takes the CVI object, a batch of samples as a matrix of floats, and a vector of integers that represent the labels prescribed to the data by your clustering algorithm.
+
+!!! note "Note"
+    You cannot switch to incremental mode after evaluating a CVI in batch mode.
+    To evaluate incrementally, you much create a new CVI object.
+
 # Arguments
 - `cvi::CVI`: the stateful information of the CVI providing the criterion value.
 - `data::RealMatrix`: a matrix of data, columns as samples and rows as features, used in the external clustering process.
@@ -117,10 +131,13 @@ Compute and return the criterion value in batch mode.
 ```julia
 # Create a new CVI object
 my_cvi = CH()
-# Load in data from some external source
-data = load_some_data()
-# Cluster the data into a set of labels as an integer vector
-labels = my_cluster_algorithm(data)
+
+# Load in random data as an example; 10 samples with feature dimenison 3
+dim = 3
+n_samples = 10
+data = rand(dim, n_samples)
+labels = repeat(1:2, inner=n_samples)
+
 # Compute the final criterion value in batch mode
 criterion_value = get_cvi!(cvi, data, labels)
 ```
