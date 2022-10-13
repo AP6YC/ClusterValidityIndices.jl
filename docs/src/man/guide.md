@@ -10,7 +10,7 @@ For a list of all implemented batch and incremental CVIs available in the packag
 
 ## [Installation](@id guide-installation)
 
-This project is distributed as a [Julia](https://julialang.org/) package and hosted on [JuliaHub][pkgeval-url], Julia's package manager repository.
+This project is distributed as a [Julia](https://julialang.org/) package and hosted on [JuliaHub](https://juliahub.com/ui/Packages/ClusterValidityIndices/Z19r6), Julia's package manager repository.
 As such, this package's usage follows the usual Julia package installation procedure, interactively:
 
 ```julia-repl
