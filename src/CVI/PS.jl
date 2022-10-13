@@ -44,7 +44,16 @@ mutable struct PS <: CVI
 end # PS <: CVI
 
 """
-Default constructor for the Partition Separation (PS) Cluster Validity Index.
+Constructor for the Partition Separation (PS) Cluster Validity Index.
+
+# Examples
+
+```julia
+# Import the package
+using ClusterValidityIndices
+# Construct a PS module
+my_cvi = PS()
+```
 
 $(local_references)
 """

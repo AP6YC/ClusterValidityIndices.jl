@@ -59,7 +59,16 @@ mutable struct rCIP <: CVI
 end # rCIP <: CVI
 
 """
-Default constructor for the (Renyi's) representative Cross Information Potential (rCIP) Cluster Validity Index.
+Constructor for the (Renyi's) representative Cross Information Potential (rCIP) Cluster Validity Index.
+
+# Examples
+
+```julia
+# Import the package
+using ClusterValidityIndices
+# Construct a rCIP module
+my_cvi = rCIP()
+```
 
 $(local_references)
 """

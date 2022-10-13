@@ -8,16 +8,9 @@ A single test set for the testing the functionality of all CVIS modules.
 - Sasha Petrenko <sap625@mst.edu>
 """
 
-"""
-Constructs and returns a list of all cvis
-"""
-function construct_cvis()
-    # Construct the cvis as a list
-    cvis = [local_cvi() for local_cvi in CVI_MODULES]
-
-    # Return a list of constructed CVIs
-    return cvis
-end
+# --------------------------------------------------------------------------- #
+# TESTSETS
+# --------------------------------------------------------------------------- #
 
 @testset "CVIs" begin
     @info "CVI Testing"
@@ -39,7 +32,6 @@ end
         # Load the data, get a subset, and relabel in order
         local_data, local_labels = get_cvi_data(data_path)
         local_data, local_labels = get_bernoulli_subset(local_data, local_labels, p)
-        local_labels = relabel_cvi_data(local_labels)
 
         # Store the sanitized data
         data[data_path] = local_data

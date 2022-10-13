@@ -8,14 +8,36 @@ Utilities for unit tests of the `ClusterValidityIndices.jl` package.
 - Sasha Petrenko <sap625@mst.edu>
 """
 
-using Random
-using DelimitedFiles
-using NumericalTypeAliases
+# --------------------------------------------------------------------------- #
+# DEPENDENCIES
+# --------------------------------------------------------------------------- #
+
+using
+    Random,
+    DelimitedFiles,
+    NumericalTypeAliases
+
+# --------------------------------------------------------------------------- #
+# FUNCTIONS
+# --------------------------------------------------------------------------- #
 
 """
-    get_cvi_data(data_file::AbstractString)
+Constructs and returns a list of all CVI modules.
+"""
+function construct_cvis()
+    # Construct the cvis as a list
+    cvis = [local_cvi() for local_cvi in CVI_MODULES]
 
+    # Return a list of constructed CVIs
+    return cvis
+end
+
+
+"""
 Get the cvi data specified by the data_file path.
+
+# Arguments
+- `data_file::AbstractString`: the CVI test dataset path to load.
 """
 function get_cvi_data(data_file::AbstractString)
     # Parse the data
@@ -25,10 +47,15 @@ function get_cvi_data(data_file::AbstractString)
     train_y = convert(Array{Int}, data[3, :])
 
     return train_x, train_y
-end # get_cvi_data(data_file::AbstractString)
+end
 
 """
-    get_bernoulli_subset(data::RealMatrix, labels::IntegerVector, p::Real)
+Gets a random bernoulli-sampled subset of the provided data, subsampled at rate p.
+
+# Arguments
+- `data::RealMatrix`: the 2-D batch of data to subsample.
+- `labels::IntegerVector`: the labels that correspond to the batch of data.
+- `p::Real`: the subsampling ratio ∈ (0, 1]
 """
 function get_bernoulli_subset(data::RealMatrix, labels::IntegerVector, p::Real)
     # Get the dimensions of the data
@@ -39,4 +66,4 @@ function get_bernoulli_subset(data::RealMatrix, labels::IntegerVector, p::Real)
 
     # Return the subset
     return data[:, subset], labels[subset]
-end # get_bernoulli_subset(data::RealMatrix, labels::IntegerVector, p::Real)
+end

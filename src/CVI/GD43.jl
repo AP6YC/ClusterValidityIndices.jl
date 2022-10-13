@@ -57,7 +57,16 @@ mutable struct GD43 <: CVI
 end # GD43 <: CVI
 
 """
-Default constructor for the Generalized Dunn's Index 43 (GD43) Cluster Validity Index.
+Constructor for the Generalized Dunn's Index 43 (GD43) Cluster Validity Index.
+
+# Examples
+
+```julia
+# Import the package
+using ClusterValidityIndices
+# Construct a GD43 module
+my_cvi = GD43()
+```
 
 $(local_references)
 """

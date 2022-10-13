@@ -4,12 +4,13 @@ The package guide is broken into the following sections:
 
 - [Installation](@ref guide-installation): instructions for the package.
 - [Quickstart](@ref guide-quickstart): a simple rundown of the package usage to get it running.
-- [Implemented CVIs](@ref implemented-cvis): a list of all batch and incremental CVIs available in the package.
 - [Usage](@ref usage): a deep dive of the package and its detailed usage.
+
+For a list of all implemented batch and incremental CVIs available in the package, see the [Implemented CVI List](@ref cvi-list-page) page.
 
 ## [Installation](@id guide-installation)
 
-This project is distributed as a [Julia](https://julialang.org/) package and hosted on [JuliaHub][pkgeval-url], Julia's package manager repository.
+This project is distributed as a [Julia](https://julialang.org/) package and hosted on [JuliaHub](https://juliahub.com/ui/Packages/ClusterValidityIndices/Z19r6), Julia's package manager repository.
 As such, this package's usage follows the usual Julia package installation procedure, interactively:
 
 ```julia-repl
@@ -52,61 +53,46 @@ my_cvi = DB()
 ```
 
 All CVIs are implemented with acronyms of their literature names.
-A list of all of these are found in the [Implemented CVIs](@ref implemented-cvis) section, and their code details can be found in the [Index](@ref index-types).
+A list of all of these are found in the [Implemented CVI List](@ref cvi-list-page) page, and their code details can be found in the [Index](@ref index-types).
 
 Next, get data from a clustering process.
 This is a set of samples of features that are clustered and prescribed cluster labels.
 
-> **Note**
->
-> The `ClusterValidityIndices.jl` package assumes data to be in the form of Float matrices where columns are samples and rows are features.
-> An individual sample is a single vector of features.
-> Labels are vectors of integers where each number corresponds to its own cluster.
+!!! note "Note"
+    The `ClusterValidityIndices.jl` package assumes data to be in the form of Float matrices where columns are samples and rows are features.
+    An individual sample is a single vector of features.
+    Labels are vectors of integers where each number corresponds to its own cluster.
 
 ```julia
 # Random data as an example; 10 samples with feature dimenison 3
 dim = 3
 n_samples = 10
 data = rand(dim, n_samples)
-labels = collect(1:n_samples)
+labels = repeat(1:2, inner=n_samples)
 ```
 
-The output of CVIs are called *criterion values*, and they can be computed both incrementally and in batch with `get_cvi`.
+The output of CVIs are called *criterion values*, and they can be computed both incrementally and in batch with `get_cvi!`.
 Compute in batch by providing a matrix of samples and a vector of labels:
 
 ```julia
-criterion_value = get_cvi(my_cvi, data, labels)
+criterion_value = get_cvi!(my_cvi, data, labels)
 ```
 
 or incrementally with the same function by passing one sample and label at a time:
 
 ```julia
+# Create a fresh CVI object for incremental evaluation
+my_icvi = DB()
+
 # Create a container for the values and iterate
 criterion_values = zeros(n_samples)
 for i = 1:n_samples
-    criterion_values[i] = get_cvi(my_cvi, data[:, i], labels[i])
+    criterion_values[i] = get_cvi!(my_icvi, data[:, i], labels[i])
 end
 ```
 
-> **Note**
->
-> Each module has a batch and incremental implementation, but `ClusterValidityIndices.jl` does not yet support switching between batch and incremental modes with the same CVI object.
-
-## [Implemented CVIs](@id implemented-cvis)
-
-The `ClusterValidityIndices.jl` package has the following CVIs implemented:
-
-- **[`CH`](@ref ClusterValidityIndices.CH)**: Calinski-Harabasz.
-- **[`cSIL`](@ref ClusterValidityIndices.cSIL)**: Centroid-based Silhouette.
-- **[`DB`](@ref ClusterValidityIndices.DB)**: Davies-Bouldin.
-- **[`GD43`](@ref ClusterValidityIndices.GD43)**: Generalized Dunn's Index 43.
-- **[`GD53`](@ref ClusterValidityIndices.GD53)**: Generalized Dunn's Index 53.
-- **[`PS`](@ref ClusterValidityIndices.PS)**: Partition Separation.
-- **[`rCIP`](@ref ClusterValidityIndices.rCIP)**: (Renyi's) representative Cross Information Potential.
-- **[`WB`](@ref ClusterValidityIndices.WB)**: WB-index.
-- **[`XB`](@ref ClusterValidityIndices.XB)**: Xie-Beni.
-
-The exported constant [`CVI_MODULES`](@ref ClusterValidityIndices.CVI_MODULES) also contains a list of these CVIs for convenient iteration.
+!!! note "Note"
+    Each module has a batch and incremental implementation, but `ClusterValidityIndices.jl` does not yet support switching between batch and incremental modes with the same CVI object.
 
 ## [Usage](@id usage)
 
@@ -165,6 +151,10 @@ In both incremental and batch modes, the parameter update requires:
 
 ### [Advanced Usage](@id guide-advanced-usage)
 
+!!! note "Note"
+    This section is for advanced usage of the internal API, documented in the [Developer Index](@ref dev-main-index).
+    Though not part of the public API, internal CVI update usage is documented here for advanced use-cases.
+
 The CVIs in this project all contain internal *parameters* that must be updated.
 Each update function modifies the CVI, so they use the Julia nomenclature convention of appending an exclamation point to indicate as much.
 
@@ -176,24 +166,30 @@ More concretely, they are
 
 ```julia
 # Incremental updating
-param_inc!(cvi::CVI, sample::RealVector, label::Integer)
+ClusterValidityIndices.param_inc!(cvi::CVI, sample::RealVector, label::Integer)
 # Batch updating
-param_batch!(cvi::CVI, data::RealMatrix, labels::IntegerVector)
+ClusterValidityIndices.param_batch!(cvi::CVI, data::RealMatrix, labels::IntegerVector)
 ```
 
 After updating their internal parameters, they both compute their most recent criterion values with
 
 ```julia
-evaluate!(cvi::CVI)
+ClusterValidityIndices.evaluate!(cvi::CVI)
 ```
+
+which are then stored `cvi.criterion_value` as a floating point value.
 
 For example, we may instantiate and load our data
 
 ```julia
+# Create a local CVI object
 cvi = DB()
-data = load_data()
-labels = get_cluster_labels(data)
-dim, n_samples = size(data)
+
+# Generate random data as an example; 10 samples with feature dimenison 3
+dim = 3
+n_samples = 10
+data = rand(dim, n_samples)
+labels = repeat(1:2, inner=n_samples)
 ```
 
 then update the parameters incrementally with
@@ -201,8 +197,8 @@ then update the parameters incrementally with
 ```julia
 criterion_values = zeros(n_samples)
 for ix = 1:n_samples
-    param_inc!(cvi, data[:, ix], labels[ix])
-    evaluate!(cvi)
+    ClusterValidityIndices.param_inc!(cvi, data[:, ix], labels[ix])
+    ClusterValidityIndices.evaluate!(cvi)
     criterion_values[ix] = cvi.criterion_value
 end
 ```
@@ -210,13 +206,12 @@ end
 or in batch with
 
 ```julia
-param_batch!(cvi, data, labels)
-evaluate!(cvi)
+ClusterValidityIndices.param_batch!(cvi, data, labels)
+ClusterValidityIndices.evaluate!(cvi)
 criterion_value = cvi.criterion_value
 ```
 
-> **Note**
->
-> Though this advanced usage is already done all at once with `get_cvi!`, one possible use of this advanced usage is saving computation.
-> For example, one might wish to update the CVI internal parameters incrementally each step with `param_inc!` but save the computation of the criterion value itself until it is required with `evaluate!`.
-> In all other instances, it is recommended to utilize the public API with `get_cvi!`.
+!!! note "Note"
+    Though this advanced usage is already done all at once with `get_cvi!`, one possible use of this advanced usage is saving computation.
+    For example, one might wish to update the CVI internal parameters incrementally each step with `param_inc!` but save the computation of the criterion value itself until it is required with `evaluate!`.
+    In all other instances, it is recommended to utilize the public API with `get_cvi!`.
