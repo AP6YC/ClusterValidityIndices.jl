@@ -110,7 +110,7 @@ end
 
 ## Show the plot
 p = plot_icvis(criterion_values)
-# Because of the visualization afforded by computing the criterion value incrementally, this plot can tell us several things
-# First, we see that the CVI has a value of zero until the second cluster is encountered, which makes sense because there cannot be measurements of inter-/intra-cluster separation until there is more than one cluster.
-# Second, we see that the criterion value evolves at each time step as the clustering process occurs.
+
+# We can clearly see that the CVIs illustrate a difference in how the two clustering algorithms operate.
+# By changing the options of the clustering algorithms just a little bit, they cluster vastly differently, which is reflected in the difference in the ICVIs that broadens each time step.
 png("assets/clustering-comparison") #hide
