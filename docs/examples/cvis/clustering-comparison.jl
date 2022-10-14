@@ -45,11 +45,11 @@ unique(labels)
 # Because these clustering algorithms run online, we can both cluster and compute a new criterion value at every step.
 # For more on these ART algorithms, see [`AdaptiveResonance.jl`](https://github.com/AP6YC/AdaptiveResonance.jl).
 
-# We will create a DDVFA module
-## Create a Distributed Dual-Vigilance Fuzzy ART (DDVFA) module with default options and a DVFA module for comparison
+# We will create two Distributed Dual-Vigilance Fuzzy ART (DDVFA) modules with two different options for comparison.
+## Create a list of two DDVFA modules with different options
 arts = [
-    DDVFA(),
-    DVFA(),
+    DDVFA()                         # Default options
+    DDVFA(rho_lb=0.6, rho_ub=0.7)   # Specified options
 ]
 typeof(arts)
 
@@ -68,7 +68,7 @@ n_cvis = length(arts)
 cvis = [CH() for _ = 1:n_cvis]
 
 ## Setup the online/streaming clustering
-n_samples = length(labels)              # Number of samples
+n_samples = length(labels)                  # Number of samples
 c_labels = zeros(Int, n_samples, n_cvis)     # Clustering labels for both
 criterion_values = zeros(n_samples, n_cvis)  # ICVI outputs
 
@@ -79,9 +79,10 @@ for ix = 1:n_samples
     ## Iterate over all clustering algorithms and CVIs
     for jx = 1:n_cvis
         ## Cluster the sample online
-        c_labels[ix, jx] = train!(arts[jx], sample)
+        local_label = train!(arts[jx], sample)
+        c_labels[ix, jx] = local_label
         ## Get the new criterion value (ICVI output)
-        criterion_values[ix, jx] = get_cvi!(cvis[jx], sample, c_labels[ix, jx])
+        criterion_values[ix, jx] = get_cvi!(cvis[jx], sample, local_label)
     end
 end
 
@@ -112,4 +113,4 @@ p = plot_icvis(criterion_values)
 # Because of the visualization afforded by computing the criterion value incrementally, this plot can tell us several things
 # First, we see that the CVI has a value of zero until the second cluster is encountered, which makes sense because there cannot be measurements of inter-/intra-cluster separation until there is more than one cluster.
 # Second, we see that the criterion value evolves at each time step as the clustering process occurs.
-png("assets/clustering-comparison") #hide
+# png("assets/clustering-comparison") #hide
