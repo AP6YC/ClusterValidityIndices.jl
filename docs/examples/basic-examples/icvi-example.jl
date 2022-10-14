@@ -1,5 +1,5 @@
 # ---
-# title: ICVI Simple Example
+# title: Incremental CVI Simple Example
 # id: icvi_example
 # cover: assets/icvi-example.png
 # date: 2022-10-13

@@ -113,4 +113,4 @@ p = plot_icvis(criterion_values)
 # Because of the visualization afforded by computing the criterion value incrementally, this plot can tell us several things
 # First, we see that the CVI has a value of zero until the second cluster is encountered, which makes sense because there cannot be measurements of inter-/intra-cluster separation until there is more than one cluster.
 # Second, we see that the criterion value evolves at each time step as the clustering process occurs.
-# png("assets/clustering-comparison") #hide
+png("assets/clustering-comparison") #hide

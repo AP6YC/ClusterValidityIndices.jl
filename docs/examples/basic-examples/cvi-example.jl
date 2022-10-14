@@ -1,5 +1,5 @@
 # ---
-# title: CVI Simple Example
+# title: Batch CVI Simple Example
 # id: cvi_example
 # cover: ../assets/logo.png
 # date: 2022-10-12
