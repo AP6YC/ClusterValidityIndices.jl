@@ -28,6 +28,7 @@ using MLDataUtils               # Shuffling and splitting
 using Printf                    # Formatted number printing
 using Plots                     # Plots frontend
 gr()                            # Use the default GR backend explicitly
+theme(:dracula)                 # Change the theme for fun
 
 # We will download the Iris dataset for its small size and benchmark use for clustering algorithms.
 iris = Iris(as_df=false)
