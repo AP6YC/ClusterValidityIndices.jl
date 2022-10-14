@@ -4,6 +4,9 @@ using MLDatasets                # Iris dataset
 using DataFrames                # DataFrames, necessary for MLDatasets.Iris()
 using MLDataUtils               # Shuffling and splitting
 using Printf                    # Formatted number printing
+using Plots                     # Plots frontend
+gr()                            # Use the default GR backend explicitly
+theme(:dracula)                 # Change the theme for fun
 
 iris = Iris(as_df=false)
 features, labels = iris.features, iris.targets
@@ -16,7 +19,7 @@ art = DDVFA()
 typeof(art)
 
 # Setup the data configuration for the module
-data_setup!(art.config, features)
+data_setup!(art, features)
 # Verify that the data is setup
 art.config.setup
 
@@ -40,6 +43,18 @@ end
 
 # See the list of criterion values
 criterion_values
+
+# Create the plotting object
+p = plot(
+    1:n_samples,
+    criterion_values,
+    linewidth = 5,
+    title = "Incremental $(typeof(icvi)) Index",
+    xlabel = "Sample",
+    ylabel = "$(typeof(icvi)) Value",
+)
+
+png("assets/icvi-example") #hide
 
 # This file was generated using Literate.jl, https://github.com/fredrikekre/Literate.jl
 

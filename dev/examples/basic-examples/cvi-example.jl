@@ -1,5 +1,5 @@
 using ClusterValidityIndices    # CVI/ICVI
-using Clustering                # DBSCAN
+using Clustering                # Fuzzy C-Means
 using MLDatasets                # Iris dataset
 using DataFrames                # DataFrames, necessary for MLDatasets.Iris()
 using MLDataUtils               # Shuffling and splitting

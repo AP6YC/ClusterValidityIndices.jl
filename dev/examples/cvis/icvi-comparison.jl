@@ -6,6 +6,7 @@ using MLDataUtils               # Shuffling and splitting
 using Printf                    # Formatted number printing
 using Plots                     # Plots frontend
 gr()                            # Use the default GR backend explicitly
+theme(:dracula)                 # Change the theme for fun
 
 iris = Iris(as_df=false)
 features, labels = iris.features, iris.targets
@@ -18,7 +19,7 @@ art = DDVFA()
 typeof(art)
 
 # Setup the data configuration for the module
-data_setup!(art.config, features)
+data_setup!(art, features)
 # Verify that the data is setup
 art.config.setup
 
@@ -65,7 +66,13 @@ function plot_cvis(range)
     # Iterate over the range of ICVI indices provided
     for jx = range
         # Plot the ICVI criterion values versus sample index
-        plot!(p, 1:n_samples, criterion_values[jx, :], label = string(typeof(icvis[jx])))
+        plot!(
+            p,                              # Modify the plot object
+            1:n_samples,                    # x-axis iteration
+            criterion_values[jx, :],        # y-axis criterion value
+            linewidth=3,                    # Thicken the lines for visibility
+            label=string(typeof(icvis[jx])) # Label is the type of CVI
+        )
     end
     # Return the plotting object for IJulia display
     return p
