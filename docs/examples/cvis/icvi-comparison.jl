@@ -2,10 +2,10 @@
 # title: Multi-ICVI Comparisons
 # id: icvi_comparison
 # cover: assets/icvi-comparision.png
-# date: 2021-12-7
+# date: 2022-10-12
 # author: "[Sasha Petrenko](https://github.com/AP6YC)"
-# julia: 1.6
-# description: This demo illustrates the differing behavior of each ICVI.
+# julia: 1.8
+# description: A comparison of the differing behavior of each ICVI.
 # ---
 
 # ## Overview
@@ -28,6 +28,7 @@ using MLDataUtils               # Shuffling and splitting
 using Printf                    # Formatted number printing
 using Plots                     # Plots frontend
 gr()                            # Use the default GR backend explicitly
+theme(:dracula)                 # Change the theme for fun
 
 # We will download the Iris dataset for its small size and benchmark use for clustering algorithms.
 iris = Iris(as_df=false)
@@ -50,7 +51,7 @@ typeof(art)
 # Because we are streaming clustering, we must setup the internal data setup of the DDVFA module.
 # This is akin to doing some data preprocessing and communicating the dimension of the data, bounds, etc. to the module beforehand.
 ## Setup the data configuration for the module
-data_setup!(art.config, features)
+data_setup!(art, features)
 ## Verify that the data is setup
 art.config.setup
 
@@ -104,7 +105,13 @@ function plot_cvis(range)
     ## Iterate over the range of ICVI indices provided
     for jx = range
         ## Plot the ICVI criterion values versus sample index
-        plot!(p, 1:n_samples, criterion_values[jx, :], label = string(typeof(icvis[jx])))
+        plot!(
+            p,                              # Modify the plot object
+            1:n_samples,                    # x-axis iteration
+            criterion_values[jx, :],        # y-axis criterion value
+            linewidth=3,                    # Thicken the lines for visibility
+            label=string(typeof(icvis[jx])) # Label is the type of CVI
+        )
     end
     ## Return the plotting object for IJulia display
     return p
