@@ -64,7 +64,12 @@ end
 end
 
 @testset "Constants" begin
-    # Show that the constants are exported
-    @test @isdefined CVI_MODULES
-    @test @isdefined CLUSTERVALIDITYINDICES_VERSION
+    # Test that the constants are exported
+    cvi_constants = [
+        CVI_MODULES,
+        CLUSTERVALIDITYINDICES_VERSION,
+    ]
+    for local_constants in cvi_constants
+        @test @isdefined local_constants
+    end
 end
