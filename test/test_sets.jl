@@ -62,3 +62,9 @@ end
 
     @info "Task map: " cvi.label_map
 end
+
+@testset "Constants" begin
+    # Show that the constants are exported
+    @test @isdefined CVI_MODULES
+    @test @isdefined CLUSTERVALIDITYINDICES_VERSION
+end
