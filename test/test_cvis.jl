@@ -12,14 +12,44 @@ A single test set for the testing the functionality of all CVIS modules.
 # TESTSETS
 # --------------------------------------------------------------------------- #
 
+@testset "ScikitLearn Equivalence" begin
+    @info "--- Testing ScikitLearn Equivalence ---"
+    using PyCall, Distributions
+    py_sklearn_metrics = pyimport("sklearn.metrics")
+    # mv_normal1 = MvNormal([0.,0.], [1.5 0.5; 0.5 3])
+    # mv_normal2 = MvNormal([10,8], [1.5 1; 1 2])
+    # mv_normal3 = MvNormal([0,-15], [5 2; 2 5])
+    # mv_normal4 = MvNormal([-20,20], [10 5; 5 10])
+    # rg_nclust = 2:50
+
+    # list_cvi = zeros(length(rg_nclust))
+    # list_cvi_py = zeros(length(rg_nclust))
+
+    # Grab all the data paths for testing
+    data_paths = readdir("data", join=true)
+
+    # Initialize the results data containers
+    data, labels, n_samples = Dict(), Dict(), Dict()
+
+    for data_path in data_paths
+        # Load the data, get a subset, and relabel in order
+        local_data, local_labels = get_cvi_data(data_path)
+
+        # Store the sanitized data
+        data[data_path] = local_data
+        labels[data_path] = local_labels
+        n_samples[data_path] = length(local_labels)
+    end
+end
+
 @testset "CVIs" begin
-    @info "CVI Testing"
+    @info "--- CVI Testing ---"
 
     # Set the approximation CVI tolerance for all comparisons
     tolerance = 1e-1
 
     # Grab all the data paths for testing
-    data_paths = readdir("../data", join=true)
+    data_paths = readdir("data", join=true)
 
     # Initialize the results data containers
     data, labels, n_samples = Dict(), Dict(), Dict()
@@ -79,7 +109,7 @@ A single test set for the testing the functionality of all CVIS modules.
 end
 
 @testset "Edge Cases" begin
-    @info "Testing CVI Edge Cases"
+    @info "--- Testing CVI Edge Cases ---"
 
     # Test rCIP provided a single sample of any one cluster in batch update
     local_cvi = rCIP()

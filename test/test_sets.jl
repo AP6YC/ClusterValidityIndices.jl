@@ -44,7 +44,7 @@ end
     cvi = CH()
 
     # Load the sample data
-    data_paths = readdir("../data", join=true)
+    data_paths = readdir("data", join=true)
     local_data, local_labels = get_cvi_data(data_paths[1])
 
     # Permute the data
