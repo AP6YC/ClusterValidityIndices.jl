@@ -46,7 +46,7 @@ mutable struct cSIL <: CVI
     sil_coefs::Vector{Float}    # dim
     n_clusters::Int
     criterion_value::Float
-end # cSIL <: CVI
+end
 
 """
 Constructor for the Centroid-based Silhouette (cSIL) Cluster Validity Index.
@@ -76,7 +76,7 @@ function cSIL()
         0,                              # n_clusters
         0.0                             # criterion_value
     )
-end # cSIL()
+end
 
 # Setup function
 function setup!(cvi::cSIL, sample::RealVector)
@@ -86,7 +86,7 @@ function setup!(cvi::cSIL, sample::RealVector)
     # NOTE: R is emptied and calculated in evaluate!, so it is not defined here
     cvi.v = Matrix{Float}(undef, cvi.dim, 0)
     cvi.G = Matrix{Float}(undef, cvi.dim, 0)
-end # setup!(cvi::cSIL, sample::RealVector)
+end
 
 # Incremental parameter update function
 function param_inc!(cvi::cSIL, sample::RealVector, label::Integer)
@@ -194,12 +194,11 @@ function param_inc!(cvi::cSIL, sample::RealVector, label::Integer)
         cvi.S[i_label, :] = S_row_new
     end
     cvi.n_samples = n_samples_new
-end # param_inc!(cvi::cSIL, sample::RealVector, label::Integer)
+end
 
 # Batch parameter update function
 function param_batch!(cvi::cSIL, data::RealMatrix, labels::IntegerVector)
     cvi.dim, cvi.n_samples = size(data)
-    # u = findfirst.(isequal.(unique(labels)), [labels])
     u = unique(labels)
     cvi.n_clusters = length(u)
     cvi.n = zeros(Integer, cvi.n_clusters)
@@ -221,7 +220,7 @@ function param_batch!(cvi::cSIL, data::RealMatrix, labels::IntegerVector)
             cvi.S[ix, jx] = sum(D[subset_ind, ix]) / cvi.n[jx]
         end
     end
-end # param_batch!(cvi::cSIL, data::RealMatrix, labels::IntegerVector)
+end
 
 # Criterion value evaluation function
 function evaluate!(cvi::cSIL)
@@ -239,4 +238,4 @@ function evaluate!(cvi::cSIL)
     else
         cvi.criterion_value = 0.0
     end
-end # evaluate(cvi::cSIL)
+end

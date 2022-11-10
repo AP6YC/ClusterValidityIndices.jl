@@ -56,7 +56,7 @@ mutable struct rCIP <: CVI
     delta_term::Matrix{Float}   # dim x dim
     n_clusters::Int
     criterion_value::Float
-end # rCIP <: CVI
+end
 
 """
 Constructor for the (Renyi's) representative Cross Information Potential (rCIP) Cluster Validity Index.
@@ -86,7 +86,7 @@ function rCIP()
         0,                                  # n_clusters
         0.0                                 # criterion_value
     )
-end # rCIP()
+end
 
 # Setup function
 function setup!(cvi::rCIP, sample::RealVector)
@@ -100,7 +100,7 @@ function setup!(cvi::rCIP, sample::RealVector)
     delta = 10 ^ (-epsilon / cvi.dim)
     cvi.delta_term = Matrix{Float}(LinearAlgebra.I, cvi.dim, cvi.dim) .* delta
     cvi.constant = 1 / sqrt((2 * pi) ^ cvi.dim)
-end # setup!(cvi::rCIP, sample::RealVector)
+end
 
 # Incremental parameter update function
 function param_inc!(cvi::rCIP, sample::RealVector, label::Integer)
@@ -130,7 +130,6 @@ function param_inc!(cvi::rCIP, sample::RealVector, label::Integer)
                     * (1 / sqrt(det(sigma_q)))
                     * exp(-0.5 * transpose(diff_m) * inv(sigma_q) * diff_m)
                 )
-                # d_column_new[jx] = sum((v_new - cvi.v[:, jx]).^2)
             end
             D_new[:, i_label] = d_column_new
             D_new[i_label, :] = transpose(d_column_new)
@@ -149,7 +148,6 @@ function param_inc!(cvi::rCIP, sample::RealVector, label::Integer)
             + (1 / n_new) .* sample
         )
         diff_x_v = sample - cvi.v[:, i_label]
-        # if n_new > 1
         sigma_new = (
             ((n_new - 2) / (n_new - 1))
             * (cvi.sigma[:, :, i_label] - cvi.delta_term)
@@ -177,7 +175,7 @@ function param_inc!(cvi::rCIP, sample::RealVector, label::Integer)
         cvi.D[i_label, :] = transpose(d_column_new)
     end
     cvi.n_samples = n_samples_new
-end # param_inc!(cvi::rCIP, sample::RealVector, label::Integer)
+end
 
 # Incremental parameter update function
 function param_batch!(cvi::rCIP, data::RealMatrix, labels::IntegerVector)
@@ -223,7 +221,7 @@ function param_batch!(cvi::rCIP, data::RealMatrix, labels::IntegerVector)
         end
     end
     cvi.D = cvi.D + transpose(cvi.D)
-end # param_batch!(cvi::rCIP, data::RealMatrix, labels::IntegerVector)
+end
 
 # Criterion value evaluation function
 function evaluate!(cvi::rCIP)
@@ -235,4 +233,4 @@ function evaluate!(cvi::rCIP)
     else
         cvi.criterion_value = 0.0
     end
-end # evaluate(cvi::rCIP)
+end
