@@ -54,7 +54,7 @@ mutable struct GD53 <: CVI
     intra::Float
     n_clusters::Int
     criterion_value::Float
-end # GD53 <: CVI
+end
 
 """
 Constructor for the Generalized Dunn's Index 53 (GD53) Cluster Validity Index.
@@ -86,7 +86,7 @@ function GD53()
         0,                              # n_clusters
         0.0                             # criterion_value
     )
-end # GD53()
+end
 
 # Setup function
 function setup!(cvi::GD53, sample::RealVector)
@@ -96,7 +96,7 @@ function setup!(cvi::GD53, sample::RealVector)
     # NOTE: R is emptied and calculated in evaluate!, so it is not defined here
     cvi.v = Matrix{Float}(undef, cvi.dim, 0)
     cvi.G = Matrix{Float}(undef, cvi.dim, 0)
-end # setup!(cvi::GD53, sample::RealVector)
+end
 
 # Incremental parameter update function
 function param_inc!(cvi::GD53, sample::RealVector, label::Integer)
@@ -173,7 +173,7 @@ function param_inc!(cvi::GD53, sample::RealVector, label::Integer)
     end
     cvi.n_samples = n_samples_new
     cvi.mu_data = mu_data_new
-end # param_inc!(cvi::GD53, sample::RealVector, label::Integer)
+end
 
 # Batch parameter update function
 function param_batch!(cvi::GD53, data::RealMatrix, labels::IntegerVector)
@@ -203,7 +203,7 @@ function param_batch!(cvi::GD53, data::RealMatrix, labels::IntegerVector)
         end
     end
     cvi.D = cvi.D + transpose(cvi.D)
-end # param_batch!(cvi::GD53, data::RealMatrix, labels::IntegerVector)
+end
 
 # Criterion value evaluation function
 function evaluate!(cvi::GD53)
@@ -218,4 +218,4 @@ function evaluate!(cvi::GD53)
     else
         cvi.criterion_value = 0.0
     end
-end # evaluate(cvi::GD53)
+end

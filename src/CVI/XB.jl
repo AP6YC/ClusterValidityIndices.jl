@@ -48,7 +48,7 @@ mutable struct XB <: CVI
     WGSS::Float
     n_clusters::Int
     criterion_value::Float
-end # XB <: CVI
+end
 
 """
 Constructor for the Xie-Beni (XB) Cluster Validity Index.
@@ -80,7 +80,7 @@ function XB()
         0,                              # n_clusters
         0.0                             # criterion_value
     )
-end # XB()
+end
 
 # Setup function
 function setup!(cvi::XB, sample::RealVector)
@@ -89,7 +89,7 @@ function setup!(cvi::XB, sample::RealVector)
     # Initialize the 2-D arrays with the correct feature dimension
     cvi.v = Matrix{Float}(undef, cvi.dim, 0)
     cvi.G = Matrix{Float}(undef, cvi.dim, 0)
-end # setup!(cvi::XB, sample::Vector{T}) where {T<:RealFP}
+end
 
 # Incremental parameter update function
 function param_inc!(cvi::XB, sample::RealVector, label::Integer)
@@ -169,7 +169,7 @@ function param_inc!(cvi::XB, sample::RealVector, label::Integer)
     end
     cvi.n_samples = n_samples_new
     cvi.mu_data = mu_data_new
-end # param_inc!(cvi::XB, sample::RealVector, label::Integer)
+end
 
 # Incremental parameter update function
 function param_batch!(cvi::XB, data::RealMatrix, labels::IntegerVector)
@@ -198,7 +198,7 @@ function param_batch!(cvi::XB, data::RealMatrix, labels::IntegerVector)
         end
     end
     cvi.D = cvi.D + transpose(cvi.D)
-end # param_batch!(cvi::XB, data::RealMatrix, labels::IntegerVector)
+end
 
 # Criterion value evaluation function
 function evaluate!(cvi::XB)
@@ -216,4 +216,4 @@ function evaluate!(cvi::XB)
         cvi.SEP = 0.0
         cvi.criterion_value = 0.0
     end
-end # evaluate(cvi::XB)
+end

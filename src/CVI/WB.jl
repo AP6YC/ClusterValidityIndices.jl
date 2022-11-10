@@ -56,7 +56,7 @@ mutable struct WB <: CVI
     WGSS::Float
     n_clusters::Int
     criterion_value::Float
-end # WB <: CVI
+end
 
 """
 Constructor for the WB-Index (WB) Cluster Validity Index.
@@ -88,7 +88,7 @@ function WB()
         0,                              # n_clusters
         0.0                             # criterion_value
     )
-end # WB()
+end
 
 # Setup function
 function setup!(cvi::WB, sample::RealVector)
@@ -98,7 +98,7 @@ function setup!(cvi::WB, sample::RealVector)
     # NOTE: R is emptied and calculated in evaluate!, so it is not defined here
     cvi.v = Matrix{Float}(undef, cvi.dim, 0)
     cvi.G = Matrix{Float}(undef, cvi.dim, 0)
-end # setup!(cvi::WB, sample::RealVector)
+end
 
 # Incremental parameter update function
 function param_inc!(cvi::WB, sample::RealVector, label::Integer)
@@ -158,7 +158,7 @@ function param_inc!(cvi::WB, sample::RealVector, label::Integer)
     cvi.SEP = (
         [cvi.n[ix] * sum((cvi.v[:, ix] - cvi.mu) .^ 2) for ix = 1:cvi.n_clusters]
     )
-end # param_inc!(cvi::WB, sample::RealVector, label::Integer)
+end
 
 # Batch parameter update function
 function param_batch!(cvi::WB, data::RealMatrix, labels::IntegerVector)
@@ -180,7 +180,7 @@ function param_batch!(cvi::WB, data::RealMatrix, labels::IntegerVector)
         cvi.CP[ix] = sum(diff_x_v .^ 2)
         cvi.SEP[ix] = cvi.n[ix] * sum((cvi.v[:, ix] - cvi.mu) .^ 2);
     end
-end # param_batch!(cvi::WB, data::RealMatrix, labels::IntegerVector)
+end
 
 # Criterion value evaluation function
 function evaluate!(cvi::WB)
@@ -195,4 +195,4 @@ function evaluate!(cvi::WB)
         cvi.BGSS = 0.0
         cvi.criterion_value = 0.0;
     end
-end # evaluate(cvi::WB)
+end

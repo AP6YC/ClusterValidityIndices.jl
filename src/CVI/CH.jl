@@ -51,7 +51,7 @@ mutable struct CH <: CVI
     WGSS::Float
     n_clusters::Int
     criterion_value::Float
-end # CH <: CVI
+end
 
 """
 Constructor for the Calinski-Harabasz (CH) Cluster Validity Index.
@@ -83,7 +83,7 @@ function CH()
         0,                              # n_clusters
         0.0                             # criterion_value
     )
-end # CH()
+end
 
 # Setup function
 function setup!(cvi::CH, sample::RealVector)
@@ -93,7 +93,7 @@ function setup!(cvi::CH, sample::RealVector)
     # NOTE: R is emptied and calculated in evaluate!, so it is not defined here
     cvi.v = Matrix{Float}(undef, cvi.dim, 0)
     cvi.G = Matrix{Float}(undef, cvi.dim, 0)
-end # setup!(cvi::CH, sample::Vector{T}) where {T<:Real}
+end
 
 # Incremental parameter update function
 function param_inc!(cvi::CH, sample::RealVector, label::Integer)
@@ -151,7 +151,7 @@ function param_inc!(cvi::CH, sample::RealVector, label::Integer)
     cvi.SEP = (
         [cvi.n[ix] * sum((cvi.v[:, ix] - cvi.mu) .^ 2) for ix = 1:cvi.n_clusters]
     )
-end # param_inc!(cvi::CH, sample::RealVector, label::Integer)
+end
 
 # Batch parameter update function
 function param_batch!(cvi::CH, data::RealMatrix, labels::IntegerVector)
@@ -173,7 +173,7 @@ function param_batch!(cvi::CH, data::RealMatrix, labels::IntegerVector)
         cvi.CP[ix] = sum(diff_x_v .^ 2)
         cvi.SEP[ix] = cvi.n[ix] * sum((cvi.v[:, ix] - cvi.mu) .^ 2);
     end
-end # param_batch!(cvi::CH, data::RealMatrix, labels::IntegerVector)
+end
 
 # Criterion value evaluation function
 function evaluate!(cvi::CH)
@@ -191,4 +191,4 @@ function evaluate!(cvi::CH)
         cvi.BGSS = 0.0
         cvi.criterion_value = 0.0
     end
-end # evaluate(cvi::CH)
+end
