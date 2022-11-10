@@ -178,7 +178,7 @@ end
 function evaluate!(cvi::CH)
     # Within group sum of scatters
     cvi.WGSS = sum(cvi.CP)
-    if cvi.n_clusters > 2
+    if cvi.n_clusters > 1
         # Between groups sum of scatters
         cvi.BGSS = sum(cvi.SEP)
         # CH index value
