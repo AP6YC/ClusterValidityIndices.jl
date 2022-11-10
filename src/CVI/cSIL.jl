@@ -199,7 +199,6 @@ end
 # Batch parameter update function
 function param_batch!(cvi::cSIL, data::RealMatrix, labels::IntegerVector)
     cvi.dim, cvi.n_samples = size(data)
-    # u = findfirst.(isequal.(unique(labels)), [labels])
     u = unique(labels)
     cvi.n_clusters = length(u)
     cvi.n = zeros(Integer, cvi.n_clusters)

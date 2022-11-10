@@ -158,7 +158,6 @@ function param_batch!(cvi::CH, data::RealMatrix, labels::IntegerVector)
     cvi.dim, cvi.n_samples = size(data)
     # Take the average across all samples, but cast to 1-D vector
     cvi.mu = mean(data, dims=2)[:]
-    # u = findfirst.(isequal.(unique(labels)), [labels])
     u = unique(labels)
     cvi.n_clusters = length(u)
     cvi.n = zeros(Integer, cvi.n_clusters)

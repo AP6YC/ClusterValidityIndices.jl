@@ -75,12 +75,12 @@ function GD53()
         LabelMap(),                     # label_map
         0,                              # dim
         0,                              # n_samples
-        Vector{Float}(undef, 0),      # mu_data
-        Vector{Int}(undef, 0),    # n
-        Matrix{Float}(undef, 0, 0),   # v
-        Vector{Float}(undef, 0),      # CP
-        Matrix{Float}(undef, 0, 0),   # G
-        Matrix{Float}(undef, 0, 0),   # D
+        Vector{Float}(undef, 0),        # mu_data
+        Vector{Int}(undef, 0),          # n
+        Matrix{Float}(undef, 0, 0),     # v
+        Vector{Float}(undef, 0),        # CP
+        Matrix{Float}(undef, 0, 0),     # G
+        Matrix{Float}(undef, 0, 0),     # D
         0.0,                            # inter
         0.0,                            # intra
         0,                              # n_clusters
@@ -180,7 +180,6 @@ function param_batch!(cvi::GD53, data::RealMatrix, labels::IntegerVector)
     cvi.dim, cvi.n_samples = size(data)
     # Take the average across all samples, but cast to 1-D vector
     cvi.mu_data = mean(data, dims=2)[:]
-    # u = findfirst.(isequal.(unique(labels)), [labels])
     u = unique(labels)
     cvi.n_clusters = length(u)
     cvi.n = zeros(Integer, cvi.n_clusters)
@@ -196,7 +195,6 @@ function param_batch!(cvi::GD53, data::RealMatrix, labels::IntegerVector)
     end
     for ix = 1 : (cvi.n_clusters - 1)
         for jx = ix + 1 : cvi.n_clusters
-            # cvi.D[jx, ix] = sum((cvi.v[:, ix] - cvi.v[:, jx]).^2)
             cvi.D[jx, ix] = (
                 (cvi.CP[ix] + cvi.CP[jx]) / (cvi.n[ix] + cvi.n[jx])
             )

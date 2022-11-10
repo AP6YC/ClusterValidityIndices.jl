@@ -44,12 +44,12 @@ mutable struct GD43 <: CVI
     label_map::LabelMap
     dim::Int
     n_samples::Int
-    mu_data::Vector{Float}     # dim
-    n::Vector{Int}        # dim
-    v::Matrix{Float}           # dim x n_clusters
-    CP::Vector{Float}          # dim
-    G::Matrix{Float}           # dim x n_clusters
-    D::Matrix{Float}           # n_clusters x n_clusters
+    mu_data::Vector{Float}      # dim
+    n::Vector{Int}              # dim
+    v::Matrix{Float}            # dim x n_clusters
+    CP::Vector{Float}           # dim
+    G::Matrix{Float}            # dim x n_clusters
+    D::Matrix{Float}            # n_clusters x n_clusters
     inter::Float
     intra::Float
     n_clusters::Int
@@ -183,7 +183,6 @@ function param_batch!(cvi::GD43, data::RealMatrix, labels::IntegerVector)
     cvi.dim, cvi.n_samples = size(data)
     # Take the average across all samples, but cast to 1-D vector
     cvi.mu_data = mean(data, dims=2)[:]
-    # u = findfirst.(isequal.(unique(labels)), [labels])
     u = unique(labels)
     cvi.n_clusters = length(u)
     cvi.n = zeros(Integer, cvi.n_clusters)

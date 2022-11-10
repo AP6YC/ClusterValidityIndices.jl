@@ -130,7 +130,6 @@ function param_inc!(cvi::rCIP, sample::RealVector, label::Integer)
                     * (1 / sqrt(det(sigma_q)))
                     * exp(-0.5 * transpose(diff_m) * inv(sigma_q) * diff_m)
                 )
-                # d_column_new[jx] = sum((v_new - cvi.v[:, jx]).^2)
             end
             D_new[:, i_label] = d_column_new
             D_new[i_label, :] = transpose(d_column_new)
@@ -149,7 +148,6 @@ function param_inc!(cvi::rCIP, sample::RealVector, label::Integer)
             + (1 / n_new) .* sample
         )
         diff_x_v = sample - cvi.v[:, i_label]
-        # if n_new > 1
         sigma_new = (
             ((n_new - 2) / (n_new - 1))
             * (cvi.sigma[:, :, i_label] - cvi.delta_term)
