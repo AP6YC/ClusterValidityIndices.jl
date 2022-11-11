@@ -13,10 +13,12 @@ These tests include testing package functionality as well as individual CVI modu
 # USINGS
 # --------------------------------------------------------------------------- #
 
-using ClusterValidityIndices
-using Test
-using Logging
-using Printf
+using
+    ClusterValidityIndices,
+    Test,
+    Logging,
+    Printf,
+    PyCall
 
 # --------------------------------------------------------------------------- #
 # SETUP
