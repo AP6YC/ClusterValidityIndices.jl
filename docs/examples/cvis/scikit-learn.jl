@@ -39,7 +39,7 @@ n_k_means = 30
 ## The dimensionality of the distributions and resulting feature space
 dim = 2
 
-# After seeting our variables, we will import the scikit-learn metrics package.
+# After setting our variables, we will import the scikit-learn metrics package.
 ## Use the PyCall interface to import the metrics package
 skmetrics = pyimport("sklearn.metrics")
 
@@ -91,10 +91,10 @@ isapprox(criterion_values_jl, criterion_values_py)
 
 # We can visualize the result as well by plotting the trendlines of the criterion values from each implementation.
 q = plot(legend=:bottomright)
-plot!(q, km_range, criterion_values_jl, marker=:d)
-plot!(q, km_range, criterion_values_py, marker=:d)
+plot!(q, km_range, criterion_values_jl, marker=:d, label="Julia")
+plot!(q, km_range, criterion_values_py, marker=:d, label="Python")
 ylabel!(q, "Calinski-Harabasz CVI")
 xlabel!(q, "K-Means Seed")
 
-# After visualizing the results and seeing that the trendlines are equivalent, we also see that unsurprisingly the best k-means seed value is k=4, since we know that
+# After visualizing the results and seeing that the trendlines are equivalent, we also see that unsurprisingly the best k-means seed value is k=4, since we know that we are sampling from four gaussians.
 png("assets/scikit-learn") #hide
