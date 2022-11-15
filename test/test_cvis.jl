@@ -58,7 +58,7 @@ A single test set for the testing the functionality of all CVIS modules.
         # If the error was a KeyError, then we don't have the CH score from the
         # sklearn version and should skip the entire loop.
         # Otherwise, we should report the error.
-        if e !isa(KeyError)
+        if !isa(e, KeyError)
             throw(e)
         end
     end
