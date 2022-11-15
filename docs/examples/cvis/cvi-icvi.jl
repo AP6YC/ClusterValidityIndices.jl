@@ -2,10 +2,10 @@
 # title: CVI-ICVI Comparison
 # id: cvi_icvi
 # cover: ../assets/logo.png
-# date: 2021-12-6
+# date: 2022-10-12
 # author: "[Sasha Petrenko](https://github.com/AP6YC)"
-# julia: 1.6
-# description: This demo illustrates how to use incremental training methods vs. batch training for all ART modules. This demo also demonstrates how the final results of each CVI and ICVI are equivalent.
+# julia: 1.8
+# description: How to use incremental and batch CVIs, demonstrating how the final results are equivalent.
 # ---
 
 # ## Overview

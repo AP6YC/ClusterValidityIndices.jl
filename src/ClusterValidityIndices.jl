@@ -67,11 +67,9 @@ using Statistics: mean
 # INCLUDES
 # --------------------------------------------------------------------------- #
 
-# Common structures
-include("common.jl")
-
-# All of the CVI modules
-include("CVI/CVI.jl")
+include("common.jl")    # Common types and functions
+include("version.jl")   # Version of the package as an exported constant
+include("CVI/CVI.jl")   # All of the CVI modules
 
 # --------------------------------------------------------------------------- #
 # EXPORTS
@@ -99,6 +97,7 @@ export
     get_cvi!,
 
     # CVI utilities
-    CVI_MODULES
+    CVI_MODULES,
+    CLUSTERVALIDITYINDICES_VERSION
 
 end

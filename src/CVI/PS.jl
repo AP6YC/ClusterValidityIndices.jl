@@ -41,7 +41,7 @@ mutable struct PS <: CVI
     PS_i::Vector{Float}         # n_clusters
     n_clusters::Int
     criterion_value::Float
-end # PS <: CVI
+end
 
 """
 Constructor for the Partition Separation (PS) Cluster Validity Index.
@@ -71,7 +71,7 @@ function PS()
         0,                              # n_clusters
         0.0                             # criterion_value
     )
-end # PS()
+end
 
 # Setup function
 function setup!(cvi::PS, sample::RealVector)
@@ -79,7 +79,7 @@ function setup!(cvi::PS, sample::RealVector)
     cvi.dim = length(sample)
     # Initialize the 2-D arrays with the correct feature dimension
     cvi.v = Matrix{Float}(undef, cvi.dim, 0)
-end # setup!(cvi::PS, sample::RealVector)
+end
 
 # Incremental parameter update function
 function param_inc!(cvi::PS, sample::RealVector, label::Integer)
@@ -132,7 +132,7 @@ function param_inc!(cvi::PS, sample::RealVector, label::Integer)
         cvi.D[i_label, :] = transpose(d_column_new)
     end
     cvi.n_samples = n_samples_new
-end # param_inc!(cvi::PS, sample::RealVector, label::Integer)
+end
 
 # Batch parameter update function
 function param_batch!(cvi::PS, data::RealMatrix, labels::IntegerVector)
@@ -154,7 +154,7 @@ function param_batch!(cvi::PS, data::RealMatrix, labels::IntegerVector)
         end
     end
     cvi.D = cvi.D + transpose(cvi.D)
-end # param_batch!(cvi::PS, data::RealMatrix, labels::IntegerVector)
+end
 
 # Criterion value evaluation function
 function evaluate!(cvi::PS)
@@ -178,4 +178,4 @@ function evaluate!(cvi::PS)
         end
         cvi.criterion_value = sum(cvi.PS_i)
     end
-end # evaluate(cvi::PS)
+end

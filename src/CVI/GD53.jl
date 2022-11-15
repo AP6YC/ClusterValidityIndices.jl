@@ -54,7 +54,7 @@ mutable struct GD53 <: CVI
     intra::Float
     n_clusters::Int
     criterion_value::Float
-end # GD53 <: CVI
+end
 
 """
 Constructor for the Generalized Dunn's Index 53 (GD53) Cluster Validity Index.
@@ -75,18 +75,18 @@ function GD53()
         LabelMap(),                     # label_map
         0,                              # dim
         0,                              # n_samples
-        Vector{Float}(undef, 0),      # mu_data
-        Vector{Int}(undef, 0),    # n
-        Matrix{Float}(undef, 0, 0),   # v
-        Vector{Float}(undef, 0),      # CP
-        Matrix{Float}(undef, 0, 0),   # G
-        Matrix{Float}(undef, 0, 0),   # D
+        Vector{Float}(undef, 0),        # mu_data
+        Vector{Int}(undef, 0),          # n
+        Matrix{Float}(undef, 0, 0),     # v
+        Vector{Float}(undef, 0),        # CP
+        Matrix{Float}(undef, 0, 0),     # G
+        Matrix{Float}(undef, 0, 0),     # D
         0.0,                            # inter
         0.0,                            # intra
         0,                              # n_clusters
         0.0                             # criterion_value
     )
-end # GD53()
+end
 
 # Setup function
 function setup!(cvi::GD53, sample::RealVector)
@@ -96,7 +96,7 @@ function setup!(cvi::GD53, sample::RealVector)
     # NOTE: R is emptied and calculated in evaluate!, so it is not defined here
     cvi.v = Matrix{Float}(undef, cvi.dim, 0)
     cvi.G = Matrix{Float}(undef, cvi.dim, 0)
-end # setup!(cvi::GD53, sample::RealVector)
+end
 
 # Incremental parameter update function
 function param_inc!(cvi::GD53, sample::RealVector, label::Integer)
@@ -173,14 +173,13 @@ function param_inc!(cvi::GD53, sample::RealVector, label::Integer)
     end
     cvi.n_samples = n_samples_new
     cvi.mu_data = mu_data_new
-end # param_inc!(cvi::GD53, sample::RealVector, label::Integer)
+end
 
 # Batch parameter update function
 function param_batch!(cvi::GD53, data::RealMatrix, labels::IntegerVector)
     cvi.dim, cvi.n_samples = size(data)
     # Take the average across all samples, but cast to 1-D vector
     cvi.mu_data = mean(data, dims=2)[:]
-    # u = findfirst.(isequal.(unique(labels)), [labels])
     u = unique(labels)
     cvi.n_clusters = length(u)
     cvi.n = zeros(Integer, cvi.n_clusters)
@@ -196,14 +195,13 @@ function param_batch!(cvi::GD53, data::RealMatrix, labels::IntegerVector)
     end
     for ix = 1 : (cvi.n_clusters - 1)
         for jx = ix + 1 : cvi.n_clusters
-            # cvi.D[jx, ix] = sum((cvi.v[:, ix] - cvi.v[:, jx]).^2)
             cvi.D[jx, ix] = (
                 (cvi.CP[ix] + cvi.CP[jx]) / (cvi.n[ix] + cvi.n[jx])
             )
         end
     end
     cvi.D = cvi.D + transpose(cvi.D)
-end # param_batch!(cvi::GD53, data::RealMatrix, labels::IntegerVector)
+end
 
 # Criterion value evaluation function
 function evaluate!(cvi::GD53)
@@ -218,4 +216,4 @@ function evaluate!(cvi::GD53)
     else
         cvi.criterion_value = 0.0
     end
-end # evaluate(cvi::GD53)
+end

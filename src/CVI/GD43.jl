@@ -44,17 +44,17 @@ mutable struct GD43 <: CVI
     label_map::LabelMap
     dim::Int
     n_samples::Int
-    mu_data::Vector{Float}     # dim
-    n::Vector{Int}        # dim
-    v::Matrix{Float}           # dim x n_clusters
-    CP::Vector{Float}          # dim
-    G::Matrix{Float}           # dim x n_clusters
-    D::Matrix{Float}           # n_clusters x n_clusters
+    mu_data::Vector{Float}      # dim
+    n::Vector{Int}              # dim
+    v::Matrix{Float}            # dim x n_clusters
+    CP::Vector{Float}           # dim
+    G::Matrix{Float}            # dim x n_clusters
+    D::Matrix{Float}            # n_clusters x n_clusters
     inter::Float
     intra::Float
     n_clusters::Int
     criterion_value::Float
-end # GD43 <: CVI
+end
 
 """
 Constructor for the Generalized Dunn's Index 43 (GD43) Cluster Validity Index.
@@ -86,7 +86,7 @@ function GD43()
         0,                              # n_clusters
         0.0                             # criterion_value
     )
-end # GD43()
+end
 
 # Setup function
 function setup!(cvi::GD43, sample::RealVector)
@@ -96,7 +96,7 @@ function setup!(cvi::GD43, sample::RealVector)
     # NOTE: R is emptied and calculated in evaluate!, so it is not defined here
     cvi.v = Matrix{Float}(undef, cvi.dim, 0)
     cvi.G = Matrix{Float}(undef, cvi.dim, 0)
-end # setup!(cvi::GD43, sample::Vector{T}) where {T<:RealFP}
+end
 
 # Incremental parameter update function
 function param_inc!(cvi::GD43, sample::RealVector, label::Integer)
@@ -176,14 +176,13 @@ function param_inc!(cvi::GD43, sample::RealVector, label::Integer)
     end
     cvi.n_samples = n_samples_new
     cvi.mu_data = mu_data_new
-end # param_inc!(cvi::GD43, sample::RealVector, label::Integer)
+end
 
 # Batch parameter update function
 function param_batch!(cvi::GD43, data::RealMatrix, labels::IntegerVector)
     cvi.dim, cvi.n_samples = size(data)
     # Take the average across all samples, but cast to 1-D vector
     cvi.mu_data = mean(data, dims=2)[:]
-    # u = findfirst.(isequal.(unique(labels)), [labels])
     u = unique(labels)
     cvi.n_clusters = length(u)
     cvi.n = zeros(Integer, cvi.n_clusters)
@@ -205,7 +204,7 @@ function param_batch!(cvi::GD43, data::RealMatrix, labels::IntegerVector)
         end
     end
     cvi.D = cvi.D + transpose(cvi.D)
-end # param_batch!(cvi::GD43, data::RealMatrix, labels::IntegerVector)
+end
 
 # Criterion value evaluation function
 function evaluate!(cvi::GD43)
@@ -221,4 +220,4 @@ function evaluate!(cvi::GD43)
     else
         cvi.criterion_value = 0.0
     end
-end # evaluate(cvi::GD43)
+end

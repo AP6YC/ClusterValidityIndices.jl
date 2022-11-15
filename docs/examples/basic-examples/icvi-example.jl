@@ -1,11 +1,11 @@
 # ---
-# title: ICVI Simple Example
+# title: Incremental CVI Simple Example
 # id: icvi_example
-# cover: ../assets/logo.png
-# date: 2021-12-6
+# cover: assets/icvi-example.png
+# date: 2022-10-13
 # author: "[Sasha Petrenko](https://github.com/AP6YC)"
-# julia: 1.6
-# description: This demo is a simple example of how to use a CVI in batch mode.
+# julia: 1.8
+# description: How to use a CVI incrementally (i.e., ICVI).
 # ---
 
 # ## Overview
@@ -27,6 +27,9 @@ using MLDatasets                # Iris dataset
 using DataFrames                # DataFrames, necessary for MLDatasets.Iris()
 using MLDataUtils               # Shuffling and splitting
 using Printf                    # Formatted number printing
+using Plots                     # Plots frontend
+gr()                            # Use the default GR backend explicitly
+theme(:dracula)                 # Change the theme for fun
 
 # We will download the Iris dataset for its small size and benchmark use for clustering algorithms.
 iris = Iris(as_df=false)
@@ -49,7 +52,7 @@ typeof(art)
 # Because we are streaming clustering, we must setup the internal data setup of the DDVFA module.
 # This is akin to doing some data preprocessing and communicating the dimension of the data, bounds, etc. to the module beforehand.
 ## Setup the data configuration for the module
-data_setup!(art.config, features)
+data_setup!(art, features)
 ## Verify that the data is setup
 art.config.setup
 
@@ -76,3 +79,20 @@ end
 
 ## See the list of criterion values
 criterion_values
+
+# Because we ran it iteratively, we can also see how the criterion value evolved over time in a plot!
+
+## Create the plotting object
+p = plot(
+    1:n_samples,
+    criterion_values,
+    linewidth = 5,
+    title = "Incremental $(typeof(icvi)) Index",
+    xlabel = "Sample",
+    ylabel = "$(typeof(icvi)) Value",
+)
+
+# Because of the visualization afforded by computing the criterion value incrementally, this plot can tell us several things.
+# First, we see that the CVI has a value of zero until the second cluster is encountered, which makes sense because there cannot be measurements of inter-/intra-cluster separation until there is more than one cluster.
+# Second, we see that the criterion value evolves at each time step as the clustering process occurs.
+png("assets/icvi-example") #hide

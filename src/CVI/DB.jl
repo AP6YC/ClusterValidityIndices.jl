@@ -48,7 +48,7 @@ mutable struct DB <: CVI
     D::Matrix{Float}                # n_clusters x n_clusters
     n_clusters::Int
     criterion_value::Float
-end # DB <: CVI
+end
 
 """
 Constructor for the Davies-Bouldin (DB) Cluster Validity Index.
@@ -80,7 +80,7 @@ function DB()
         0,                              # n_clusters
         0.0                             # criterion_value
     )
-end # DB()
+end
 
 # Setup function
 function setup!(cvi::DB, sample::RealVector)
@@ -91,7 +91,7 @@ function setup!(cvi::DB, sample::RealVector)
     # NOTE: R is emptied and calculated in evaluate!, so it is not defined here
     cvi.v = Matrix{Float}(undef, cvi.dim, 0)
     cvi.G = Matrix{Float}(undef, cvi.dim, 0)
-end # setup!(cvi::DB, sample::RealVector)
+end
 
 # Incremental parameter update function
 function param_inc!(cvi::DB, sample::RealVector, label::Integer)
@@ -173,14 +173,13 @@ function param_inc!(cvi::DB, sample::RealVector, label::Integer)
         cvi.D[i_label, :] = transpose(d_column_new)
     end
     cvi.n_samples = n_samples_new
-end # param_inc!(cvi::DB, sample::RealVector, label::Integer)
+end
 
 # Batch parameter update function
 function param_batch!(cvi::DB, data::RealMatrix, labels::IntegerVector)
     cvi.dim, cvi.n_samples = size(data)
     # Take the average across all samples, but cast to 1-D vector
     cvi.mu_data = mean(data, dims=2)[:]
-    # u = findfirst.(isequal.(unique(labels)), [labels])
     u = unique(labels)
     cvi.n_clusters = length(u)
     cvi.n = zeros(Integer, cvi.n_clusters)
@@ -203,7 +202,7 @@ function param_batch!(cvi::DB, data::RealMatrix, labels::IntegerVector)
         end
     end
     cvi.D = cvi.D + transpose(cvi.D)
-end # function param_batch!(cvi::DB, data::RealMatrix, labels::IntegerVector)
+end
 
 # Criterion value evaluation function
 function evaluate!(cvi::DB)
@@ -219,4 +218,4 @@ function evaluate!(cvi::DB)
     else
         cvi.criterion_value = 0
     end
-end # evaluate(cvi::DB)
+end

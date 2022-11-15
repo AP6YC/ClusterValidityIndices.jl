@@ -13,14 +13,25 @@ These tests include testing package functionality as well as individual CVI modu
 # USINGS
 # --------------------------------------------------------------------------- #
 
-using ClusterValidityIndices
-using Test
-using Logging
-using Printf
+using
+    ClusterValidityIndices,
+    Conda,
+    Test,
+    Logging,
+    Printf,
+    PyCall
 
 # --------------------------------------------------------------------------- #
 # SETUP
 # --------------------------------------------------------------------------- #
+
+# If sklearn loading fails from the default install, explicitly install internally
+try
+    _ = pyimport("sklearn.metrics")
+catch
+    ENV["PYTHON"] = ""
+    Conda.add("scikit-learn")
+end
 
 # Set the log level
 LogLevel(Logging.Info)
@@ -44,7 +55,7 @@ end
     cvi = CH()
 
     # Load the sample data
-    data_paths = readdir("../data", join=true)
+    data_paths = readdir("data", join=true)
     local_data, local_labels = get_cvi_data(data_paths[1])
 
     # Permute the data
@@ -61,4 +72,15 @@ end
     end
 
     @info "Task map: " cvi.label_map
+end
+
+@testset "Constants" begin
+    # Test that the constants are exported
+    cvi_constants = [
+        CVI_MODULES,
+        CLUSTERVALIDITYINDICES_VERSION,
+    ]
+    for local_constants in cvi_constants
+        @test @isdefined local_constants
+    end
 end
