@@ -20,6 +20,7 @@ ProgressBars = "0.7, 0.8, 1"
 julia = "1"
 
 [extras]
+Conda = "8f4d0f93-b110-5947-807f-2305c1781a2d"
 DelimitedFiles = "8bb1440f-4735-579b-a4ab-409b98df4dab"
 Printf = "de0858da-6303-5e67-8744-51eddeeeb8d7"
 PyCall = "438e738f-606a-5dbb-bf0a-cddfbfd45ab0"
@@ -27,4 +28,4 @@ SafeTestsets = "1bc83da4-3b8d-516f-aca4-4fe02f6d838f"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [targets]
-test = ["Test", "SafeTestsets", "DelimitedFiles", "Printf", "PyCall"]
+test = ["Test", "SafeTestsets", "DelimitedFiles", "Printf", "PyCall", "Conda"]

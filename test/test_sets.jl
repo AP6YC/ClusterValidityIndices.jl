@@ -15,6 +15,7 @@ These tests include testing package functionality as well as individual CVI modu
 
 using
     ClusterValidityIndices,
+    Conda,
     Test,
     Logging,
     Printf,
@@ -23,6 +24,14 @@ using
 # --------------------------------------------------------------------------- #
 # SETUP
 # --------------------------------------------------------------------------- #
+
+# If sklearn loading fails from the default install, explicitly install internally
+try
+    _ = pyimport("sklearn.metrics")
+catch
+    ENV["PYTHON"] = ""
+    Conda.add("scikit-learn")
+end
 
 # Set the log level
 LogLevel(Logging.Info)
