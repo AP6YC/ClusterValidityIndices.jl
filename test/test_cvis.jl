@@ -40,16 +40,27 @@ A single test set for the testing the functionality of all CVIS modules.
     end
 
     @info "--- Testing ScikitLearn Equivalence ---"
-    py_sklearn_metrics = pyimport("sklearn.metrics")
-    for data_path in data_paths
-        cvi = CH()
-        criterion_value_j = get_cvi!(cvi, data[data_path], labels[data_path])
-        criterion_value_p = (
-            py_sklearn_metrics.calinski_harabasz_score(
-                data[data_path]', labels[data_path]
+    # Try to run the sklearn comparison, skipping everything if an error occurs
+    try
+        py_sklearn_metrics = pyimport("sklearn.metrics")
+        for data_path in data_paths
+            cvi = CH()
+            criterion_value_j = get_cvi!(cvi, data[data_path], labels[data_path])
+            criterion_value_p = (
+                py_sklearn_metrics.calinski_harabasz_score(
+                    data[data_path]', labels[data_path]
+                )
             )
-        )
-        @test isapprox(criterion_value_j, criterion_value_p)
+            @test isapprox(criterion_value_j, criterion_value_p)
+        end
+    # Catch any error from the process
+    catch e
+        # If the error was a KeyError, then we don't have the CH score from the
+        # sklearn version and should skip the entire loop.
+        # Otherwise, we should report the error.
+        if e !isa(KeyError)
+            throw(e)
+        end
     end
 
     # Incremental
