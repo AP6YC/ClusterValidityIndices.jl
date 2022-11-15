@@ -13,13 +13,13 @@ A single test set for the testing the functionality of all CVIS modules.
 # --------------------------------------------------------------------------- #
 
 @testset "CVIs" begin
-    @info "CVI Testing"
+    @info "--- CVI Testing ---"
 
     # Set the approximation CVI tolerance for all comparisons
     tolerance = 1e-1
 
     # Grab all the data paths for testing
-    data_paths = readdir("../data", join=true)
+    data_paths = readdir("data", join=true)
 
     # Initialize the results data containers
     data, labels, n_samples = Dict(), Dict(), Dict()
@@ -37,6 +37,30 @@ A single test set for the testing the functionality of all CVIS modules.
         data[data_path] = local_data
         labels[data_path] = local_labels
         n_samples[data_path] = length(local_labels)
+    end
+
+    @info "--- Testing ScikitLearn Equivalence ---"
+    # Try to run the sklearn comparison, skipping everything if an error occurs
+    try
+        py_sklearn_metrics = pyimport("sklearn.metrics")
+        for data_path in data_paths
+            cvi = CH()
+            criterion_value_j = get_cvi!(cvi, data[data_path], labels[data_path])
+            criterion_value_p = (
+                py_sklearn_metrics.calinski_harabasz_score(
+                    data[data_path]', labels[data_path]
+                )
+            )
+            @test isapprox(criterion_value_j, criterion_value_p)
+        end
+    # Catch any error from the process
+    catch e
+        # If the error was a KeyError, then we don't have the CH score from the
+        # sklearn version and should skip the entire loop.
+        # Otherwise, we should report the error.
+        if !isa(e, KeyError)
+            throw(e)
+        end
     end
 
     # Incremental
@@ -79,7 +103,7 @@ A single test set for the testing the functionality of all CVIS modules.
 end
 
 @testset "Edge Cases" begin
-    @info "Testing CVI Edge Cases"
+    @info "--- Testing CVI Edge Cases ---"
 
     # Test rCIP provided a single sample of any one cluster in batch update
     local_cvi = rCIP()

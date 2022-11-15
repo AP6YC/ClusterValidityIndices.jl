@@ -38,14 +38,19 @@ jobs:
       # Set this to download test data outside of repo
       DATADEPS_ALWAYS_ACCEPT: true
     steps:
+    #  styfle/cancel-workflow-action@0.6.0, actions/checkout@v2, actions/cache@v2, codecov/codecov-action@v1, coverallsapp/github-action@master
       # Cancel ongoing tests if pushing to branch again before the previous
       # build is finished.
       - name: Cancel ongoing tests for previous commits
         uses: styfle/cancel-workflow-action@0.6.0
         with:
           access_token: ${{ github.token }}
-
       - uses: actions/checkout@v2
+      # Setup python dependencies
+      - name: Install scikit-learn
+        run: |
+          python -m pip install --upgrade pip
+          pip install -U scikit-learn
       - uses: julia-actions/setup-julia@v1
         with:
           version: ${{ matrix.version }}
