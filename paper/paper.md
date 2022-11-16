@@ -82,13 +82,17 @@ This criterion value often does not have an upper bound, varies greatly in behav
 In fact, it is often the trendlines of these values that provide the most information about the clustering process rather than the values themselves.
 
 CVIs are originally derived to work on batches of samples and labels.
-However, there exist incremental variants that are proven to be mathematically equivalent to their batch counterparts.
+However, there exist incremental variants that are proven to be mathematically equivalent to their batch counterparts [@brito_da_silva_incremental_2020].
 These incremental CVIs (ICVIs) mitigate the computational overhead of computing these metrics online, such as in a streaming clustering scenarios.
 
 # Acknowledgements
 
 This package is developed and maintained with sponsorship by the Applied Computational Intelligence Laboratory (ACIL) of the Missouri University of Science and Technology.
-This project is supported by grants from the Army Research Labs Night Vision Electronic Sensors Directorate (NVESD), the DARPA Lifelong Learning Machines (L2M) program, Teledyne Technologies, and the National Science Foundation.
+This project is supported by grants from the Army Research Labs Night Vision Electronic Sensors Directorate (NVESD), the DARPA Lifelong Learning Machines (L2M) program under Contract No. FA8650-18-C-7831, Teledyne Technologies, and the National Science Foundation.
 The material, findings, and conclusions here do not necessarily reflect the views of these entities.
+
+This research was also sponsored by the Army Research Laboratory and was accomplished under Cooperative Agreement Number W911NF-22-2-0209.
+The views and conclusions contained in this document are those of the authors and should not be interpreted as representing the official policies, either expressed or implied, of the Army Research Laboratory or the U.S. Government.
+The U.S. Government is authorized to reproduce and distribute reprints for Government purposes notwithstanding any copyright notation herein.
 
 # References
