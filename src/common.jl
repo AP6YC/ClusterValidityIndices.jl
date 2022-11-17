@@ -163,7 +163,7 @@ Get the internal label and update the label map if the label is new.
 function get_internal_label!(label_map::LabelMap, label::Integer)
     # If the label map contains the key, return that internal label
     if haskey(label_map, label)
-        internal_label = label
+        internal_label = label_map[label]
     # Otherwise, increment the internal label to preserve monotonicity and store
     else
         internal_label = length(label_map) + 1
