@@ -72,6 +72,11 @@ end
     end
 
     @info "Task map: " cvi.label_map
+
+    # Test the get_internal_label! function
+    for (key, value) in cvi.label_map
+        @test value == ClusterValidityIndices.get_internal_label!(cvi.label_map, key)
+    end
 end
 
 @testset "Constants" begin
