@@ -33,27 +33,27 @@ end
 
 # See the list of criterion values
 criterion_values</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">150-element Vector{Float64}:
-   0.0
-   0.0
-   0.0
-   0.0
-   0.0
-   0.0
-   0.0
-   0.0
-   0.0
-   0.0
-   ⋮
- 175.70208373876895
- 176.98900203544565
- 177.76973027565234
- 178.5025580016738
- 180.18069298390944
- 181.89146457574347
- 183.96910814900303
- 185.97443145431606
- 187.45626993623438</code></pre><h2 id="Batch-Evaluation"><a class="docs-heading-anchor" href="#Batch-Evaluation">Batch Evaluation</a><a id="Batch-Evaluation-1"></a><a class="docs-heading-anchor-permalink" href="#Batch-Evaluation" title="Permalink"></a></h2><p>In batch mode, we will use the sample features and prescribed cluster labels as before to verify that the criterion values are the same at the last iteration.</p><pre><code class="language-julia hljs"># Get the final criterion value in batch
-batch_criterion_value = get_cvi!(cvi, features, c_labels)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">187.45626993623443</code></pre><h2 id="Comparison"><a class="docs-heading-anchor" href="#Comparison">Comparison</a><a id="Comparison-1"></a><a class="docs-heading-anchor-permalink" href="#Comparison" title="Permalink"></a></h2><p>Now we check that the two produce the same results in the end.</p><pre><code class="language-julia hljs"># Print the batch result and the final result of the incremental variant
+  0.0
+  0.0
+  0.0
+  0.0
+  0.0
+  0.0
+  0.0
+  0.0
+  0.0
+  0.0
+  ⋮
+ 12.353295690914523
+ 12.1509583142854
+ 12.658861811198907
+ 13.139126596142964
+ 13.517957276687305
+ 13.284575851700808
+ 13.011911765129938
+ 13.35323771098832
+ 13.1625264757805</code></pre><h2 id="Batch-Evaluation"><a class="docs-heading-anchor" href="#Batch-Evaluation">Batch Evaluation</a><a id="Batch-Evaluation-1"></a><a class="docs-heading-anchor-permalink" href="#Batch-Evaluation" title="Permalink"></a></h2><p>In batch mode, we will use the sample features and prescribed cluster labels as before to verify that the criterion values are the same at the last iteration.</p><pre><code class="language-julia hljs"># Get the final criterion value in batch
+batch_criterion_value = get_cvi!(cvi, features, c_labels)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">13.16252647578051</code></pre><h2 id="Comparison"><a class="docs-heading-anchor" href="#Comparison">Comparison</a><a id="Comparison-1"></a><a class="docs-heading-anchor-permalink" href="#Comparison" title="Permalink"></a></h2><p>Now we check that the two produce the same results in the end.</p><pre><code class="language-julia hljs"># Print the batch result and the final result of the incremental variant
 @printf &quot;Batch criterion value: %.4f\n&quot; batch_criterion_value
-@printf &quot;Final incremental criterion value: %.4f\n&quot; criterion_values[end]</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Batch criterion value: 187.4563
-Final incremental criterion value: 187.4563</code></pre><hr/><p><em>This page was generated using <a href="https://github.com/johnnychen94/DemoCards.jl">DemoCards.jl</a> and <a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a>.</em></p></article><nav class="docs-footer"><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.23 on <span class="colophon-date" title="Thursday 1 December 2022 15:51">Thursday 1 December 2022</span>. Using Julia version 1.8.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+@printf &quot;Final incremental criterion value: %.4f\n&quot; criterion_values[end]</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Batch criterion value: 13.1625
+Final incremental criterion value: 13.1625</code></pre><hr/><p><em>This page was generated using <a href="https://github.com/johnnychen94/DemoCards.jl">DemoCards.jl</a> and <a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a>.</em></p></article><nav class="docs-footer"><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.23 on <span class="colophon-date" title="Friday 16 December 2022 04:02">Friday 16 December 2022</span>. Using Julia version 1.8.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
