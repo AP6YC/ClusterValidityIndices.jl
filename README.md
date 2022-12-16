@@ -58,10 +58,11 @@ Please read the [documentation](https://ap6yc.github.io/ClusterValidityIndices.j
   - [Quickstart](#quickstart)
   - [Implemented CVI/ICVIs](#implemented-cviicvis)
   - [Examples](#examples)
-- [Contributing](#contributing)
+  - [Contributing](#contributing)
 - [Acknowledgements](#acknowledgements)
   - [Authors](#authors)
-- [License](#license)
+  - [License](#license)
+  - [Citation](#citation)
 
 ## Overview
 
@@ -195,7 +196,7 @@ A [basic example](https://ap6yc.github.io/ClusterValidityIndices.jl/dev/getting-
 Futhermore, there are a variety of examples in the [Examples](https://ap6yc.github.io/ClusterValidityIndices.jl/dev/examples/) section of the documentation for a variety of use cases of the project.
 Each of these is made using the [`DemoCards.jl`](https://github.com/johnnychen94/DemoCards.jl) package and can be opened, saved, and run as a Julia notebook.
 
-## Contributing
+### Contributing
 
 If you have a question or concern, please raise an [issue][issues-url].
 For more details on how to work with the project, propose changes, or even contribute code, please see the [Developer Notes][contrib-url] in the project's documentation.
@@ -219,6 +220,27 @@ The material, findings, and conclusions here do not necessarily reflect the view
 
 The users [@rMassimiliano](https://github.com/rMassimiliano) and [@malmaud](https://github.com/malmaud) have graciously contributed their time with reviews and feedback that has greatly improved the project.
 
-## License
+### License
 
 This software is openly maintained by the ACIL of the Missouri University of Science and Technology under the [MIT License](LICENSE).
+
+### Citation
+
+This project has a [citation file](CITATION.cff) file that generates citation information for the package and corresponding JOSS paper, which can be accessed at the "Cite this repository button" under the "About" section of the GitHub page.
+
+You may also cite this repository with the following BibTeX entry:
+
+```bibtex
+@article{Petrenko2022,
+  doi = {10.21105/joss.03527},
+  url = {https://doi.org/10.21105/joss.03527},
+  year = {2022},
+  publisher = {The Open Journal},
+  volume = {7},
+  number = {79},
+  pages = {3527},
+  author = {Sasha Petrenko and Donald C. Wunsch},
+  title = {ClusterValidityIndices.jl: Batch and Incremental Metrics for Unsupervised Learning},
+  journal = {Journal of Open Source Software}
+}
+```
