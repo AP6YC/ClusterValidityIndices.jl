@@ -12,17 +12,18 @@ authors:
     affiliation: "Missouri University of Science and Technology"
 
 # Repository title and descriptors
-title: "AP6YC/AdaptiveResonance.jl"
-abstract: "This software is a Julia package for Adaptive Resonance Theory (ART) algorithms."
+title: "AP6YC/ClusterValidityIndices.jl"
+abstract: "This software is a Julia package for incremental and batch Cluster Validity Indices (CVI)."
 keywords:
-  - "ART"
-  - "Adaptive Resonance Theory"
-  - "Adaptive Resonance"
+  - "CVI"
+  - "ICVI"
+  - "Cluster Validity Indices"
+  - "Incremental Cluster Validity Indices"
 identifiers:
-  - description: "The DOI of the latest AdaptiveResonance.jl Zenodo archive."
+  - description: "The DOI of the latest ClusterValidityIndices.jl Zenodo archive."
     type: "doi"
-    value: "10.5281/zenodo.5748453"
-url: "https://doi.org/10.5281/zenodo.5748453"
+    value: "10.5281/zenodo.5765807"
+url: "https://doi.org/10.5281/zenodo.5765807"
 repository-code: "https://github.com/AP6YC/AdaptiveResonance.jl"
 license: "MIT"
 institution:
@@ -51,19 +52,19 @@ preferred-citation:
       affiliation: "Missouri University of Science and Technology"
 
   # Title, DOI, and journal details for the JOSS paper
-  title: "AdaptiveResonance.jl: A Julia Implementation of Adaptive Resonance Theory (ART) Algorithms"
+  title: "ClusterValidityIndices.jl: Batch and Incremental Metrics for Unsupervised Learning"
   publisher: "The Open Journal"
   journal: "Journal of Open Source Software"
   year: 2022
-  month: 4
+  month: 11
   volume: 7
-  number: 73
-  pages: 3671
+  number: 79
+  pages: 3527
   type: "article"
   identifiers:
-    - description: "The DOI of the AdaptiveResonance.jl JOSS paper."
+    - description: "The DOI of the ClusterValidityIndices.jl JOSS paper."
       type: "doi"
-      value: "10.21105/joss.03671"
-  url: "https://doi.org/10.21105/joss.03671"
+      value: "10.21105/joss.03527"
+  url: "https://doi.org/10.21105/joss.03527"
   institution:
     name: "Missouri University of Science and Technology"
