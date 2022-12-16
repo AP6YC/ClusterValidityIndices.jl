@@ -3,7 +3,7 @@
 A Julia package for Cluster Validity Indices (CVI) algorithms.
 
 | **Documentation**  | **Build Status** | **Coverage** | **Reference** |
-|:------------------:|:----------------:|:------------:|:----:|
+|:------------------:|:----------------:|:------------:|:-------------:|
 | [![Stable][docs-stable-img]][docs-stable-url] | [![Build Status][ci-img]][ci-url] | [![Codecov][codecov-img]][codecov-url] | [![DOI][joss-img]][joss-url] |
 | [![Dev][docs-dev-img]][docs-dev-url] | [![Build Status][appveyor-img]][appveyor-url] | [![Coveralls][coveralls-img]][coveralls-url] | [![DOI][zenodo-img]][zenodo-url] |
 | **Documentation Build** | **JuliaHub Status** | **Dependents** | **Release** |

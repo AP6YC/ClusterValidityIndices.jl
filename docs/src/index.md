@@ -1,3 +1,9 @@
+```@meta
+DocTestSetup = quote
+    using ClusterValidityIndices, Dates
+end
+```
+
 ![header](assets/header.png)
 
 ---
@@ -37,3 +43,33 @@ All CVIs in the package are listed in the [Implemented CVI List](@ref cvi-list-p
 
 Instructions on how to contribute to the package are found in [Contributing](@ref), and docstrings for every element of the package is listed in the [Index](@ref main-index).
 Names internal to the package are also listed under the [Developer Index](@ref dev-main-index).
+
+
+## Documentation Build
+
+This documentation was built using [Documenter.jl](https://github.com/JuliaDocs/Documenter.jl) with the following version and OS:
+
+```@example
+using AdaptiveResonance, Dates # hide
+println("AdaptiveResonance v$(ADAPTIVERESONANCE_VERSION) docs built $(Dates.now()) with Julia $(VERSION) on $(Sys.KERNEL)") # hide
+```
+
+## Citation
+
+If you make use of this project, please generate your citation with the [CITATION.cff](../CITATION.cff) file of the repository.
+Alternatively, you may use the following BibTeX entry for the JOSS paper associated with the repository:
+
+```bibtex
+@article{Petrenko2022,
+  doi = {10.21105/joss.03527},
+  url = {https://doi.org/10.21105/joss.03527},
+  year = {2022},
+  publisher = {The Open Journal},
+  volume = {7},
+  number = {79},
+  pages = {3527},
+  author = {Sasha Petrenko and Donald C. Wunsch},
+  title = {ClusterValidityIndices.jl: Batch and Incremental Metrics for Unsupervised Learning},
+  journal = {Journal of Open Source Software}
+}
+```
