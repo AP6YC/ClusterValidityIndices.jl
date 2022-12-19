@@ -60,8 +60,9 @@ using
     LinearAlgebra,
     NumericalTypeAliases
 
-# Partial usings (which does not yet support comma-separated import notation)
+# Specific identifiers
 using Statistics: mean
+using PrecompileSignatures: @precompile_signatures  # Precompile concrete type methods
 
 # --------------------------------------------------------------------------- #
 # INCLUDES
@@ -99,5 +100,12 @@ export
     # CVI utilities
     CVI_MODULES,
     CLUSTERVALIDITYINDICES_VERSION
+
+# -----------------------------------------------------------------------------
+# PRECOMPILE
+# -----------------------------------------------------------------------------
+
+# Precompile any concrete-type function signatures
+@precompile_signatures(ClusterValidityIndices)
 
 end
