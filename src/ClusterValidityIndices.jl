@@ -56,9 +56,10 @@ module ClusterValidityIndices
 
 # Full usings (which supports comma-separated import notation)
 using
-    DocStringExtensions,   # Docstring utilities
-    LinearAlgebra,
-    NumericalTypeAliases
+    DocStringExtensions,    # Docstring utilities
+    ElasticArrays,          # Elastic matrices
+    LinearAlgebra,          # All fast linalg functions
+    NumericalTypeAliases    # Type aliases for functions
 
 # Specific identifiers
 using Statistics: mean

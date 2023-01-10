@@ -64,6 +64,16 @@ Alias for a dictionary mapping of integers to integers as cluster labels.
 """
 const LabelMap = Dict{Int, Int}
 
+"""
+The type of matrix used by the ClusterValidityIndices.jl package, used to configure matrix growth behavior.
+"""
+const CVIMatrix = ElasticMatrix
+
+"""
+The type of vector used by the ClusterValidityIndices.jl package, used to configure vector growth behavior
+"""
+const CVIVector = Vector
+
 # --------------------------------------------------------------------------- #
 # FUNCTIONS
 # --------------------------------------------------------------------------- #
@@ -248,3 +258,7 @@ Internal method, sets up the CVI based upon the type of the provided sample.
 - `sample::RealVector`: The sample to use as a basis for setting up the CVI.
 """
 setup!(cvi::CVI, sample::RealVector)
+
+# function append_matrix!(original::RealMatrix, new_vector::RealVector)
+#     append!(original, new_vector)
+# end

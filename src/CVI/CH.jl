@@ -72,12 +72,12 @@ function CH()
         LabelMap(),                     # label_map
         0,                              # dim
         0,                              # n_samples
-        Vector{Float}(undef, 0),        # mu
-        Vector{Int}(undef, 0),          # n
-        Matrix{Float}(undef, 0, 0),     # v
-        Vector{Float}(undef, 0),        # CP
-        Vector{Float}(undef, 0),        # SEP
-        Matrix{Float}(undef, 0, 0),     # G
+        CVIVector{Float}(undef, 0),     # mu
+        CVIVector{Int}(undef, 0),       # n
+        CVIMatrix{Float}(undef, 0, 0),  # v
+        CVIVector{Float}(undef, 0),     # CP
+        CVIVector{Float}(undef, 0),     # SEP
+        CVIMatrix{Float}(undef, 0, 0),  # G
         0.0,                            # BGSS
         0.0,                            # WGSS
         0,                              # n_clusters
@@ -91,8 +91,8 @@ function setup!(cvi::CH, sample::RealVector)
     cvi.dim = length(sample)
     # Initialize the augmenting 2-D arrays with the correct feature dimension
     # NOTE: R is emptied and calculated in evaluate!, so it is not defined here
-    cvi.v = Matrix{Float}(undef, cvi.dim, 0)
-    cvi.G = Matrix{Float}(undef, cvi.dim, 0)
+    cvi.v = CVIMatrix{Float}(undef, cvi.dim, 0)
+    cvi.G = CVIMatrix{Float}(undef, cvi.dim, 0)
 end
 
 # Incremental parameter update function
@@ -120,8 +120,10 @@ function param_inc!(cvi::CH, sample::RealVector, label::Integer)
         push!(cvi.CP, CP_new)
         push!(cvi.n, n_new)
         # Update 2-D parameters with appending and reassignment
-        cvi.v = [cvi.v v_new]
-        cvi.G = [cvi.G G_new]
+        # cvi.v = [cvi.v v_new]
+        append!(cvi.v, v_new)
+        # cvi.G = [cvi.G G_new]
+        append!(cvi.G, G_new)
     else
         n_new = cvi.n[i_label] + 1
         v_new = (
