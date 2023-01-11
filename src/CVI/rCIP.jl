@@ -48,12 +48,12 @@ mutable struct rCIP <: CVI
     label_map::LabelMap
     dim::Int
     n_samples::Int
-    n::Vector{Int}              # dim
-    v::Matrix{Float}            # dim x n_clusters
-    sigma::Array{Float, 3}      # dim x dim x n_clusters
+    n::CVIVector{Int}               # dim
+    v::CVIMatrix{Float}             # dim x n_clusters
+    sigma::CVIArray{Float, 3}       # dim x dim x n_clusters
+    D::CVIMatrix{Float}             # n_clusters x n_clusters
+    delta_term::CVIMatrix{Float}    # dim x dim
     constant::Float
-    D::Matrix{Float}            # n_clusters x n_clusters
-    delta_term::Matrix{Float}   # dim x dim
     n_clusters::Int
     criterion_value::Float
 end
@@ -77,12 +77,12 @@ function rCIP()
         LabelMap(),                         # label_map
         0,                                  # dim
         0,                                  # n_samples
-        Vector{Int}(undef, 0),              # n
-        Matrix{Float}(undef, 0, 0),         # v
-        Array{Float, 3}(undef, 0, 0, 0),    # sigma
-        0.0,                                # constant
-        Matrix{Float}(undef, 0, 0),         # D
+        CVIVector{Int}(undef, 0),           # n
+        CVIMatrix{Float}(undef, 0, 0),      # v
+        CVIArray{Float, 3}(undef, 0, 0, 0), # sigma
+        CVIMatrix{Float}(undef, 0, 0),      # D
         Matrix{Float}(undef, 0, 0),         # delta_term
+        0.0,                                # constant
         0,                                  # n_clusters
         0.0                                 # criterion_value
     )
@@ -93,8 +93,8 @@ function setup!(cvi::rCIP, sample::RealVector)
     # Get the feature dimension
     cvi.dim = length(sample)
     # Initialize the 2-D and 3-D arrays with the correct feature dimension
-    cvi.v = Matrix{Float}(undef, cvi.dim, 0)
-    cvi.sigma = Array{Float, 3}(undef, cvi.dim, cvi.dim, 0)
+    cvi.v = CVIMatrix{Float}(undef, cvi.dim, 0)
+    cvi.sigma = CVIArray{Float, 3}(undef, cvi.dim, cvi.dim, 0)
     # Calculate the delta term
     epsilon = 12
     delta = 10 ^ (-epsilon / cvi.dim)
@@ -136,11 +136,12 @@ function param_inc!(cvi::rCIP, sample::RealVector, label::Integer)
         end
         # Update 1-D parameters with a push
         cvi.n_clusters += 1
-        push!(cvi.n, n_new)
+        expand_strategy_1d!(cvi.n, n_new)
         # Update 2-D parameters with appending and reassignment
-        cvi.v = [cvi.v v_new]
+        expand_strategy_2d!(cvi.v, v_new)
+        # cvi.sigma = cat(cvi.sigma, sigma_new, dims=3)
+        expand_strategy_3d!(cvi.sigma, sigma_new)
         cvi.D = D_new
-        cvi.sigma = cat(cvi.sigma, sigma_new, dims=3)
     else
         n_new = cvi.n[i_label] + 1
         v_new = (

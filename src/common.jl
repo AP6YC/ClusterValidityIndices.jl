@@ -65,6 +65,11 @@ Alias for a dictionary mapping of integers to integers as cluster labels.
 const LabelMap = Dict{Int, Int}
 
 """
+The type of array used by the ClusterValidityIndices.jl package for, used to configure array growth behavior.
+"""
+const CVIArray = ElasticArray
+
+"""
 The type of matrix used by the ClusterValidityIndices.jl package, used to configure matrix growth behavior.
 """
 const CVIMatrix = ElasticMatrix
@@ -100,6 +105,17 @@ Implements the strategy for expanding a 2-D CVIMatrix with a vector on the last 
 function expand_strategy_2d!(cvi_mat::CVIMatrix, v_new::RealVector)
     # Use the ElasticMatrix append! function
     append!(cvi_mat, v_new)
+end
+
+"""
+Implements the strategy for expanding a 3-D CVI array with a 2-D matrix.
+
+# Arguments
+- `cvi_mat::CVIArray{RealFP, 3}`: the 3-D CVI array to append to.
+- `mat_new::RealMatrix`: the 2-D matrix to append to the CVI array.
+"""
+function expand_strategy_3d!(cvi_mat::CVIArray{T, 3}, mat_new::RealMatrix) where T <: RealFP
+    append!(cvi_mat, mat_new)
 end
 
 """
