@@ -39,13 +39,13 @@ mutable struct DB <: CVI
     dim::Int
     n_samples::Int
     mu_data::Vector{Float}          # dim
-    n::Vector{Int}                  # dim
-    v::Matrix{Float}                # dim x n_clusters
-    CP::Vector{Float}               # dim
-    S::Vector{Float}                # dim
-    R::Matrix{Float}                # dim x n_clusters
-    G::Matrix{Float}                # dim x n_clusters
-    D::Matrix{Float}                # n_clusters x n_clusters
+    n::CVIVector{Int}               # dim
+    v::CVIMatrix{Float}             # dim x n_clusters
+    CP::CVIVector{Float}            # dim
+    S::CVIVector{Float}             # dim
+    R::CVIMatrix{Float}             # dim x n_clusters
+    G::CVIMatrix{Float}             # dim x n_clusters
+    D::CVIMatrix{Float}             # n_clusters x n_clusters
     n_clusters::Int
     criterion_value::Float
 end
@@ -69,14 +69,14 @@ function DB()
         LabelMap(),                     # label_map
         0,                              # dim
         0,                              # n_samples
-        Vector{Float}(undef, 0),        # mu_data
-        Vector{Int}(undef, 0),          # n
-        Matrix{Float}(undef, 0, 0),     # v
-        Vector{Float}(undef, 0),        # CP
-        Vector{Float}(undef, 0),        # S
-        Matrix{Float}(undef, 0, 0),     # R
-        Matrix{Float}(undef, 0, 0),     # G
-        Matrix{Float}(undef, 0, 0),     # D
+        CVIVector{Float}(undef, 0),     # mu_data
+        CVIVector{Int}(undef, 0),       # n
+        CVIMatrix{Float}(undef, 0, 0),  # v
+        CVIVector{Float}(undef, 0),     # CP
+        CVIVector{Float}(undef, 0),     # S
+        CVIMatrix{Float}(undef, 0, 0),  # R
+        CVIMatrix{Float}(undef, 0, 0),  # G
+        CVIMatrix{Float}(undef, 0, 0),  # D
         0,                              # n_clusters
         0.0                             # criterion_value
     )
@@ -89,8 +89,8 @@ function setup!(cvi::DB, sample::RealVector)
     cvi.mu_data = sample
     # Initialize the augmenting 2-D arrays with the correct feature dimension
     # NOTE: R is emptied and calculated in evaluate!, so it is not defined here
-    cvi.v = Matrix{Float}(undef, cvi.dim, 0)
-    cvi.G = Matrix{Float}(undef, cvi.dim, 0)
+    cvi.v = CVIMatrix{Float}(undef, cvi.dim, 0)
+    cvi.G = CVIMatrix{Float}(undef, cvi.dim, 0)
 end
 
 # Incremental parameter update function
@@ -132,8 +132,10 @@ function param_inc!(cvi::DB, sample::RealVector, label::Integer)
         push!(cvi.n, n_new)
         push!(cvi.S, S_new)
         # Update 2-D parameters with appending and reassignment
-        cvi.v = [cvi.v v_new]
-        cvi.G = [cvi.G G_new]
+        # cvi.v = [cvi.v v_new]
+        expand_strategy_2d!(cvi.v, v_new)
+        # cvi.G = [cvi.G G_new]
+        expand_strategy_2d!(cvi.G, G_new)
         cvi.D = D_new
     else
         n_new = cvi.n[i_label] + 1
