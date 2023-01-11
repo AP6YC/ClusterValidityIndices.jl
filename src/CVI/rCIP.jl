@@ -50,7 +50,7 @@ mutable struct rCIP <: CVI
     n_samples::Int
     n::CVIVector{Int}               # dim
     v::CVIMatrix{Float}             # dim x n_clusters
-    sigma::CVIArray{Float, 3}       # dim x dim x n_clusters
+    sigma::CVITensor{Float}         # dim x dim x n_clusters
     D::CVIMatrix{Float}             # n_clusters x n_clusters
     delta_term::CVIMatrix{Float}    # dim x dim
     constant::Float
@@ -79,7 +79,7 @@ function rCIP()
         0,                                  # n_samples
         CVIVector{Int}(undef, 0),           # n
         CVIMatrix{Float}(undef, 0, 0),      # v
-        CVIArray{Float, 3}(undef, 0, 0, 0), # sigma
+        CVITensor{Float}(undef, 0, 0, 0),   # sigma
         CVIMatrix{Float}(undef, 0, 0),      # D
         Matrix{Float}(undef, 0, 0),         # delta_term
         0.0,                                # constant
@@ -94,7 +94,7 @@ function setup!(cvi::rCIP, sample::RealVector)
     cvi.dim = length(sample)
     # Initialize the 2-D and 3-D arrays with the correct feature dimension
     cvi.v = CVIMatrix{Float}(undef, cvi.dim, 0)
-    cvi.sigma = CVIArray{Float, 3}(undef, cvi.dim, cvi.dim, 0)
+    cvi.sigma = CVITensor{Float}(undef, cvi.dim, cvi.dim, 0)
     # Calculate the delta term
     epsilon = 12
     delta = 10 ^ (-epsilon / cvi.dim)

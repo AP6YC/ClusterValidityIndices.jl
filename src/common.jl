@@ -65,9 +65,12 @@ Alias for a dictionary mapping of integers to integers as cluster labels.
 const LabelMap = Dict{Int, Int}
 
 """
-The type of array used by the ClusterValidityIndices.jl package for, used to configure array growth behavior.
+The type of tensor used by the ClusterValidityIndices.jl package, used to configure array growth behavior.
+
+Though perhaps an abuse of notation, CVITensor is defined as only a 3-D array here due to the frequent use of 3-dimensional arrays in the package.
+This maintains that the Julia Array type allows multiple orders (i.e., 3-D and onwards).
 """
-const CVIArray = ElasticArray
+const CVITensor{T<:Real} = ElasticArray{T, 3}
 
 """
 The type of matrix used by the ClusterValidityIndices.jl package, used to configure matrix growth behavior.
@@ -111,10 +114,11 @@ end
 Implements the strategy for expanding a 3-D CVI array with a 2-D matrix.
 
 # Arguments
-- `cvi_mat::CVIArray{RealFP, 3}`: the 3-D CVI array to append to.
+- `cvi_mat::CVITensor`: the 3-D CVI array to append to.
 - `mat_new::RealMatrix`: the 2-D matrix to append to the CVI array.
 """
-function expand_strategy_3d!(cvi_mat::CVIArray{T, 3}, mat_new::RealMatrix) where T <: RealFP
+function expand_strategy_3d!(cvi_mat::CVITensor, mat_new::RealMatrix)
+    # Use the ElasticArray append! function
     append!(cvi_mat, mat_new)
 end
 
