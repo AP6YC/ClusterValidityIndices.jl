@@ -79,11 +79,27 @@ const CVIVector = Vector
 # --------------------------------------------------------------------------- #
 
 """
-Implements the strategy for expanding a 2D CVIMatrix with a vector on the last dimension.
+Implements the strategy for expanding a 1-D CVIVector with an arbitrary number.
+
+# Arguments
+- `cvi_vec::CVIVector`: the 1-D vector to append a number to.
+- `n_new::Real`: a floating point or integer number to append to the vector.
 """
-function expand_strategy_2d!(mat::CVIMatrix, v_new::RealVector)
-    # Use the ElasticMAtrix append! function
-    append!(mat, v_new)
+function expand_strategy_1d!(cvi_vec::CVIVector, n_new::Real)
+    # Use the push! method, which implements the ElasticMatrix append! function
+    push!(cvi_vec, n_new)
+end
+
+"""
+Implements the strategy for expanding a 2-D CVIMatrix with a vector on the last dimension.
+
+# Arguments
+- `mat::CVIMatrix`: the 2-D matrix to append a vector to its last dimension.
+- `v_new::RealVector`: the 1-D vector to append to the matrix.
+"""
+function expand_strategy_2d!(cvi_mat::CVIMatrix, v_new::RealVector)
+    # Use the ElasticMatrix append! function
+    append!(cvi_mat, v_new)
 end
 
 """

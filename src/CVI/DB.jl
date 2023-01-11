@@ -128,9 +128,9 @@ function param_inc!(cvi::DB, sample::RealVector, label::Integer)
         end
         # Update 1-D parameters with a push
         cvi.n_clusters += 1
-        push!(cvi.CP, CP_new)
-        push!(cvi.n, n_new)
-        push!(cvi.S, S_new)
+        expand_strategy_1d!(cvi.CP, CP_new)
+        expand_strategy_1d!(cvi.n, n_new)
+        expand_strategy_1d!(cvi.S, S_new)
         # Update 2-D parameters with appending and reassignment
         expand_strategy_2d!(cvi.v, v_new)
         expand_strategy_2d!(cvi.G, G_new)
