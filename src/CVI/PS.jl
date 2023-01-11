@@ -33,12 +33,12 @@ mutable struct PS <: CVI
     label_map::LabelMap
     dim::Int
     n_samples::Int
-    n::Vector{Int}              # dim
-    v::Matrix{Float}            # dim x n_clusters
-    D::Matrix{Float}            # n_clusters x n_clusters
-    v_bar::Vector{Float}        # dim
+    n::CVIVector{Int}           # dim
+    v::CVIMatrix{Float}         # dim x n_clusters
+    D::CVIMatrix{Float}         # n_clusters x n_clusters
+    v_bar::CVIVector{Float}     # dim
+    PS_i::CVIVector{Float}      # n_clusters
     beta_t::Float
-    PS_i::Vector{Float}         # n_clusters
     n_clusters::Int
     criterion_value::Float
 end
@@ -62,12 +62,12 @@ function PS()
         LabelMap(),                     # label_map
         0,                              # dim
         0,                              # n_samples
-        Vector{Int}(undef, 0),          # n
-        Matrix{Float}(undef, 0, 0),     # v
-        Matrix{Float}(undef, 0, 0),     # D
-        Vector{Float}(undef, 0),        # v_bar
+        CVIVector{Int}(undef, 0),       # n
+        CVIMatrix{Float}(undef, 0, 0),  # v
+        CVIMatrix{Float}(undef, 0, 0),  # D
+        CVIVector{Float}(undef, 0),     # v_bar
+        CVIVector{Float}(undef, 0),     # PS_i
         0.0,                            # beta_t
-        Vector{Float}(undef, 0),        # PS_i
         0,                              # n_clusters
         0.0                             # criterion_value
     )
@@ -78,7 +78,7 @@ function setup!(cvi::PS, sample::RealVector)
     # Get the feature dimension
     cvi.dim = length(sample)
     # Initialize the 2-D arrays with the correct feature dimension
-    cvi.v = Matrix{Float}(undef, cvi.dim, 0)
+    cvi.v = CVIMatrix{Float}(undef, cvi.dim, 0)
 end
 
 # Incremental parameter update function
@@ -108,9 +108,9 @@ function param_inc!(cvi::PS, sample::RealVector, label::Integer)
         end
         # Update 1-D parameters with a push
         cvi.n_clusters += 1
-        push!(cvi.n, n_new)
+        expand_strategy_1d!(cvi.n, n_new)
         # Update 2-D parameters with appending and reassignment
-        cvi.v = [cvi.v v_new]
+        expand_strategy_2d!(cvi.v, v_new)
         cvi.D = D_new
     else
         n_new = cvi.n[i_label] + 1
@@ -170,7 +170,8 @@ function evaluate!(cvi::PS)
         n_max = maximum(cvi.n)
         for ix = 1:cvi.n_clusters
             d = cvi.D[:, ix]
-            deleteat!(d, ix)
+            # Exclude the category itself in the minimum calculation
+            d[ix] = Inf
             cvi.PS_i[ix] = (
                 (cvi.n[ix] / n_max)
                 - exp(-minimum(d) / cvi.beta_t)
