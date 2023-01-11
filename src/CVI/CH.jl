@@ -41,12 +41,12 @@ mutable struct CH <: CVI
     label_map::LabelMap
     dim::Int
     n_samples::Int
-    mu::Vector{Float}   # dim
-    n::Vector{Int}      # dim
-    v::Matrix{Float}    # dim x n_clusters
-    CP::Vector{Float}   # dim
-    SEP::Vector{Float}  # dim
-    G::Matrix{Float}    # dim x n_clusters
+    mu::CVIVector{Float}    # dim
+    n::CVIVector{Int}       # dim
+    v::CVIMatrix{Float}     # dim x n_clusters
+    CP::CVIVector{Float}    # dim
+    SEP::CVIVector{Float}   # dim
+    G::CVIMatrix{Float}     # dim x n_clusters
     BGSS::Float
     WGSS::Float
     n_clusters::Int

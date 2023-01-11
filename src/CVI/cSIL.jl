@@ -38,12 +38,12 @@ mutable struct cSIL <: CVI
     label_map::LabelMap
     dim::Int
     n_samples::Int
-    n::Vector{Int}              # dim
-    v::Matrix{Float}            # dim x n_clusters
-    CP::Vector{Float}           # dim
-    G::Matrix{Float}            # dim x n_clusters
-    S::Matrix{Float}            # n_clusters x n_clusters
-    sil_coefs::Vector{Float}    # dim
+    n::CVIVector{Int}              # dim
+    v::CVIMatrix{Float}            # dim x n_clusters
+    CP::CVIVector{Float}           # dim
+    G::CVIMatrix{Float}            # dim x n_clusters
+    S::CVIMatrix{Float}            # n_clusters x n_clusters
+    sil_coefs::CVIVector{Float}    # dim
     n_clusters::Int
     criterion_value::Float
 end
@@ -67,12 +67,12 @@ function cSIL()
         LabelMap(),                     # label_map
         0,                              # dim
         0,                              # n_samples
-        Vector{Int}(undef, 0),          # n
-        Matrix{Float}(undef, 0, 0),     # v
-        Vector{Float}(undef, 0),        # CP
-        Matrix{Float}(undef, 0, 0),     # G
-        Matrix{Float}(undef, 0, 0),     # S
-        Vector{Float}(undef, 0),        # sil_coefs
+        CVIVector{Int}(undef, 0),       # n
+        CVIMatrix{Float}(undef, 0, 0),  # v
+        CVIVector{Float}(undef, 0),     # CP
+        CVIMatrix{Float}(undef, 0, 0),  # G
+        CVIMatrix{Float}(undef, 0, 0),  # S
+        CVIVector{Float}(undef, 0),     # sil_coefs
         0,                              # n_clusters
         0.0                             # criterion_value
     )
@@ -84,8 +84,8 @@ function setup!(cvi::cSIL, sample::RealVector)
     cvi.dim = length(sample)
     # Initialize the augmenting 2-D arrays with the correct feature dimension
     # NOTE: R is emptied and calculated in evaluate!, so it is not defined here
-    cvi.v = Matrix{Float}(undef, cvi.dim, 0)
-    cvi.G = Matrix{Float}(undef, cvi.dim, 0)
+    cvi.v = CVIMatrix{Float}(undef, cvi.dim, 0)
+    cvi.G = CVIMatrix{Float}(undef, cvi.dim, 0)
 end
 
 # Incremental parameter update function
@@ -139,8 +139,10 @@ function param_inc!(cvi::cSIL, sample::RealVector, label::Integer)
         push!(cvi.CP, CP_new)
         push!(cvi.n, n_new)
         # Update 2-D parameters with appending and reassignment
-        cvi.v = [cvi.v v_new]
-        cvi.G = [cvi.G G_new]
+        # cvi.v = [cvi.v v_new]
+        append!(cvi.v, v_new)
+        # cvi.G = [cvi.G G_new]
+        append!(cvi.G, G_new)
         cvi.S = S_new
     else
         n_new = cvi.n[i_label] + 1
