@@ -79,6 +79,14 @@ const CVIVector = Vector
 # --------------------------------------------------------------------------- #
 
 """
+Implements the strategy for expanding a 2D CVIMatrix with a vector on the last dimension.
+"""
+function expand_strategy_2d!(mat::CVIMatrix, v_new::RealVector)
+    # Use the ElasticMAtrix append! function
+    append!(mat, v_new)
+end
+
+"""
 Compute and return the criterion value incrementally.
 
 This method takes the CVI object, a single sample as a vector of floats, and a single integer that represents the label prescribed to the sample by your clustering algorithm.

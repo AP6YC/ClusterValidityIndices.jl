@@ -120,10 +120,8 @@ function param_inc!(cvi::CH, sample::RealVector, label::Integer)
         push!(cvi.CP, CP_new)
         push!(cvi.n, n_new)
         # Update 2-D parameters with appending and reassignment
-        # cvi.v = [cvi.v v_new]
-        append!(cvi.v, v_new)
-        # cvi.G = [cvi.G G_new]
-        append!(cvi.G, G_new)
+        expand_strategy_2d!(cvi.v, v_new)
+        expand_strategy_2d!(cvi.G, G_new)
     else
         n_new = cvi.n[i_label] + 1
         v_new = (
