@@ -44,12 +44,12 @@ mutable struct GD43 <: CVI
     label_map::LabelMap
     dim::Int
     n_samples::Int
-    mu_data::Vector{Float}      # dim
-    n::Vector{Int}              # dim
-    v::Matrix{Float}            # dim x n_clusters
-    CP::Vector{Float}           # dim
-    G::Matrix{Float}            # dim x n_clusters
-    D::Matrix{Float}            # n_clusters x n_clusters
+    mu_data::CVIVector{Float}   # dim
+    n::CVIVector{Int}           # dim
+    v::CVIMatrix{Float}         # dim x n_clusters
+    CP::CVIVector{Float}        # dim
+    G::CVIMatrix{Float}         # dim x n_clusters
+    D::CVIMatrix{Float}         # n_clusters x n_clusters
     inter::Float
     intra::Float
     n_clusters::Int
@@ -75,12 +75,12 @@ function GD43()
         LabelMap(),                     # label_map
         0,                              # dim
         0,                              # n_samples
-        Vector{Float}(undef, 0),        # mu_data
-        Vector{Int}(undef, 0),          # n
-        Matrix{Float}(undef, 0, 0),     # v
-        Vector{Float}(undef, 0),        # CP
-        Matrix{Float}(undef, 0, 0),     # G
-        Matrix{Float}(undef, 0, 0),     # D
+        CVIVector{Float}(undef, 0),     # mu_data
+        CVIVector{Int}(undef, 0),       # n
+        CVIMatrix{Float}(undef, 0, 0),  # v
+        CVIVector{Float}(undef, 0),     # CP
+        CVIMatrix{Float}(undef, 0, 0),  # G
+        CVIMatrix{Float}(undef, 0, 0),  # D
         0.0,                            # inter
         0.0,                            # intra
         0,                              # n_clusters
@@ -94,8 +94,8 @@ function setup!(cvi::GD43, sample::RealVector)
     cvi.dim = length(sample)
     # Initialize the augmenting 2-D arrays with the correct feature dimension
     # NOTE: R is emptied and calculated in evaluate!, so it is not defined here
-    cvi.v = Matrix{Float}(undef, cvi.dim, 0)
-    cvi.G = Matrix{Float}(undef, cvi.dim, 0)
+    cvi.v = CVIMatrix{Float}(undef, cvi.dim, 0)
+    cvi.G = CVIMatrix{Float}(undef, cvi.dim, 0)
 end
 
 # Incremental parameter update function
@@ -136,8 +136,8 @@ function param_inc!(cvi::GD43, sample::RealVector, label::Integer)
         push!(cvi.CP, CP_new)
         push!(cvi.n, n_new)
         # Update 2-D parameters with appending and reassignment
-        cvi.v = [cvi.v v_new]
-        cvi.G = [cvi.G G_new]
+        expand_strategy_2d!(cvi.v, v_new)
+        expand_strategy_2d!(cvi.G, G_new)
         cvi.D = D_new
     else
         n_new = cvi.n[i_label] + 1

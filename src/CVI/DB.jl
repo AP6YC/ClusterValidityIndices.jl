@@ -132,9 +132,7 @@ function param_inc!(cvi::DB, sample::RealVector, label::Integer)
         push!(cvi.n, n_new)
         push!(cvi.S, S_new)
         # Update 2-D parameters with appending and reassignment
-        # cvi.v = [cvi.v v_new]
         expand_strategy_2d!(cvi.v, v_new)
-        # cvi.G = [cvi.G G_new]
         expand_strategy_2d!(cvi.G, G_new)
         cvi.D = D_new
     else
