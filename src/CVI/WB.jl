@@ -46,12 +46,12 @@ mutable struct WB <: CVI
     label_map::LabelMap
     dim::Int
     n_samples::Int
-    mu::Vector{Float}           # dim
-    n::Vector{Int}              # dim
-    v::Matrix{Float}            # dim x n_clusters
-    CP::Vector{Float}           # dim
-    SEP::Vector{Float}          # dim
-    G::Matrix{Float}            # dim x n_clusters
+    mu::CVIVector{Float}        # dim
+    n::CVIVector{Int}           # dim
+    v::CVIMatrix{Float}         # dim x n_clusters
+    CP::CVIVector{Float}        # dim
+    SEP::CVIVector{Float}       # dim
+    G::CVIMatrix{Float}         # dim x n_clusters
     BGSS::Float
     WGSS::Float
     n_clusters::Int
@@ -77,12 +77,12 @@ function WB()
         LabelMap(),                     # label_map
         0,                              # dim
         0,                              # n_samples
-        Vector{Float}(undef, 0),        # mu
-        Vector{Int}(undef, 0),          # n
-        Matrix{Float}(undef, 0, 0),     # v
-        Vector{Float}(undef, 0),        # CP
-        Vector{Float}(undef, 0),        # SEP
-        Matrix{Float}(undef, 0, 0),     # G
+        CVIVector{Float}(undef, 0),     # mu
+        CVIVector{Int}(undef, 0),       # n
+        CVIMatrix{Float}(undef, 0, 0),  # v
+        CVIVector{Float}(undef, 0),     # CP
+        CVIVector{Float}(undef, 0),     # SEP
+        CVIMatrix{Float}(undef, 0, 0),  # G
         0.0,                            # BGSS
         0.0,                            # WGSS
         0,                              # n_clusters
@@ -96,8 +96,8 @@ function setup!(cvi::WB, sample::RealVector)
     cvi.dim = length(sample)
     # Initialize the augmenting 2-D arrays with the correct feature dimension
     # NOTE: R is emptied and calculated in evaluate!, so it is not defined here
-    cvi.v = Matrix{Float}(undef, cvi.dim, 0)
-    cvi.G = Matrix{Float}(undef, cvi.dim, 0)
+    cvi.v = CVIMatrix{Float}(undef, cvi.dim, 0)
+    cvi.G = CVIMatrix{Float}(undef, cvi.dim, 0)
 end
 
 # Incremental parameter update function
@@ -123,11 +123,11 @@ function param_inc!(cvi::WB, sample::RealVector, label::Integer)
         G_new = zeros(cvi.dim)
         # Update 1-D parameters with a push
         cvi.n_clusters += 1
-        push!(cvi.CP, CP_new)
-        push!(cvi.n, n_new)
+        expand_strategy_1d!(cvi.CP, CP_new)
+        expand_strategy_1d!(cvi.n, n_new)
         # Update 2-D parameters with appending and reassignment
-        cvi.v = [cvi.v v_new]
-        cvi.G = [cvi.G G_new]
+        expand_strategy_2d!(cvi.v, v_new)
+        expand_strategy_2d!(cvi.G, G_new)
     else
         n_new = cvi.n[i_label] + 1
         v_new = (
