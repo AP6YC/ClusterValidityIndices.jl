@@ -38,7 +38,7 @@ mutable struct DB <: CVI
     label_map::LabelMap
     dim::Int
     n_samples::Int
-    mu::Vector{Float}          # dim
+    mu::Vector{Float}               # dim
     R::Matrix{Float}                # dim x n_clusters
     D::Matrix{Float}                # n_clusters x n_clusters
     n::CVIVector{Int}               # dim

@@ -36,9 +36,6 @@ mutable struct PS <: CVI
     n::CVIVector{Int}           # dim
     v::CVIMatrix{Float}         # dim x n_clusters
     D::Matrix{Float}            # n_clusters x n_clusters
-    # v_bar::CVIVector{Float}     # dim
-    # PS_i::CVIVector{Float}      # n_clusters
-    # beta_t::Float
     n_clusters::Int
     criterion_value::Float
 end
@@ -65,9 +62,6 @@ function PS()
         CVIVector{Int}(undef, 0),       # n
         CVIMatrix{Float}(undef, 0, 0),  # v
         Matrix{Float}(undef, 0, 0),     # D
-        # CVIVector{Float}(undef, 0),     # v_bar
-        # CVIVector{Float}(undef, 0),     # PS_i
-        # 0.0,                            # beta_t
         0,                              # n_clusters
         0.0                             # criterion_value
     )
