@@ -38,7 +38,7 @@ mutable struct XB <: CVI
     label_map::LabelMap
     dim::Int
     n_samples::Int
-    mu_data::Vector{Float}          # dim
+    mu::Vector{Float}               # dim
     D::Matrix{Float}                # n_clusters x n_clusters
     n::CVIVector{Int}               # dim
     v::CVIMatrix{Float}             # dim x n_clusters
@@ -69,7 +69,7 @@ function XB()
         LabelMap(),                     # label_map
         0,                              # dim
         0,                              # n_samples
-        Vector{Float}(undef, 0),        # mu_data
+        Vector{Float}(undef, 0),        # mu
         Matrix{Float}(undef, 0, 0),     # D
         CVIVector{Int}(undef, 0),       # n
         CVIMatrix{Float}(undef, 0, 0),  # v
@@ -97,12 +97,12 @@ function param_inc!(cvi::XB, sample::RealVector, label::Integer)
     i_label = get_internal_label!(cvi.label_map, label)
 
     n_samples_new = cvi.n_samples + 1
-    if isempty(cvi.mu_data)
-        mu_data_new = sample
+    if isempty(cvi.mu)
+        mu_new = sample
         setup!(cvi, sample)
     else
-        mu_data_new = (
-            (1 - 1 / n_samples_new) .* cvi.mu_data
+        mu_new = (
+            (1 - 1 / n_samples_new) .* cvi.mu
             + (1 / n_samples_new) .* sample
         )
     end
@@ -168,14 +168,14 @@ function param_inc!(cvi::XB, sample::RealVector, label::Integer)
         cvi.D[i_label, :] = transpose(d_column_new)
     end
     cvi.n_samples = n_samples_new
-    cvi.mu_data = mu_data_new
+    cvi.mu = mu_new
 end
 
 # Incremental parameter update function
 function param_batch!(cvi::XB, data::RealMatrix, labels::IntegerVector)
     cvi.dim, cvi.n_samples = size(data)
     # Take the average across all samples, but cast to 1-D vector
-    cvi.mu_data = mean(data, dims=2)[:]
+    cvi.mu = mean(data, dims=2)[:]
     # u = findfirst.(isequal.(unique(labels)), [labels])
     u = unique(labels)
     cvi.n_clusters = length(u)

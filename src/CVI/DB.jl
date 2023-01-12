@@ -38,7 +38,7 @@ mutable struct DB <: CVI
     label_map::LabelMap
     dim::Int
     n_samples::Int
-    mu_data::Vector{Float}          # dim
+    mu::Vector{Float}          # dim
     R::Matrix{Float}                # dim x n_clusters
     D::Matrix{Float}                # n_clusters x n_clusters
     n::CVIVector{Int}               # dim
@@ -69,7 +69,7 @@ function DB()
         LabelMap(),                     # label_map
         0,                              # dim
         0,                              # n_samples
-        Vector{Float}(undef, 0),        # mu_data
+        Vector{Float}(undef, 0),        # mu
         Matrix{Float}(undef, 0, 0),     # R
         Matrix{Float}(undef, 0, 0),     # D
         CVIVector{Int}(undef, 0),       # n
@@ -86,7 +86,7 @@ end
 function setup!(cvi::DB, sample::RealVector)
     # Get the feature dimension
     cvi.dim = length(sample)
-    cvi.mu_data = sample
+    cvi.mu = sample
     # Initialize the augmenting 2-D arrays with the correct feature dimension
     # NOTE: R is emptied and calculated in evaluate!, so it is not defined here
     cvi.v = CVIMatrix{Float}(undef, cvi.dim, 0)
@@ -99,11 +99,11 @@ function param_inc!(cvi::DB, sample::RealVector, label::Integer)
     i_label = get_internal_label!(cvi.label_map, label)
 
     n_samples_new = cvi.n_samples + 1
-    if isempty(cvi.mu_data)
+    if isempty(cvi.mu)
         setup!(cvi, sample)
     else
-        cvi.mu_data = (
-            (1 - 1 / n_samples_new) .* cvi.mu_data
+        cvi.mu = (
+            (1 - 1 / n_samples_new) .* cvi.mu
             + (1 / n_samples_new) .* sample
         )
     end
@@ -179,7 +179,7 @@ end
 function param_batch!(cvi::DB, data::RealMatrix, labels::IntegerVector)
     cvi.dim, cvi.n_samples = size(data)
     # Take the average across all samples, but cast to 1-D vector
-    cvi.mu_data = mean(data, dims=2)[:]
+    cvi.mu = mean(data, dims=2)[:]
     u = unique(labels)
     cvi.n_clusters = length(u)
     cvi.n = zeros(Integer, cvi.n_clusters)
