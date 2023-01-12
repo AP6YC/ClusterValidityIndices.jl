@@ -48,11 +48,11 @@ mutable struct rCIP <: CVI
     label_map::LabelMap
     dim::Int
     n_samples::Int
-    D::Matrix{Float}                # n_clusters x n_clusters
-    delta_term::Matrix{Float}       # dim x dim
-    n::CVIVector{Int}               # dim
-    v::CVIMatrix{Float}             # dim x n_clusters
-    sigma::CVITensor{Float}         # dim x dim x n_clusters
+    D::Matrix{Float}                        # n_clusters x n_clusters
+    delta_term::Matrix{Float}               # dim x dim
+    n::CVIExpandVector{Int}                 # dim
+    v::CVIExpandMatrix{Float}               # dim x n_clusters
+    sigma::CVIExpandTensor{Float}           # dim x dim x n_clusters
     constant::Float
     n_clusters::Int
     criterion_value::Float
@@ -74,17 +74,17 @@ $(local_references)
 """
 function rCIP()
     rCIP(
-        LabelMap(),                         # label_map
-        0,                                  # dim
-        0,                                  # n_samples
-        Matrix{Float}(undef, 0, 0),         # D
-        Matrix{Float}(undef, 0, 0),         # delta_term
-        CVIVector{Int}(undef, 0),           # n
-        CVIMatrix{Float}(undef, 0, 0),      # v
-        CVITensor{Float}(undef, 0, 0, 0),   # sigma
-        0.0,                                # constant
-        0,                                  # n_clusters
-        0.0                                 # criterion_value
+        LabelMap(),                                 # label_map
+        0,                                          # dim
+        0,                                          # n_samples
+        Matrix{Float}(undef, 0, 0),                 # D
+        Matrix{Float}(undef, 0, 0),                 # delta_term
+        CVIExpandVector{Int}(undef, 0),             # n
+        CVIExpandMatrix{Float}(undef, 0, 0),        # v
+        CVIExpandTensor{Float}(undef, 0, 0, 0),     # sigma
+        0.0,                                        # constant
+        0,                                          # n_clusters
+        0.0                                         # criterion_value
     )
 end
 
@@ -93,8 +93,8 @@ function setup!(cvi::rCIP, sample::RealVector)
     # Get the feature dimension
     cvi.dim = length(sample)
     # Initialize the 2-D and 3-D arrays with the correct feature dimension
-    cvi.v = CVIMatrix{Float}(undef, cvi.dim, 0)
-    cvi.sigma = CVITensor{Float}(undef, cvi.dim, cvi.dim, 0)
+    cvi.v = CVIExpandMatrix{Float}(undef, cvi.dim, 0)
+    cvi.sigma = CVIExpandTensor{Float}(undef, cvi.dim, cvi.dim, 0)
     # Calculate the delta term
     epsilon = 12
     delta = 10 ^ (-epsilon / cvi.dim)

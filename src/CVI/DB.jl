@@ -38,14 +38,14 @@ mutable struct DB <: CVI
     label_map::LabelMap
     dim::Int
     n_samples::Int
-    mu::Vector{Float}               # dim
-    R::Matrix{Float}                # dim x n_clusters
-    D::Matrix{Float}                # n_clusters x n_clusters
-    n::CVIVector{Int}               # dim
-    v::CVIMatrix{Float}             # dim x n_clusters
-    CP::CVIVector{Float}            # dim
-    S::CVIVector{Float}             # dim
-    G::CVIMatrix{Float}             # dim x n_clusters
+    mu::Vector{Float}                       # dim
+    R::Matrix{Float}                        # dim x n_clusters
+    D::Matrix{Float}                        # n_clusters x n_clusters
+    n::CVIExpandVector{Int}                 # dim
+    v::CVIExpandMatrix{Float}               # dim x n_clusters
+    CP::CVIExpandVector{Float}              # dim
+    S::CVIExpandVector{Float}               # dim
+    G::CVIExpandMatrix{Float}               # dim x n_clusters
     n_clusters::Int
     criterion_value::Float
 end
@@ -66,19 +66,19 @@ $(local_references)
 """
 function DB()
     DB(
-        LabelMap(),                     # label_map
-        0,                              # dim
-        0,                              # n_samples
-        Vector{Float}(undef, 0),        # mu
-        Matrix{Float}(undef, 0, 0),     # R
-        Matrix{Float}(undef, 0, 0),     # D
-        CVIVector{Int}(undef, 0),       # n
-        CVIMatrix{Float}(undef, 0, 0),  # v
-        CVIVector{Float}(undef, 0),     # CP
-        CVIVector{Float}(undef, 0),     # S
-        CVIMatrix{Float}(undef, 0, 0),  # G
-        0,                              # n_clusters
-        0.0                             # criterion_value
+        LabelMap(),                             # label_map
+        0,                                      # dim
+        0,                                      # n_samples
+        Vector{Float}(undef, 0),                # mu
+        Matrix{Float}(undef, 0, 0),             # R
+        Matrix{Float}(undef, 0, 0),             # D
+        CVIExpandVector{Int}(undef, 0),         # n
+        CVIExpandMatrix{Float}(undef, 0, 0),    # v
+        CVIExpandVector{Float}(undef, 0),       # CP
+        CVIExpandVector{Float}(undef, 0),       # S
+        CVIExpandMatrix{Float}(undef, 0, 0),    # G
+        0,                                      # n_clusters
+        0.0                                     # criterion_value
     )
 end
 
@@ -89,8 +89,8 @@ function setup!(cvi::DB, sample::RealVector)
     cvi.mu = sample
     # Initialize the augmenting 2-D arrays with the correct feature dimension
     # NOTE: R is emptied and calculated in evaluate!, so it is not defined here
-    cvi.v = CVIMatrix{Float}(undef, cvi.dim, 0)
-    cvi.G = CVIMatrix{Float}(undef, cvi.dim, 0)
+    cvi.v = CVIExpandMatrix{Float}(undef, cvi.dim, 0)
+    cvi.G = CVIExpandMatrix{Float}(undef, cvi.dim, 0)
 end
 
 # Incremental parameter update function

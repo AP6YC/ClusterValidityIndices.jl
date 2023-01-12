@@ -67,45 +67,45 @@ const LabelMap = Dict{Int, Int}
 """
 The type of tensor used by the ClusterValidityIndices.jl package, used to configure array growth behavior.
 
-Though perhaps an abuse of notation, CVITensor is defined as only a 3-D array here due to the frequent use of 3-dimensional arrays in the package.
+Though perhaps an abuse of notation, CVIExpandTensor is defined as only a 3-D array here due to the frequent use of 3-dimensional arrays in the package.
 This maintains that the Julia Array type allows multiple orders (i.e., 3-D and onwards).
 """
-const CVITensor{T<:Real} = ElasticArray{T, 3}
+const CVIExpandTensor{T<:Real} = ElasticArray{T, 3}
 
 """
 The type of matrix used by the ClusterValidityIndices.jl package, used to configure matrix growth behavior.
 """
-const CVIMatrix = ElasticMatrix
+const CVIExpandMatrix = ElasticMatrix
 
 """
 The type of vector used by the ClusterValidityIndices.jl package, used to configure vector growth behavior
 """
-const CVIVector = Vector
+const CVIExpandVector = Vector
 
 # --------------------------------------------------------------------------- #
 # FUNCTIONS
 # --------------------------------------------------------------------------- #
 
 """
-Implements the strategy for expanding a 1-D CVIVector with an arbitrary number.
+Implements the strategy for expanding a 1-D CVIExpandVector with an arbitrary number.
 
 # Arguments
-- `cvi_vec::CVIVector`: the 1-D vector to append a number to.
+- `cvi_vec::CVIExpandVector`: the 1-D vector to append a number to.
 - `n_new::Real`: a floating point or integer number to append to the vector.
 """
-function expand_strategy_1d!(cvi_vec::CVIVector, n_new::Real)
+function expand_strategy_1d!(cvi_vec::CVIExpandVector, n_new::Real)
     # Use the push! method, which implements the ElasticMatrix append! function
     push!(cvi_vec, n_new)
 end
 
 """
-Implements the strategy for expanding a 2-D CVIMatrix with a vector on the last dimension.
+Implements the strategy for expanding a 2-D CVIExpandMatrix with a vector on the last dimension.
 
 # Arguments
-- `mat::CVIMatrix`: the 2-D matrix to append a vector to its last dimension.
+- `mat::CVIExpandMatrix`: the 2-D matrix to append a vector to its last dimension.
 - `v_new::RealVector`: the 1-D vector to append to the matrix.
 """
-function expand_strategy_2d!(cvi_mat::CVIMatrix, v_new::RealVector)
+function expand_strategy_2d!(cvi_mat::CVIExpandMatrix, v_new::RealVector)
     # Use the ElasticMatrix append! function
     append!(cvi_mat, v_new)
 end
@@ -114,10 +114,10 @@ end
 Implements the strategy for expanding a 3-D CVI array with a 2-D matrix.
 
 # Arguments
-- `cvi_mat::CVITensor`: the 3-D CVI array to append to.
+- `cvi_mat::CVIExpandTensor`: the 3-D CVI array to append to.
 - `mat_new::RealMatrix`: the 2-D matrix to append to the CVI array.
 """
-function expand_strategy_3d!(cvi_mat::CVITensor, mat_new::RealMatrix)
+function expand_strategy_3d!(cvi_mat::CVIExpandTensor, mat_new::RealMatrix)
     # Use the ElasticArray append! function
     append!(cvi_mat, mat_new)
 end

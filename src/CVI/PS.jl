@@ -33,9 +33,9 @@ mutable struct PS <: CVI
     label_map::LabelMap
     dim::Int
     n_samples::Int
-    n::CVIVector{Int}           # dim
-    v::CVIMatrix{Float}         # dim x n_clusters
-    D::Matrix{Float}            # n_clusters x n_clusters
+    n::CVIExpandVector{Int}             # dim
+    v::CVIExpandMatrix{Float}           # dim x n_clusters
+    D::Matrix{Float}                    # n_clusters x n_clusters
     n_clusters::Int
     criterion_value::Float
 end
@@ -56,14 +56,14 @@ $(local_references)
 """
 function PS()
     PS(
-        LabelMap(),                     # label_map
-        0,                              # dim
-        0,                              # n_samples
-        CVIVector{Int}(undef, 0),       # n
-        CVIMatrix{Float}(undef, 0, 0),  # v
-        Matrix{Float}(undef, 0, 0),     # D
-        0,                              # n_clusters
-        0.0                             # criterion_value
+        LabelMap(),                             # label_map
+        0,                                      # dim
+        0,                                      # n_samples
+        CVIExpandVector{Int}(undef, 0),         # n
+        CVIExpandMatrix{Float}(undef, 0, 0),    # v
+        Matrix{Float}(undef, 0, 0),             # D
+        0,                                      # n_clusters
+        0.0                                     # criterion_value
     )
 end
 
@@ -72,7 +72,7 @@ function setup!(cvi::PS, sample::RealVector)
     # Get the feature dimension
     cvi.dim = length(sample)
     # Initialize the 2-D arrays with the correct feature dimension
-    cvi.v = CVIMatrix{Float}(undef, cvi.dim, 0)
+    cvi.v = CVIExpandMatrix{Float}(undef, cvi.dim, 0)
 end
 
 # Incremental parameter update function
