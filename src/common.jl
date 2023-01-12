@@ -105,11 +105,14 @@ end
 """
 Constructor for the CVIElasticParams struct, using the dimension to prime the 2-D elastic matrices.
 
+The empty constructor should only be used when initializing empty CVIs before setup.
+CVI setup should instead create this struct with a specified dimension `dim`, and batch updates can set both `dim` and `n_clusters` immediately.
+
 # Arguments
 - `dim::Integer`: the dimension to use for the first dimension of the 2-D matrices.
 - `n_clusters::Integer`: optional, the number of clusters if known. Default 0.
 """
-function CVIElasticParams(dim::Integer, n_clusters::Integer=0)
+function CVIElasticParams(dim::Integer=0, n_clusters::Integer=0)
     return CVIElasticParams(
         CVIExpandVector{Int}(undef, n_clusters),             # n
         CVIExpandVector{Float}(undef, n_clusters),           # CP
@@ -119,19 +122,35 @@ function CVIElasticParams(dim::Integer, n_clusters::Integer=0)
 end
 
 
-"""
-Empty constructor for the CVIElasticParams that creates an empty, unprimed struct.
+# """
+# Empty constructor for the CVIElasticParams that creates an empty, unprimed struct.
 
-This constructor should only be used when initializing empty CVIs before setup.
-CVI setup should instead create this struct with a specified dimension `dim`.
-"""
-function CVIElasticParams()
-    return CVIElasticParams(0)
-end
+# This constructor should only be used when initializing empty CVIs before setup.
+# CVI setup should instead create this struct with a specified dimension `dim`.
+# """
+# function CVIElasticParams()
+#     return CVIElasticParams(0)
+# end
 
 # -----------------------------------------------------------------------------
 # FUNCTIONS
 # -----------------------------------------------------------------------------
+
+"""
+Returns an updated mean vector with a new vector and adjusted count of samples.
+
+# Arguments
+- `old_mean::RealVector`:
+- `sample::RealVector`:
+- `n_new::Integer`:
+"""
+function update_mean(old_mean::RealVector, sample::RealVector, n_new::Integer)
+    new_mean = (
+        (1 - 1 / n_new) .* old_mean
+        + (1 / n_new) .* sample
+    )
+    return new_mean
+end
 
 """
 Implements the strategy for expanding a 1-D CVIExpandVector with an arbitrary number.

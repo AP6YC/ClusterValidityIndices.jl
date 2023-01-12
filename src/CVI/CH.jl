@@ -44,12 +44,6 @@ mutable struct CH <: CVI
     mu::Vector{Float}               # dim
     SEP::Vector{Float}              # dim
     params::CVIElasticParams
-    # n::CVIExpandVector{Int}         # dim
-    # v::CVIExpandMatrix{Float}       # dim x n_clusters
-    # CP::CVIExpandVector{Float}      # dim
-    # G::CVIExpandMatrix{Float}       # dim x n_clusters
-    BGSS::Float
-    WGSS::Float
     n_clusters::Int
     criterion_value::Float
 end
@@ -76,8 +70,6 @@ function CH()
         Vector{Float}(undef, 0),                # mu
         Vector{Float}(undef, 0),                # SEP
         CVIElasticParams(0),
-        0.0,                                    # BGSS
-        0.0,                                    # WGSS
         0,                                      # n_clusters
         0.0                                     # criterion_value
     )
@@ -93,9 +85,7 @@ function param_inc!(cvi::CH, sample::RealVector, label::Integer)
         mu_new = sample
         setup!(cvi, sample)
     else
-        mu_new = (
-            (1 - 1/n_samples_new) .* cvi.mu + (1 / n_samples_new) .* sample
-        )
+        mu_new = update_mean(cvi.mu, sample, n_samples_new)
     end
 
     if i_label > cvi.n_clusters
@@ -114,9 +104,7 @@ function param_inc!(cvi::CH, sample::RealVector, label::Integer)
         )
     else
         n_new = cvi.params.n[i_label] + 1
-        v_new = (
-            (1 - 1/n_new) .* cvi.params.v[:, i_label] + (1 / n_new) .* sample
-        )
+        v_new = update_mean(cvi.params.v[:, i_label], sample, n_new)
         delta_v = cvi.params.v[:, i_label] - v_new
         diff_x_v = sample .- v_new
         CP_new = (
@@ -166,17 +154,16 @@ end
 # Criterion value evaluation function
 function evaluate!(cvi::CH)
     # Within group sum of scatters
-    cvi.WGSS = sum(cvi.params.CP)
+    WGSS = sum(cvi.params.CP)
     if cvi.n_clusters > 1
         # Between groups sum of scatters
-        cvi.BGSS = sum(cvi.SEP)
+        BGSS = sum(cvi.SEP)
         # CH index value
         cvi.criterion_value = (
-            (cvi.BGSS / cvi.WGSS)
+            (BGSS / WGSS)
             * ((cvi.n_samples - cvi.n_clusters) / (cvi.n_clusters - 1))
         )
     else
-        cvi.BGSS = 0.0
         cvi.criterion_value = 0.0
     end
 end

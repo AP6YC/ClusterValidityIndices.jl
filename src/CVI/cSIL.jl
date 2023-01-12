@@ -38,10 +38,7 @@ mutable struct cSIL <: CVI
     label_map::LabelMap
     dim::Int
     n_samples::Int
-    n::CVIExpandVector{Int}                 # dim
-    v::CVIExpandMatrix{Float}               # dim x n_clusters
-    CP::CVIExpandVector{Float}              # dim
-    G::CVIExpandMatrix{Float}               # dim x n_clusters
+    params::CVIElasticParams
     S::Matrix{Float}                        # n_clusters x n_clusters
     sil_coefs::Vector{Float}                # dim
     n_clusters::Int
@@ -67,25 +64,12 @@ function cSIL()
         LabelMap(),                             # label_map
         0,                                      # dim
         0,                                      # n_samples
-        CVIExpandVector{Int}(undef, 0),         # n
-        CVIExpandMatrix{Float}(undef, 0, 0),    # v
-        CVIExpandVector{Float}(undef, 0),       # CP
-        CVIExpandMatrix{Float}(undef, 0, 0),    # G
+        CVIElasticParams(),
         Matrix{Float}(undef, 0, 0),             # S
         Vector{Float}(undef, 0),                # sil_coefs
         0,                                      # n_clusters
         0.0                                     # criterion_value
     )
-end
-
-# Setup function
-function setup!(cvi::cSIL, sample::RealVector)
-    # Get the feature dimension
-    cvi.dim = length(sample)
-    # Initialize the augmenting 2-D arrays with the correct feature dimension
-    # NOTE: R is emptied and calculated in evaluate!, so it is not defined here
-    cvi.v = CVIExpandMatrix{Float}(undef, cvi.dim, 0)
-    cvi.G = CVIExpandMatrix{Float}(undef, cvi.dim, 0)
 end
 
 # Incremental parameter update function
@@ -101,7 +85,8 @@ function param_inc!(cvi::cSIL, sample::RealVector, label::Integer)
     if i_label > cvi.n_clusters
         n_new = 1
         v_new = sample
-        CP_new = transpose(sample) * sample
+        # CP_new = transpose(sample) * sample
+        CP_new = dot(sample, sample)
         G_new = sample
         # Compute S_new
         if cvi.n_clusters == 0
@@ -116,17 +101,17 @@ function param_inc!(cvi::cSIL, sample::RealVector, label::Integer)
                 # Column "bmu_temp" - D_new
                 C = (
                     CP_new
-                    + dot(cvi.v[:, cl], cvi.v[:, cl])
-                    - 2 * dot(G_new, cvi.v[:, cl])
+                    + dot(cvi.params.v[:, cl], cvi.params.v[:, cl])
+                    - 2 * dot(G_new, cvi.params.v[:, cl])
                 )
                 S_col_new[cl] = C
                 # Row "bmu_temp" - E
                 C = (
-                    cvi.CP[cl]
-                    + cvi.n[cl] * dot(v_new, v_new)
-                    - 2 * dot(cvi.G[:, cl], v_new)
+                    cvi.params.CP[cl]
+                    + cvi.params.n[cl] * dot(v_new, v_new)
+                    - 2 * dot(cvi.params.G[:, cl], v_new)
                 )
-                S_row_new[cl] = C / cvi.n[cl]
+                S_row_new[cl] = C / cvi.params.n[cl]
             end
             # Column "ind_minus" - F
             S_col_new[i_label] = 0
@@ -134,22 +119,24 @@ function param_inc!(cvi::cSIL, sample::RealVector, label::Integer)
             S_new[:, i_label] = S_col_new
             S_new[i_label, :] = S_row_new
         end
-        # Update 1-D parameters with a push
+        # Expand the parameters for a new cluster
         cvi.n_clusters += 1
-        expand_strategy_1d!(cvi.CP, CP_new)
-        expand_strategy_1d!(cvi.n, n_new)
-        # Update 2-D parameters with appending and reassignment
-        expand_strategy_2d!(cvi.v, v_new)
-        expand_strategy_2d!(cvi.G, G_new)
+        expand_params!(
+            cvi.params,
+            n_new,
+            CP_new,
+            v_new,
+            G_new
+        )
         cvi.S = S_new
     else
-        n_new = cvi.n[i_label] + 1
+        n_new = cvi.params.n[i_label] + 1
         v_new = (
-            (1 - 1 / n_new) .* cvi.v[:, i_label]
+            (1 - 1 / n_new) .* cvi.params.v[:, i_label]
             + (1 / n_new) .* sample
         )
-        CP_new = cvi.CP[i_label] + dot(sample, sample)
-        G_new = cvi.G[:, i_label] + sample
+        CP_new = cvi.params.CP[i_label] + dot(sample, sample)
+        G_new = cvi.params.G[:, i_label] + sample
         # Compute S_new
         S_row_new = zeros(cvi.n_clusters)
         S_col_new = zeros(cvi.n_clusters)
@@ -159,37 +146,37 @@ function param_inc!(cvi::cSIL, sample::RealVector, label::Integer)
                 continue
             end
             # Column "bmu_temp" - D_new
-            diff_x_v = sample - cvi.v[:, cl]
+            diff_x_v = sample - cvi.params.v[:, cl]
             C = (
-                cvi.CP[i_label]
+                cvi.params.CP[i_label]
                 + dot(diff_x_v, diff_x_v)
-                + cvi.n[i_label] * dot(cvi.v[:, cl], cvi.v[:, cl])
-                - 2 * dot(G_new, cvi.v[:, cl])
+                + cvi.params.n[i_label] * dot(cvi.params.v[:, cl], cvi.params.v[:, cl])
+                - 2 * dot(G_new, cvi.params.v[:, cl])
             )
             S_col_new[cl] = C / n_new
             # Row "bmu_temp" - E
             C = (
-                cvi.CP[cl]
-                + cvi.n[cl] * dot(v_new, v_new)
-                - 2 * dot(cvi.G[:, cl], v_new)
+                cvi.params.CP[cl]
+                + cvi.params.n[cl] * dot(v_new, v_new)
+                - 2 * dot(cvi.params.G[:, cl], v_new)
             )
-            S_row_new[cl] = C / cvi.n[cl]
+            S_row_new[cl] = C / cvi.params.n[cl]
         end
         # Column "ind_minus" - F
         diff_x_v = sample - v_new
         C = (
-            cvi.CP[i_label]
+            cvi.params.CP[i_label]
             + dot(diff_x_v, diff_x_v)
-            + cvi.n[i_label] * dot(v_new, v_new)
-            - 2 * dot(cvi.G[:, i_label], v_new)
+            + cvi.params.n[i_label] * dot(v_new, v_new)
+            - 2 * dot(cvi.params.G[:, i_label], v_new)
         )
         S_col_new[i_label] = C / n_new
         S_row_new[i_label] = S_col_new[i_label]
         # Update parameters
-        cvi.n[i_label] = n_new
-        cvi.v[:, i_label] = v_new
-        cvi.CP[i_label] = CP_new
-        cvi.G[:, i_label] = G_new
+        cvi.params.n[i_label] = n_new
+        cvi.params.v[:, i_label] = v_new
+        cvi.params.CP[i_label] = CP_new
+        cvi.params.G[:, i_label] = G_new
         cvi.S[:, i_label] = S_col_new
         cvi.S[i_label, :] = S_row_new
     end
@@ -201,23 +188,25 @@ function param_batch!(cvi::cSIL, data::RealMatrix, labels::IntegerVector)
     cvi.dim, cvi.n_samples = size(data)
     u = unique(labels)
     cvi.n_clusters = length(u)
-    cvi.n = zeros(Integer, cvi.n_clusters)
-    cvi.v = zeros(cvi.dim, cvi.n_clusters)
-    cvi.CP = zeros(cvi.n_clusters)
+    # cvi.params.n = zeros(Integer, cvi.n_clusters)
+    # cvi.params.v = zeros(cvi.dim, cvi.n_clusters)
+    # cvi.params.CP = zeros(cvi.n_clusters)
+    # Initialize the parameters with both correct dimensions
+    cvi.params = CVIElasticParams(cvi.dim, cvi.n_clusters)
     cvi.S = zeros(cvi.n_clusters, cvi.n_clusters)
     D = zeros(cvi.n_samples, cvi.n_clusters)
     for ix = 1:cvi.n_clusters
         subset = data[:, findall(x->x==u[ix], labels)]
-        cvi.n[ix] = size(subset, 2)
-        cvi.v[:, ix] = mean(subset, dims=2)
+        cvi.params.n[ix] = size(subset, 2)
+        cvi.params.v[:, ix] = mean(subset, dims=2)
         # Compute CP in case of switching back to incremental mode
-        d_temp = (data - cvi.v[:, ix] * ones(1, cvi.n_samples)) .^ 2
+        d_temp = (data - cvi.params.v[:, ix] * ones(1, cvi.n_samples)) .^ 2
         D[:, ix] = transpose(sum(d_temp, dims=1))
     end
     for ix = 1:cvi.n_clusters
         for jx = 1:cvi.n_clusters
             subset_ind = findall(x->x==u[jx], labels)
-            cvi.S[ix, jx] = sum(D[subset_ind, ix]) / cvi.n[jx]
+            cvi.S[ix, jx] = sum(D[subset_ind, ix]) / cvi.params.n[jx]
         end
     end
 end
