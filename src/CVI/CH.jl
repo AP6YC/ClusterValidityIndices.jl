@@ -92,7 +92,7 @@ function param_inc!(cvi::CH, sample::RealVector, label::Integer)
         n_new = cvi.params.n[i_label] + 1
         v_new = update_mean(cvi.params.v[:, i_label], sample, n_new)
         delta_v = cvi.params.v[:, i_label] - v_new
-        diff_x_v = sample .- v_new
+        diff_x_v = sample - v_new
         CP_new = (
             cvi.params.CP[i_label]
             + dot(diff_x_v, diff_x_v)
@@ -102,14 +102,17 @@ function param_inc!(cvi::CH, sample::RealVector, label::Integer)
         G_new = (
             cvi.params.G[:, i_label]
             + diff_x_v
-            + cvi.params.n[i_label] .* delta_v
+            + cvi.params.n[i_label] * delta_v
+            # + cvi.params.n[i_label] .* delta_v
         )
         # Update parameters
         update_params!(cvi.params, i_label, n_new, CP_new, v_new, G_new)
     end
-    cvi.SEP = (
-        [cvi.params.n[ix] * sum((cvi.params.v[:, ix] - cvi.mu) .^ 2) for ix = 1:cvi.n_clusters]
-    )
+    # Compute the separation
+    cvi.SEP = zeros(cvi.n_clusters)
+    for ix = 1:cvi.n_clusters
+        cvi.SEP[ix] = cvi.params.n[ix] * sum((cvi.params.v[:, ix] - cvi.mu) .^ 2)
+    end
 end
 
 # Batch parameter update function
