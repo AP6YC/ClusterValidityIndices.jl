@@ -76,16 +76,8 @@ end
 
 # Incremental parameter update function
 function param_inc!(cvi::DB, sample::RealVector, label::Integer)
-    # Get the internal label
-    i_label = get_internal_label!(cvi.label_map, label)
-
-    n_samples_new = cvi.n_samples + 1
-    if isempty(cvi.mu)
-        cvi.mu = sample
-        setup!(cvi, sample)
-    else
-        cvi.mu = update_mean(cvi.mu, sample, n_samples_new)
-    end
+    # Initialize the incremental update
+    i_label = init_cvi_inc!(cvi, sample, label)
 
     if i_label > cvi.n_clusters
         n_new = 1
@@ -141,7 +133,6 @@ function param_inc!(cvi::DB, sample::RealVector, label::Integer)
         cvi.D[:, i_label] = d_column_new
         cvi.D[i_label, :] = transpose(d_column_new)
     end
-    cvi.n_samples = n_samples_new
 end
 
 # Batch parameter update function
