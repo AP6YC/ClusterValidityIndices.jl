@@ -105,10 +105,7 @@ function param_inc!(cvi::CH, sample::RealVector, label::Integer)
             + cvi.params.n[i_label] .* delta_v
         )
         # Update parameters
-        cvi.params.n[i_label] = n_new
-        cvi.params.v[:, i_label] = v_new
-        cvi.params.CP[i_label] = CP_new
-        cvi.params.G[:, i_label] = G_new
+        update_params!(cvi.params, i_label, n_new, CP_new, v_new, G_new)
     end
     cvi.SEP = (
         [cvi.params.n[ix] * sum((cvi.params.v[:, ix] - cvi.mu) .^ 2) for ix = 1:cvi.n_clusters]
@@ -137,10 +134,10 @@ end
 
 # Criterion value evaluation function
 function evaluate!(cvi::CH)
-    # Within group sum of scatters
+    # Within group sum of squares
     WGSS = sum(cvi.params.CP)
     if cvi.n_clusters > 1
-        # Between groups sum of scatters
+        # Between groups sum of squares
         BGSS = sum(cvi.SEP)
         # CH index value
         cvi.criterion_value = (

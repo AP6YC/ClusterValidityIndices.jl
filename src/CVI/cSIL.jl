@@ -164,10 +164,7 @@ function param_inc!(cvi::cSIL, sample::RealVector, label::Integer)
         S_col_new[i_label] = C / n_new
         S_row_new[i_label] = S_col_new[i_label]
         # Update parameters
-        cvi.params.n[i_label] = n_new
-        cvi.params.v[:, i_label] = v_new
-        cvi.params.CP[i_label] = CP_new
-        cvi.params.G[:, i_label] = G_new
+        update_params!(cvi.params, i_label, n_new, CP_new, v_new, G_new)
         cvi.S[:, i_label] = S_col_new
         cvi.S[i_label, :] = S_row_new
     end

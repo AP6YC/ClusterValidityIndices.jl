@@ -92,10 +92,25 @@ Container for the common elastic parameters of CVIs.
 This is defined as an immutable struct because the
 """
 struct CVIElasticParams
-    n::CVIExpandVector{Int}         # dim
-    CP::CVIExpandVector{Float}      # dim
-    v::CVIExpandMatrix{Float}       # dim x n_clusters
-    G::CVIExpandMatrix{Float}       # dim x n_clusters
+    """
+    Number of samples per cluster, size of `cvi.dim`.
+    """
+    n::CVIExpandVector{Int}
+
+    """
+    Compactness of each cluster, size of `cvi.dim`.
+    """
+    CP::CVIExpandVector{Float}
+
+    """
+    Prototype/centroid of each cluster, size of `(cvi.dim, cvi.n_clusters)`.
+    """
+    v::CVIExpandMatrix{Float}
+
+    """
+    Compacness parameter G, size of `(cvi.dim, cvi.n_clusters)`
+    """
+    G::CVIExpandMatrix{Float}
 end
 
 # -----------------------------------------------------------------------------
@@ -121,17 +136,6 @@ function CVIElasticParams(dim::Integer=0, n_clusters::Integer=0)
     )
 end
 
-
-# """
-# Empty constructor for the CVIElasticParams that creates an empty, unprimed struct.
-
-# This constructor should only be used when initializing empty CVIs before setup.
-# CVI setup should instead create this struct with a specified dimension `dim`.
-# """
-# function CVIElasticParams()
-#     return CVIElasticParams(0)
-# end
-
 # -----------------------------------------------------------------------------
 # FUNCTIONS
 # -----------------------------------------------------------------------------
@@ -154,6 +158,11 @@ end
 
 """
 Initializes incremental CVI updates.
+
+# Arguments
+- `cvi::CVI`:
+- `sample::RealVector`:
+- `label::Integer`:
 """
 function init_cvi_inc!(cvi::CVI, sample::RealVector, label::Integer)
     # Get the internal label
@@ -234,6 +243,27 @@ function expand_params!(
     # Update 2-D parameters with appending and reassignment
     expand_strategy_2d!(params.v, v)
     expand_strategy_2d!(params.G, G)
+
+    return
+end
+
+"""
+"""
+function update_params!(
+    params::CVIElasticParams,
+    index::Integer,
+    n::Integer,
+    CP::Float,
+    v::RealVector,
+    G::RealVector
+)
+    # Update parameters
+    params.n[index] = n
+    params.CP[index] = CP
+    params.v[:, index] = v
+    params.G[:, index] = G
+
+    return
 end
 
 """
