@@ -64,7 +64,7 @@ function cSIL()
         LabelMap(),                             # label_map
         0,                                      # dim
         0,                                      # n_samples
-        CVIElasticParams(),
+        CVIElasticParams(),                     # params
         Matrix{Float}(undef, 0, 0),             # S
         Vector{Float}(undef, 0),                # sil_coefs
         0,                                      # n_clusters

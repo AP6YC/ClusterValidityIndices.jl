@@ -69,7 +69,7 @@ function CH()
         0,                                      # n_samples
         Vector{Float}(undef, 0),                # mu
         Vector{Float}(undef, 0),                # SEP
-        CVIElasticParams(0),
+        CVIElasticParams(),                     # params
         0,                                      # n_clusters
         0.0                                     # criterion_value
     )

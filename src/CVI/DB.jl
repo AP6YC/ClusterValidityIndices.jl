@@ -68,7 +68,7 @@ function DB()
         Vector{Float}(undef, 0),                # mu
         Matrix{Float}(undef, 0, 0),             # D
         CVIExpandVector{Float}(undef, 0),       # S
-        CVIElasticParams(),
+        CVIElasticParams(),                     # params
         0,                                      # n_clusters
         0.0                                     # criterion_value
     )

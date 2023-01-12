@@ -40,7 +40,7 @@ mutable struct XB <: CVI
     n_samples::Int
     mu::Vector{Float}                       # dim
     D::Matrix{Float}                        # n_clusters x n_clusters
-    params::CVIElasticParams,
+    params::CVIElasticParams
     SEP::Float
     WGSS::Float
     n_clusters::Int
@@ -68,7 +68,7 @@ function XB()
         0,                                      # n_samples
         Vector{Float}(undef, 0),                # mu
         Matrix{Float}(undef, 0, 0),             # D
-        CVIElasticParams,
+        CVIElasticParams(0),                    # params
         0.0,                                    # SEP
         0.0,                                    # WGSS
         0,                                      # n_clusters
@@ -76,30 +76,10 @@ function XB()
     )
 end
 
-# # Setup function
-# function setup!(cvi::XB, sample::RealVector)
-#     # Get the feature dimension
-#     cvi.dim = length(sample)
-#     # Initialize the 2-D arrays with the correct feature dimension
-#     cvi.params.v = CVIExpandMatrix{Float}(undef, cvi.dim, 0)
-#     cvi.params.G = CVIExpandMatrix{Float}(undef, cvi.dim, 0)
-# end
-
 # Incremental parameter update function
 function param_inc!(cvi::XB, sample::RealVector, label::Integer)
-    # Get the internal label
-    i_label = get_internal_label!(cvi.label_map, label)
-
-    n_samples_new = cvi.n_samples + 1
-    if isempty(cvi.mu)
-        mu_new = sample
-        setup!(cvi, sample)
-    else
-        mu_new = (
-            (1 - 1 / n_samples_new) .* cvi.mu
-            + (1 / n_samples_new) .* sample
-        )
-    end
+    # Initialize the incremental update
+    i_label = init_cvi_inc!(cvi, sample, label)
 
     if i_label > cvi.n_clusters
         n_new = 1
@@ -161,8 +141,6 @@ function param_inc!(cvi::XB, sample::RealVector, label::Integer)
         cvi.D[:, i_label] = d_column_new
         cvi.D[i_label, :] = transpose(d_column_new)
     end
-    cvi.n_samples = n_samples_new
-    cvi.mu = mu_new
 end
 
 # Incremental parameter update function
@@ -173,9 +151,8 @@ function param_batch!(cvi::XB, data::RealMatrix, labels::IntegerVector)
     # u = findfirst.(isequal.(unique(labels)), [labels])
     u = unique(labels)
     cvi.n_clusters = length(u)
-    cvi.params.n = zeros(Integer, cvi.n_clusters)
-    cvi.params.v = zeros(cvi.dim, cvi.n_clusters)
-    cvi.params.CP = zeros(cvi.n_clusters)
+    # Initialize the parameters with both correct dimensions
+    cvi.params = CVIElasticParams(cvi.dim, cvi.n_clusters)
     cvi.D = zeros(cvi.n_clusters, cvi.n_clusters)
     for ix = 1:cvi.n_clusters
         subset = data[:, findall(x->x==u[ix], labels)]

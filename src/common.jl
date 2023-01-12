@@ -150,8 +150,8 @@ Returns an updated mean vector with a new vector and adjusted count of samples.
 """
 function update_mean(old_mean::RealVector, sample::RealVector, n_new::Integer)
     new_mean = (
-        (1 - 1 / n_new) .* old_mean
-        + (1 / n_new) .* sample
+        (1 - 1 / n_new) * old_mean
+        + (1 / n_new) * sample
     )
     return new_mean
 end
@@ -224,10 +224,10 @@ end
 Expands the CVIElasticParams struct with the provided CVI parameters.
 
 # Arguments
-- `params::CVIElasticParams`:
-- `n::Integer`:
-- `CP::Float`:
-- `v::RealVector`:
+- `params::CVIElasticParams`: the CVI elastic parameters to expand.
+- `n::Integer`: the sample count of the new cluster.
+- `CP::Float`: the compactness of the new cluster.
+- `v::RealVector`: the prototype of the new cluster.
 - `G::RealVector`:
 """
 function expand_params!(
@@ -248,6 +248,15 @@ function expand_params!(
 end
 
 """
+Updates the elastic CVI parameters in place at `index`.
+
+# Arguments
+- `params::CVIElasticParams`: the CVI elastic parameters to update in place.
+- `index::Integer`: the cluster index to update for all elastic parameters.
+- `n::Integer`: the new cluster count at the index.
+- `CP::Float`: the new compactness at the index.
+- `v::RealVector`: the new prototype at the index.
+- `G::RealVector`:
 """
 function update_params!(
     params::CVIElasticParams,
