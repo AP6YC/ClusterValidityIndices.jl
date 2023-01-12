@@ -76,44 +76,39 @@ end
 
 # Incremental parameter update function
 function param_inc!(cvi::cSIL, sample::RealVector, label::Integer)
-    # # Get the internal label
-    # i_label = get_internal_label!(cvi.label_map, label)
-
-    # n_samples_new = cvi.n_samples + 1
-    # if cvi.n_samples == 0
-    #     setup!(cvi, sample)
-    # end
     # Initialize the incremental update
     i_label = init_cvi_inc!(cvi, sample, label)
 
     if i_label > cvi.n_clusters
-        n_new = 1
-        v_new = sample
-        # CP_new = transpose(sample) * sample
-        CP_new = dot(sample, sample)
-        G_new = sample
+        # Add a new cluster to the CVI
+        add_cluster!(cvi, sample, alt_CP=true)
+
         # Compute S_new
-        if cvi.n_clusters == 0
-            # S_new = 0.0
+        if cvi.n_clusters == 1
             S_new = zeros(1,1)
         else
-            S_new = zeros(cvi.n_clusters + 1, cvi.n_clusters + 1)
-            S_new[1:cvi.n_clusters, 1:cvi.n_clusters] = cvi.S
-            S_row_new = zeros(cvi.n_clusters + 1)
-            S_col_new = zeros(cvi.n_clusters + 1)
-            for cl = 1:cvi.n_clusters
+            S_new = zeros(cvi.n_clusters, cvi.n_clusters)
+            S_new[1:cvi.n_clusters - 1, 1:cvi.n_clusters - 1] = cvi.S
+            S_row_new = zeros(cvi.n_clusters)
+            S_col_new = zeros(cvi.n_clusters)
+            for cl = 1:cvi.n_clusters - 1
                 # Column "bmu_temp" - D_new
                 C = (
-                    CP_new
+                    # CP_new
+                    cvi.params.CP[cvi.n_clusters]
                     + dot(cvi.params.v[:, cl], cvi.params.v[:, cl])
-                    - 2 * dot(G_new, cvi.params.v[:, cl])
+                    # - 2 * dot(G_new, cvi.params.v[:, cl])
+                    - 2 * dot(cvi.params.G[:, cvi.n_clusters], cvi.params.v[:, cl])
                 )
                 S_col_new[cl] = C
                 # Row "bmu_temp" - E
                 C = (
                     cvi.params.CP[cl]
-                    + cvi.params.n[cl] * dot(v_new, v_new)
-                    - 2 * dot(cvi.params.G[:, cl], v_new)
+                    # Replacing v_new with sample here due to equivalence
+                    # + cvi.params.n[cl] * dot(v_new, v_new)
+                    + cvi.params.n[cl] * dot(sample, sample)
+                    # - 2 * dot(cvi.params.G[:, cl], v_new)
+                    - 2 * dot(cvi.params.G[:, cl], sample)
                 )
                 S_row_new[cl] = C / cvi.params.n[cl]
             end
@@ -123,9 +118,7 @@ function param_inc!(cvi::cSIL, sample::RealVector, label::Integer)
             S_new[:, i_label] = S_col_new
             S_new[i_label, :] = S_row_new
         end
-        # Expand the parameters for a new cluster
-        cvi.n_clusters += 1
-        expand_params!(cvi.params, n_new, CP_new, v_new, G_new)
+        # Replace S
         cvi.S = S_new
     else
         n_new = cvi.params.n[i_label] + 1

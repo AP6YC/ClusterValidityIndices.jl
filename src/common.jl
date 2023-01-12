@@ -253,13 +253,14 @@ Adds a cluster to the a CVI, updating the count and elastic parameters according
 # Arguments
 - `cvi::CVI`: the CVI to add a cluster to.
 - `sample::RealVector`: the feature sample to base the new cluster off of.
+- `alt_CP::Bool`: optional, alternate compactness definition.
 """
-function add_cluster!(cvi::CVI, sample::RealVector)
+function add_cluster!(cvi::CVI, sample::RealVector ; alt_CP::Bool=false)
     # Set the parameters for a new cluster
     n_new = 1
     v_new = sample
-    CP_new = 0.0
-    G_new = zeros(cvi.dim)
+    CP_new = alt_CP ? dot(sample, sample) : 0.0
+    G_new = alt_CP ? sample : zeros(cvi.dim)
 
     # Expand the parameters for a new cluster
     cvi.n_clusters += 1

@@ -80,27 +80,24 @@ function param_inc!(cvi::DB, sample::RealVector, label::Integer)
     i_label = init_cvi_inc!(cvi, sample, label)
 
     if i_label > cvi.n_clusters
-        n_new = 1
-        v_new = sample
-        CP_new = 0.0
-        G_new = zeros(cvi.dim)
+        # Add a new cluster to the CVI
+        add_cluster!(cvi, sample)
         S_new = 0.0
-        if cvi.n_clusters == 0
+        if cvi.n_clusters == 1
             D_new = zeros(1, 1)
         else
-            D_new = zeros(cvi.n_clusters + 1, cvi.n_clusters + 1)
-            D_new[1:cvi.n_clusters, 1:cvi.n_clusters] = cvi.D
-            d_column_new = zeros(cvi.n_clusters + 1)
-            for jx = 1:cvi.n_clusters
-                d_column_new[jx] = sum((v_new - cvi.params.v[:, jx]) .^ 2)
+            D_new = zeros(cvi.n_clusters, cvi.n_clusters)
+            D_new[1:cvi.n_clusters - 1, 1:cvi.n_clusters - 1] = cvi.D
+            d_column_new = zeros(cvi.n_clusters)
+            for jx = 1:cvi.n_clusters - 1
+                # d_column_new[jx] = sum((v_new - cvi.params.v[:, jx]) .^ 2)
+                d_column_new[jx] = sum((sample - cvi.params.v[:, jx]) .^ 2)
             end
             D_new[:, i_label] = d_column_new
             D_new[i_label, :] = transpose(d_column_new)
         end
         # Expand the parameters for a new cluster
-        cvi.n_clusters += 1
         expand_strategy_1d!(cvi.S, S_new)
-        expand_params!(cvi.params, n_new, CP_new, v_new, G_new)
         cvi.D = D_new
     else
         n_new = cvi.params.n[i_label] + 1

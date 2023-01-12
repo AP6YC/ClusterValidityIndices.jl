@@ -81,6 +81,7 @@ function param_inc!(cvi::CH, sample::RealVector, label::Integer)
     i_label = init_cvi_inc!(cvi, sample, label)
 
     if i_label > cvi.n_clusters
+        # Add a new cluster to the CVI
         add_cluster!(cvi, sample)
     else
         n_new = cvi.params.n[i_label] + 1
