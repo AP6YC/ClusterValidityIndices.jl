@@ -39,13 +39,13 @@ mutable struct DB <: CVI
     dim::Int
     n_samples::Int
     mu_data::Vector{Float}          # dim
+    R::Matrix{Float}                # dim x n_clusters
+    D::Matrix{Float}                # n_clusters x n_clusters
     n::CVIVector{Int}               # dim
     v::CVIMatrix{Float}             # dim x n_clusters
     CP::CVIVector{Float}            # dim
     S::CVIVector{Float}             # dim
-    R::CVIMatrix{Float}             # dim x n_clusters
     G::CVIMatrix{Float}             # dim x n_clusters
-    D::CVIMatrix{Float}             # n_clusters x n_clusters
     n_clusters::Int
     criterion_value::Float
 end
@@ -69,14 +69,14 @@ function DB()
         LabelMap(),                     # label_map
         0,                              # dim
         0,                              # n_samples
-        CVIVector{Float}(undef, 0),     # mu_data
+        Vector{Float}(undef, 0),        # mu_data
+        Matrix{Float}(undef, 0, 0),     # R
+        Matrix{Float}(undef, 0, 0),     # D
         CVIVector{Int}(undef, 0),       # n
         CVIMatrix{Float}(undef, 0, 0),  # v
         CVIVector{Float}(undef, 0),     # CP
         CVIVector{Float}(undef, 0),     # S
-        CVIMatrix{Float}(undef, 0, 0),  # R
         CVIMatrix{Float}(undef, 0, 0),  # G
-        CVIMatrix{Float}(undef, 0, 0),  # D
         0,                              # n_clusters
         0.0                             # criterion_value
     )

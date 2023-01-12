@@ -35,10 +35,10 @@ mutable struct PS <: CVI
     n_samples::Int
     n::CVIVector{Int}           # dim
     v::CVIMatrix{Float}         # dim x n_clusters
-    D::CVIMatrix{Float}         # n_clusters x n_clusters
-    v_bar::CVIVector{Float}     # dim
-    PS_i::CVIVector{Float}      # n_clusters
-    beta_t::Float
+    D::Matrix{Float}            # n_clusters x n_clusters
+    # v_bar::CVIVector{Float}     # dim
+    # PS_i::CVIVector{Float}      # n_clusters
+    # beta_t::Float
     n_clusters::Int
     criterion_value::Float
 end
@@ -64,10 +64,10 @@ function PS()
         0,                              # n_samples
         CVIVector{Int}(undef, 0),       # n
         CVIMatrix{Float}(undef, 0, 0),  # v
-        CVIMatrix{Float}(undef, 0, 0),  # D
-        CVIVector{Float}(undef, 0),     # v_bar
-        CVIVector{Float}(undef, 0),     # PS_i
-        0.0,                            # beta_t
+        Matrix{Float}(undef, 0, 0),     # D
+        # CVIVector{Float}(undef, 0),     # v_bar
+        # CVIVector{Float}(undef, 0),     # PS_i
+        # 0.0,                            # beta_t
         0,                              # n_clusters
         0.0                             # criterion_value
     )
@@ -159,24 +159,35 @@ end
 # Criterion value evaluation function
 function evaluate!(cvi::PS)
     if cvi.n_clusters > 1
-        cvi.v_bar = vec(mean(cvi.v, dims=2))
-        cvi.beta_t = 0.0
-        cvi.PS_i = zeros(cvi.n_clusters)
+        # cvi.v_bar = vec(mean(cvi.v, dims=2))
+        # cvi.beta_t = 0.0
+        # cvi.PS_i = zeros(cvi.n_clusters)
+        v_bar = vec(mean(cvi.v, dims=2))
+        beta_t = 0.0
+        PS_i = zeros(cvi.n_clusters)
         for ix = 1:cvi.n_clusters
-            delta_v = cvi.v[:, ix] - cvi.v_bar
-            cvi.beta_t = cvi.beta_t + dot(delta_v, delta_v)
+            # delta_v = cvi.v[:, ix] - cvi.v_bar
+            # cvi.beta_t = cvi.beta_t + dot(delta_v, delta_v)
+            delta_v = cvi.v[:, ix] - v_bar
+            beta_t += dot(delta_v, delta_v)
         end
-        cvi.beta_t /= cvi.n_clusters
+        # cvi.beta_t /= cvi.n_clusters
+        beta_t /= cvi.n_clusters
         n_max = maximum(cvi.n)
         for ix = 1:cvi.n_clusters
             d = cvi.D[:, ix]
             # Exclude the category itself in the minimum calculation
             d[ix] = Inf
-            cvi.PS_i[ix] = (
+            PS_i[ix] = (
                 (cvi.n[ix] / n_max)
-                - exp(-minimum(d) / cvi.beta_t)
+                - exp(-minimum(d) / beta_t)
             )
+            # cvi.PS_i[ix] = (
+            #     (cvi.n[ix] / n_max)
+            #     - exp(-minimum(d) / cvi.beta_t)
+            # )
         end
-        cvi.criterion_value = sum(cvi.PS_i)
+        # cvi.criterion_value = sum(cvi.PS_i)
+        cvi.criterion_value = sum(PS_i)
     end
 end

@@ -48,11 +48,11 @@ mutable struct rCIP <: CVI
     label_map::LabelMap
     dim::Int
     n_samples::Int
+    D::Matrix{Float}                # n_clusters x n_clusters
+    delta_term::Matrix{Float}       # dim x dim
     n::CVIVector{Int}               # dim
     v::CVIMatrix{Float}             # dim x n_clusters
     sigma::CVITensor{Float}         # dim x dim x n_clusters
-    D::CVIMatrix{Float}             # n_clusters x n_clusters
-    delta_term::CVIMatrix{Float}    # dim x dim
     constant::Float
     n_clusters::Int
     criterion_value::Float
@@ -77,11 +77,11 @@ function rCIP()
         LabelMap(),                         # label_map
         0,                                  # dim
         0,                                  # n_samples
+        Matrix{Float}(undef, 0, 0),         # D
+        Matrix{Float}(undef, 0, 0),         # delta_term
         CVIVector{Int}(undef, 0),           # n
         CVIMatrix{Float}(undef, 0, 0),      # v
         CVITensor{Float}(undef, 0, 0, 0),   # sigma
-        CVIMatrix{Float}(undef, 0, 0),      # D
-        Matrix{Float}(undef, 0, 0),         # delta_term
         0.0,                                # constant
         0,                                  # n_clusters
         0.0                                 # criterion_value

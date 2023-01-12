@@ -44,12 +44,12 @@ mutable struct GD53 <: CVI
     label_map::LabelMap
     dim::Int
     n_samples::Int
-    mu_data::CVIVector{Float}   # dim
+    mu_data::Vector{Float}      # dim
+    D::Matrix{Float}            # n_clusters x n_clusters
     n::CVIVector{Int}           # dim
     v::CVIMatrix{Float}         # dim x n_clusters
     CP::CVIVector{Float}        # dim
     G::CVIMatrix{Float}         # dim x n_clusters
-    D::CVIMatrix{Float}         # n_clusters x n_clusters
     inter::Float
     intra::Float
     n_clusters::Int
@@ -75,12 +75,12 @@ function GD53()
         LabelMap(),                     # label_map
         0,                              # dim
         0,                              # n_samples
-        CVIVector{Float}(undef, 0),     # mu_data
+        Vector{Float}(undef, 0),        # mu_data
+        Matrix{Float}(undef, 0, 0),     # D
         CVIVector{Int}(undef, 0),       # n
         CVIMatrix{Float}(undef, 0, 0),  # v
         CVIVector{Float}(undef, 0),     # CP
         CVIMatrix{Float}(undef, 0, 0),  # G
-        CVIMatrix{Float}(undef, 0, 0),  # D
         0.0,                            # inter
         0.0,                            # intra
         0,                              # n_clusters

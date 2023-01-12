@@ -56,6 +56,7 @@ module ClusterValidityIndices
 
 # Full usings (which supports comma-separated import notation)
 using
+    Accessors,              # @set
     DocStringExtensions,    # Docstring utilities
     ElasticArrays,          # Elastic matrices
     LinearAlgebra,          # All fast linalg functions
