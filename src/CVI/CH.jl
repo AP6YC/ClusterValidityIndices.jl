@@ -77,16 +77,8 @@ end
 
 # Incremental parameter update function
 function param_inc!(cvi::CH, sample::RealVector, label::Integer)
-    # Get the internal label
-    i_label = get_internal_label!(cvi.label_map, label)
-
-    n_samples_new = cvi.n_samples + 1
-    if isempty(cvi.mu)
-        mu_new = sample
-        setup!(cvi, sample)
-    else
-        mu_new = update_mean(cvi.mu, sample, n_samples_new)
-    end
+    # Initialize the incremental update
+    i_label = init_cvi_inc!(cvi, sample, label)
 
     if i_label > cvi.n_clusters
         n_new = 1
@@ -95,13 +87,7 @@ function param_inc!(cvi::CH, sample::RealVector, label::Integer)
         G_new = zeros(cvi.dim)
         # Expand the parameters for a new cluster
         cvi.n_clusters += 1
-        expand_params!(
-            cvi.params,
-            n_new,
-            CP_new,
-            v_new,
-            G_new
-        )
+        expand_params!(cvi.params, n_new, CP_new, v_new, G_new)
     else
         n_new = cvi.params.n[i_label] + 1
         v_new = update_mean(cvi.params.v[:, i_label], sample, n_new)
@@ -124,8 +110,6 @@ function param_inc!(cvi::CH, sample::RealVector, label::Integer)
         cvi.params.CP[i_label] = CP_new
         cvi.params.G[:, i_label] = G_new
     end
-    cvi.n_samples = n_samples_new
-    cvi.mu = mu_new
     cvi.SEP = (
         [cvi.params.n[ix] * sum((cvi.params.v[:, ix] - cvi.mu) .^ 2) for ix = 1:cvi.n_clusters]
     )

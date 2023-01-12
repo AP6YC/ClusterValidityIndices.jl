@@ -153,6 +153,29 @@ function update_mean(old_mean::RealVector, sample::RealVector, n_new::Integer)
 end
 
 """
+Initializes incremental CVI updates.
+"""
+function init_cvi_inc!(cvi::CVI, sample::RealVector, label::Integer)
+    # Get the internal label
+    i_label = get_internal_label!(cvi.label_map, label)
+
+    # Increment to a new sample count
+    cvi.n_samples += 1
+
+    # If uninitialized, setup the CVI
+    if isempty(cvi.mu)
+        cvi.mu = sample
+        setup!(cvi, sample)
+    # Otherwise, update the mean
+    else
+        cvi.mu = update_mean(cvi.mu, sample, cvi.n_samples)
+    end
+
+    # Return the internal label
+    return i_label
+end
+
+"""
 Implements the strategy for expanding a 1-D CVIExpandVector with an arbitrary number.
 
 # Arguments

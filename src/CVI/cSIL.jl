@@ -121,20 +121,11 @@ function param_inc!(cvi::cSIL, sample::RealVector, label::Integer)
         end
         # Expand the parameters for a new cluster
         cvi.n_clusters += 1
-        expand_params!(
-            cvi.params,
-            n_new,
-            CP_new,
-            v_new,
-            G_new
-        )
+        expand_params!(cvi.params, n_new, CP_new, v_new, G_new)
         cvi.S = S_new
     else
         n_new = cvi.params.n[i_label] + 1
-        v_new = (
-            (1 - 1 / n_new) .* cvi.params.v[:, i_label]
-            + (1 / n_new) .* sample
-        )
+        v_new = update_mean(cvi.params.v[:, i_label], sample, n_new)
         CP_new = cvi.params.CP[i_label] + dot(sample, sample)
         G_new = cvi.params.G[:, i_label] + sample
         # Compute S_new
@@ -188,9 +179,6 @@ function param_batch!(cvi::cSIL, data::RealMatrix, labels::IntegerVector)
     cvi.dim, cvi.n_samples = size(data)
     u = unique(labels)
     cvi.n_clusters = length(u)
-    # cvi.params.n = zeros(Integer, cvi.n_clusters)
-    # cvi.params.v = zeros(cvi.dim, cvi.n_clusters)
-    # cvi.params.CP = zeros(cvi.n_clusters)
     # Initialize the parameters with both correct dimensions
     cvi.params = CVIElasticParams(cvi.dim, cvi.n_clusters)
     cvi.S = zeros(cvi.n_clusters, cvi.n_clusters)
