@@ -5,9 +5,9 @@
 All common types, aliases, structs, and methods for the ClusterValidityIndices.jl package.
 """
 
-# --------------------------------------------------------------------------- #
+# -----------------------------------------------------------------------------
 # DOCSTRING TEMPLATES
-# --------------------------------------------------------------------------- #
+# -----------------------------------------------------------------------------
 
 # Constants template
 @template CONSTANTS =
@@ -42,9 +42,9 @@ $(DOCSTRING)
 $(METHODLIST)
 """
 
-# --------------------------------------------------------------------------- #
+# -----------------------------------------------------------------------------
 # ABSTRACT TYPES
-# --------------------------------------------------------------------------- #
+# -----------------------------------------------------------------------------
 
 # Type for all CVIs
 """
@@ -53,9 +53,9 @@ All index instantiations are subtypes of `CVI`.
 """
 abstract type CVI end
 
-# --------------------------------------------------------------------------- #
-# CONSTANTS
-# --------------------------------------------------------------------------- #
+# -----------------------------------------------------------------------------
+# ALIASES
+# -----------------------------------------------------------------------------
 
 """
 Internal label mapping for incremental CVIs.
@@ -82,9 +82,56 @@ The type of vector used by the ClusterValidityIndices.jl package, used to config
 """
 const CVIExpandVector = Vector
 
-# --------------------------------------------------------------------------- #
+# -----------------------------------------------------------------------------
+# STRUCTS
+# -----------------------------------------------------------------------------
+
+"""
+Container for the common elastic parameters of CVIs.
+
+This is defined as an immutable struct because the
+"""
+struct CVIElasticParams
+    n::CVIExpandVector{Int}         # dim
+    CP::CVIExpandVector{Float}      # dim
+    v::CVIExpandMatrix{Float}       # dim x n_clusters
+    G::CVIExpandMatrix{Float}       # dim x n_clusters
+end
+
+# -----------------------------------------------------------------------------
+# CONSTRUCTORS
+# -----------------------------------------------------------------------------
+
+"""
+Constructor for the CVIElasticParams struct, using the dimension to prime the 2-D elastic matrices.
+
+# Arguments
+- `dim::Integer`: the dimension to use for the first dimension of the 2-D matrices.
+- `n_clusters::Integer`: optional, the number of clusters if known. Default 0.
+"""
+function CVIElasticParams(dim::Integer, n_clusters::Integer=0)
+    return CVIElasticParams(
+        CVIExpandVector{Int}(undef, n_clusters),             # n
+        CVIExpandVector{Float}(undef, n_clusters),           # CP
+        CVIExpandMatrix{Float}(undef, dim, n_clusters),      # v
+        CVIExpandMatrix{Float}(undef, dim, n_clusters),      # G
+    )
+end
+
+
+"""
+Empty constructor for the CVIElasticParams that creates an empty, unprimed struct.
+
+This constructor should only be used when initializing empty CVIs before setup.
+CVI setup should instead create this struct with a specified dimension `dim`.
+"""
+function CVIElasticParams()
+    return CVIElasticParams(0)
+end
+
+# -----------------------------------------------------------------------------
 # FUNCTIONS
-# --------------------------------------------------------------------------- #
+# -----------------------------------------------------------------------------
 
 """
 Implements the strategy for expanding a 1-D CVIExpandVector with an arbitrary number.
@@ -121,6 +168,46 @@ function expand_strategy_3d!(cvi_mat::CVIExpandTensor, mat_new::RealMatrix)
     # Use the ElasticArray append! function
     append!(cvi_mat, mat_new)
 end
+
+"""
+Expands the CVIElasticParams struct with the provided CVI parameters.
+
+# Arguments
+- `params::CVIElasticParams`:
+- `n::Integer`:
+- `CP::Float`:
+- `v::RealVector`:
+- `G::RealVector`:
+"""
+function expand_params!(
+    params::CVIElasticParams,
+    n::Integer,
+    CP::Float,
+    v::RealVector,
+    G::RealVector
+)
+    # Update 1-D parameters with a push
+    expand_strategy_1d!(params.n, n)
+    expand_strategy_1d!(params.CP, CP)
+    # Update 2-D parameters with appending and reassignment
+    expand_strategy_2d!(params.v, v)
+    expand_strategy_2d!(params.G, G)
+end
+
+"""
+Internal method, sets up the CVI based upon the type of the provided sample.
+
+# Arguments
+- `cvi::CVI`: the CVI to setup to the correct dimensions.
+- `sample::RealVector`: The sample to use as a basis for setting up the CVI.
+"""
+function setup!(cvi::CVI, sample::RealVector)
+    # Get the feature dimension
+    cvi.dim = length(sample)
+    # Initialize the elastic parameters with the correct dimension
+    cvi.params = CVIElasticParams(cvi.dim)
+end
+
 
 """
 Compute and return the criterion value incrementally.
@@ -227,9 +314,9 @@ function get_internal_label!(label_map::LabelMap, label::Integer)
     return internal_label
 end
 
-# --------------------------------------------------------------------------- #
+# -----------------------------------------------------------------------------
 # COMMON DOCUMENTATION
-# --------------------------------------------------------------------------- #
+# -----------------------------------------------------------------------------
 
 @doc raw"""
 Compute the CVI parameters incrementally.
@@ -293,16 +380,3 @@ julia> my_criterion_value = my_cvi.criterion_value
 ```
 """
 evaluate!(cvi::CVI)
-
-@doc raw"""
-Internal method, sets up the CVI based upon the type of the provided sample.
-
-# Arguments
-- `cvi::CVI`: the CVI to setup to the correct dimensions.
-- `sample::RealVector`: The sample to use as a basis for setting up the CVI.
-"""
-setup!(cvi::CVI, sample::RealVector)
-
-# function append_matrix!(original::RealMatrix, new_vector::RealVector)
-#     append!(original, new_vector)
-# end

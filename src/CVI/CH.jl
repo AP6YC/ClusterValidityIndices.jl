@@ -43,10 +43,11 @@ mutable struct CH <: CVI
     n_samples::Int
     mu::Vector{Float}               # dim
     SEP::Vector{Float}              # dim
-    n::CVIExpandVector{Int}         # dim
-    v::CVIExpandMatrix{Float}       # dim x n_clusters
-    CP::CVIExpandVector{Float}      # dim
-    G::CVIExpandMatrix{Float}       # dim x n_clusters
+    params::CVIElasticParams
+    # n::CVIExpandVector{Int}         # dim
+    # v::CVIExpandMatrix{Float}       # dim x n_clusters
+    # CP::CVIExpandVector{Float}      # dim
+    # G::CVIExpandMatrix{Float}       # dim x n_clusters
     BGSS::Float
     WGSS::Float
     n_clusters::Int
@@ -74,25 +75,12 @@ function CH()
         0,                                      # n_samples
         Vector{Float}(undef, 0),                # mu
         Vector{Float}(undef, 0),                # SEP
-        CVIExpandVector{Int}(undef, 0),         # n
-        CVIExpandMatrix{Float}(undef, 0, 0),    # v
-        CVIExpandVector{Float}(undef, 0),       # CP
-        CVIExpandMatrix{Float}(undef, 0, 0),    # G
+        CVIElasticParams(0),
         0.0,                                    # BGSS
         0.0,                                    # WGSS
         0,                                      # n_clusters
         0.0                                     # criterion_value
     )
-end
-
-# Setup function
-function setup!(cvi::CH, sample::RealVector)
-    # Get the feature dimension
-    cvi.dim = length(sample)
-    # Initialize the augmenting 2-D arrays with the correct feature dimension
-    # NOTE: R is emptied and calculated in evaluate!, so it is not defined here
-    cvi.v = CVIExpandMatrix{Float}(undef, cvi.dim, 0)
-    cvi.G = CVIExpandMatrix{Float}(undef, cvi.dim, 0)
 end
 
 # Incremental parameter update function
@@ -115,41 +103,43 @@ function param_inc!(cvi::CH, sample::RealVector, label::Integer)
         v_new = sample
         CP_new = 0.0
         G_new = zeros(cvi.dim)
-        # Update 1-D parameters with a push
+        # Expand the parameters for a new cluster
         cvi.n_clusters += 1
-        expand_strategy_1d!(cvi.CP, CP_new)
-        expand_strategy_1d!(cvi.n, n_new)
-        # Update 2-D parameters with appending and reassignment
-        expand_strategy_2d!(cvi.v, v_new)
-        expand_strategy_2d!(cvi.G, G_new)
-    else
-        n_new = cvi.n[i_label] + 1
-        v_new = (
-            (1 - 1/n_new) .* cvi.v[:, i_label] + (1 / n_new) .* sample
+        expand_params!(
+            cvi.params,
+            n_new,
+            CP_new,
+            v_new,
+            G_new
         )
-        delta_v = cvi.v[:, i_label] - v_new
+    else
+        n_new = cvi.params.n[i_label] + 1
+        v_new = (
+            (1 - 1/n_new) .* cvi.params.v[:, i_label] + (1 / n_new) .* sample
+        )
+        delta_v = cvi.params.v[:, i_label] - v_new
         diff_x_v = sample .- v_new
         CP_new = (
-            cvi.CP[i_label]
+            cvi.params.CP[i_label]
             + dot(diff_x_v, diff_x_v)
-            + cvi.n[i_label] * dot(delta_v, delta_v)
-            + 2 * dot(delta_v, cvi.G[:, i_label])
+            + cvi.params.n[i_label] * dot(delta_v, delta_v)
+            + 2 * dot(delta_v, cvi.params.G[:, i_label])
         )
         G_new = (
-            cvi.G[:, i_label]
+            cvi.params.G[:, i_label]
             + diff_x_v
-            + cvi.n[i_label] .* delta_v
+            + cvi.params.n[i_label] .* delta_v
         )
         # Update parameters
-        cvi.n[i_label] = n_new
-        cvi.v[:, i_label] = v_new
-        cvi.CP[i_label] = CP_new
-        cvi.G[:, i_label] = G_new
+        cvi.params.n[i_label] = n_new
+        cvi.params.v[:, i_label] = v_new
+        cvi.params.CP[i_label] = CP_new
+        cvi.params.G[:, i_label] = G_new
     end
     cvi.n_samples = n_samples_new
     cvi.mu = mu_new
     cvi.SEP = (
-        [cvi.n[ix] * sum((cvi.v[:, ix] - cvi.mu) .^ 2) for ix = 1:cvi.n_clusters]
+        [cvi.params.n[ix] * sum((cvi.params.v[:, ix] - cvi.mu) .^ 2) for ix = 1:cvi.n_clusters]
     )
 end
 
@@ -160,24 +150,23 @@ function param_batch!(cvi::CH, data::RealMatrix, labels::IntegerVector)
     cvi.mu = mean(data, dims=2)[:]
     u = unique(labels)
     cvi.n_clusters = length(u)
-    cvi.n = zeros(Integer, cvi.n_clusters)
-    cvi.v = zeros(cvi.dim, cvi.n_clusters)
-    cvi.CP = zeros(cvi.n_clusters)
+    # Initialize the parameters with both correct dimensions
+    cvi.params = CVIElasticParams(cvi.dim, cvi.n_clusters)
     cvi.SEP = zeros(cvi.n_clusters)
     for ix = 1:cvi.n_clusters
         subset = data[:, findall(x->x==u[ix], labels)]
-        cvi.n[ix] = size(subset, 2)
-        cvi.v[1:cvi.dim, ix] = mean(subset, dims=2)
-        diff_x_v = subset - cvi.v[:, ix] * ones(1, cvi.n[ix])
-        cvi.CP[ix] = sum(diff_x_v .^ 2)
-        cvi.SEP[ix] = cvi.n[ix] * sum((cvi.v[:, ix] - cvi.mu) .^ 2);
+        cvi.params.n[ix] = size(subset, 2)
+        cvi.params.v[1:cvi.dim, ix] = mean(subset, dims=2)
+        diff_x_v = subset - cvi.params.v[:, ix] * ones(1, cvi.params.n[ix])
+        cvi.params.CP[ix] = sum(diff_x_v .^ 2)
+        cvi.SEP[ix] = cvi.params.n[ix] * sum((cvi.params.v[:, ix] - cvi.mu) .^ 2);
     end
 end
 
 # Criterion value evaluation function
 function evaluate!(cvi::CH)
     # Within group sum of scatters
-    cvi.WGSS = sum(cvi.CP)
+    cvi.WGSS = sum(cvi.params.CP)
     if cvi.n_clusters > 1
         # Between groups sum of scatters
         cvi.BGSS = sum(cvi.SEP)

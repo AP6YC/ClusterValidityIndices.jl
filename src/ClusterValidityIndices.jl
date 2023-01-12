@@ -49,10 +49,8 @@ $(EXPORTS)
 module ClusterValidityIndices
 
 # -----------------------------------------------------------------------------
-# USINGS
+# DEPENDENCIES
 # -----------------------------------------------------------------------------
-
-# Package dependencies
 
 # Full usings (which supports comma-separated import notation)
 using
