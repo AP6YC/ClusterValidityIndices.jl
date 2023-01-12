@@ -103,7 +103,6 @@ function param_inc!(cvi::CH, sample::RealVector, label::Integer)
             cvi.params.G[:, i_label]
             + diff_x_v
             + cvi.params.n[i_label] * delta_v
-            # + cvi.params.n[i_label] .* delta_v
         )
         # Update parameters
         update_params!(cvi.params, i_label, n_new, CP_new, v_new, G_new)
