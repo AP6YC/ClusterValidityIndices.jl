@@ -38,6 +38,7 @@ mutable struct cSIL <: CVI
     label_map::LabelMap
     dim::Int
     n_samples::Int
+    mu::Vector{Float}                       # dim
     params::CVIElasticParams
     S::Matrix{Float}                        # n_clusters x n_clusters
     sil_coefs::Vector{Float}                # dim
@@ -64,6 +65,7 @@ function cSIL()
         LabelMap(),                             # label_map
         0,                                      # dim
         0,                                      # n_samples
+        Vector{Float}(undef, 0),                # mu
         CVIElasticParams(),                     # params
         Matrix{Float}(undef, 0, 0),             # S
         Vector{Float}(undef, 0),                # sil_coefs
@@ -74,13 +76,15 @@ end
 
 # Incremental parameter update function
 function param_inc!(cvi::cSIL, sample::RealVector, label::Integer)
-    # Get the internal label
-    i_label = get_internal_label!(cvi.label_map, label)
+    # # Get the internal label
+    # i_label = get_internal_label!(cvi.label_map, label)
 
-    n_samples_new = cvi.n_samples + 1
-    if cvi.n_samples == 0
-        setup!(cvi, sample)
-    end
+    # n_samples_new = cvi.n_samples + 1
+    # if cvi.n_samples == 0
+    #     setup!(cvi, sample)
+    # end
+    # Initialize the incremental update
+    i_label = init_cvi_inc!(cvi, sample, label)
 
     if i_label > cvi.n_clusters
         n_new = 1
@@ -168,7 +172,6 @@ function param_inc!(cvi::cSIL, sample::RealVector, label::Integer)
         cvi.S[:, i_label] = S_col_new
         cvi.S[i_label, :] = S_row_new
     end
-    cvi.n_samples = n_samples_new
 end
 
 # Batch parameter update function

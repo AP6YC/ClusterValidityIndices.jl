@@ -112,7 +112,7 @@ function param_inc!(cvi::GD43, sample::RealVector, label::Integer)
         n_new = cvi.params.n[i_label] + 1
         v_new = update_mean(cvi.params.v[:, i_label], sample, n_new)
         delta_v = cvi.params.v[:, i_label] - v_new
-        diff_x_v = sample .- v_new
+        diff_x_v = sample - v_new
         CP_new = (
             cvi.params.CP[i_label]
             + dot(diff_x_v, diff_x_v)
@@ -122,7 +122,7 @@ function param_inc!(cvi::GD43, sample::RealVector, label::Integer)
         G_new = (
             cvi.params.G[:, i_label]
             + diff_x_v
-            + cvi.params.n[i_label] .* delta_v
+            + cvi.params.n[i_label] * delta_v
         )
         d_column_new = zeros(cvi.n_clusters)
         for jx = 1:cvi.n_clusters

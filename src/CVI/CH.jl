@@ -81,13 +81,7 @@ function param_inc!(cvi::CH, sample::RealVector, label::Integer)
     i_label = init_cvi_inc!(cvi, sample, label)
 
     if i_label > cvi.n_clusters
-        n_new = 1
-        v_new = sample
-        CP_new = 0.0
-        G_new = zeros(cvi.dim)
-        # Expand the parameters for a new cluster
-        cvi.n_clusters += 1
-        expand_params!(cvi.params, n_new, CP_new, v_new, G_new)
+        add_cluster!(cvi, sample)
     else
         n_new = cvi.params.n[i_label] + 1
         v_new = update_mean(cvi.params.v[:, i_label], sample, n_new)

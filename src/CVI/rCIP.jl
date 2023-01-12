@@ -108,13 +108,6 @@ end
 
 # Incremental parameter update function
 function param_inc!(cvi::rCIP, sample::RealVector, label::Integer)
-    # # Get the internal label
-    # i_label = get_internal_label!(cvi.label_map, label)
-
-    # n_samples_new = cvi.n_samples + 1
-    # if isempty(cvi.params.v)
-    #     setup!(cvi, sample)
-    # end
     # Initialize the incremental update
     i_label = init_cvi_inc!(cvi, sample, label)
     isempty(cvi.sigma) && setup_rCIP!(cvi)

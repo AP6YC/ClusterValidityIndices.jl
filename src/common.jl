@@ -248,6 +248,27 @@ function expand_params!(
 end
 
 """
+Adds a cluster to the a CVI, updating the count and elastic parameters accordingly.
+
+# Arguments
+- `cvi::CVI`: the CVI to add a cluster to.
+- `sample::RealVector`: the feature sample to base the new cluster off of.
+"""
+function add_cluster!(cvi::CVI, sample::RealVector)
+    # Set the parameters for a new cluster
+    n_new = 1
+    v_new = sample
+    CP_new = 0.0
+    G_new = zeros(cvi.dim)
+
+    # Expand the parameters for a new cluster
+    cvi.n_clusters += 1
+    expand_params!(cvi.params, n_new, CP_new, v_new, G_new)
+
+    return
+end
+
+"""
 Updates the elastic CVI parameters in place at `index`.
 
 # Arguments
