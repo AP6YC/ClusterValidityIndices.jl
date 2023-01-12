@@ -48,15 +48,14 @@ $(EXPORTS)
 """
 module ClusterValidityIndices
 
-# --------------------------------------------------------------------------- #
+# -----------------------------------------------------------------------------
 # USINGS
-# --------------------------------------------------------------------------- #
+# -----------------------------------------------------------------------------
 
 # Package dependencies
 
 # Full usings (which supports comma-separated import notation)
 using
-    Accessors,              # @set
     DocStringExtensions,    # Docstring utilities
     ElasticArrays,          # Elastic matrices
     LinearAlgebra,          # All fast linalg functions
@@ -66,17 +65,17 @@ using
 using Statistics: mean
 using PrecompileSignatures: @precompile_signatures  # Precompile concrete type methods
 
-# --------------------------------------------------------------------------- #
+# -----------------------------------------------------------------------------
 # INCLUDES
-# --------------------------------------------------------------------------- #
+# -----------------------------------------------------------------------------
 
 include("common.jl")    # Common types and functions
 include("version.jl")   # Version of the package as an exported constant
 include("CVI/CVI.jl")   # All of the CVI modules
 
-# --------------------------------------------------------------------------- #
+# -----------------------------------------------------------------------------
 # EXPORTS
-# --------------------------------------------------------------------------- #
+# -----------------------------------------------------------------------------
 
 # Export all public names
 export
