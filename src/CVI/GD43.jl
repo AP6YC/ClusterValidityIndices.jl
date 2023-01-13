@@ -6,8 +6,8 @@ This is a Julia port of a MATLAB implementation of batch and incremental
 Generalized Dunn's Index 43 (GD43) Cluster Validity Index.
 
 # Authors
-MATLAB implementation: Leonardo Enzo Brito da Silva
-Julia port: Sasha Petrenko <sap625@mst.edu>
+- MATLAB implementation: Leonardo Enzo Brito da Silva
+- Julia port: Sasha Petrenko <sap625@mst.edu>
 
 # References
 [1] A. Ibrahim, J. M. Keller, and J. C. Bezdek, "Evaluating Evolving Structure

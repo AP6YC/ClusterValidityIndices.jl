@@ -6,8 +6,8 @@ This is a Julia port of a MATLAB implementation of batch and incremental
 WB-Index (WB) Cluster Validity Index.
 
 # Authors
-MATLAB implementation: Leonardo Enzo Brito da Silva
-Julia port: Sasha Petrenko <sap625@mst.edu>
+- MATLAB implementation: Leonardo Enzo Brito da Silva
+- Julia port: Sasha Petrenko <sap625@mst.edu>
 
 # References
 [1] L. E. Brito da Silva, N. M. Melton, and D. C. Wunsch II, "Incremental
@@ -73,7 +73,7 @@ function WB()
         0,                                      # dim
         0,                                      # n_samples
         Vector{Float}(undef, 0),                # mu
-        Vector{Float}(undef, 0),                # SEP
+        CVIExpandVector{Float}(undef, 0),       # SEP
         CVIElasticParams(),                     # params
         0,                                      # n_clusters
         0.0                                     # criterion_value
@@ -107,10 +107,10 @@ function param_inc!(cvi::WB, sample::RealVector, label::Integer)
         # Update parameters
         update_params!(cvi.params, i_label, n_new, CP_new, v_new, G_new)
     end
-    # Compute the separation
-    cvi.SEP = zeros(cvi.n_clusters)
+    # Compute the new separation
+    # cvi.SEP = zeros(cvi.n_clusters)
     for ix = 1:cvi.n_clusters
-        cvi.SEP[ix] = cvi.params.n[ix] * sum((cvi.params.v[:, ix] - cvi.mu) .^ 2)
+        cvi.params.SEP[ix] = cvi.params.n[ix] * sum((cvi.params.v[:, ix] - cvi.mu) .^ 2)
     end
 end
 
@@ -118,14 +118,14 @@ end
 function param_batch!(cvi::WB, data::RealMatrix, labels::IntegerVector)
     # Initialize the batch update
     u = init_cvi_update!(cvi, data, labels)
-    cvi.SEP = zeros(cvi.n_clusters)
+    # cvi.SEP = zeros(cvi.n_clusters)
     for ix = 1:cvi.n_clusters
         subset = data[:, findall(x->x==u[ix], labels)]
         cvi.params.n[ix] = size(subset, 2)
         cvi.params.v[1:cvi.dim, ix] = mean(subset, dims=2)
         diff_x_v = subset - cvi.params.v[:, ix] * ones(1, cvi.params.n[ix])
         cvi.params.CP[ix] = sum(diff_x_v .^ 2)
-        cvi.SEP[ix] = cvi.params.n[ix] * sum((cvi.params.v[:, ix] - cvi.mu) .^ 2);
+        cvi.params.SEP[ix] = cvi.params.n[ix] * sum((cvi.params.v[:, ix] - cvi.mu) .^ 2);
     end
 end
 
@@ -135,7 +135,7 @@ function evaluate!(cvi::WB)
     if cvi.n_clusters > 1
         WGSS = sum(cvi.params.CP)
         # Between groups sum of scatters
-        BGSS = sum(cvi.SEP)
+        BGSS = sum(cvi.params.SEP)
         # WB index value
         cvi.criterion_value = (WGSS / BGSS) * cvi.n_clusters
     else

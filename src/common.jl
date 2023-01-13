@@ -93,12 +93,12 @@ This is defined as an immutable struct because the
 """
 struct CVIElasticParams
     """
-    Number of samples per cluster, size of `cvi.dim`.
+    Number of samples per cluster, size of `cvi.n_clusters`.
     """
     n::CVIExpandVector{Int}
 
     """
-    Compactness of each cluster, size of `cvi.dim`.
+    Compactness of each cluster, size of `cvi.n_clusters`.
     """
     CP::CVIExpandVector{Float}
 
@@ -111,6 +111,11 @@ struct CVIElasticParams
     Compacness parameter G, size of `(cvi.dim, cvi.n_clusters)`
     """
     G::CVIExpandMatrix{Float}
+
+    """
+    The measure of separation, size of `cvi.n_clusters`.
+    """
+    SEP::CVIExpandVector{Float}
 end
 
 # -----------------------------------------------------------------------------
@@ -129,10 +134,11 @@ CVI setup should instead create this struct with a specified dimension `dim`, an
 """
 function CVIElasticParams(dim::Integer=0, n_clusters::Integer=0)
     return CVIElasticParams(
-        CVIExpandVector{Int}(undef, n_clusters),             # n
-        CVIExpandVector{Float}(undef, n_clusters),           # CP
-        CVIExpandMatrix{Float}(undef, dim, n_clusters),      # v
-        CVIExpandMatrix{Float}(undef, dim, n_clusters),      # G
+        CVIExpandVector{Int}(undef, n_clusters),            # n
+        CVIExpandVector{Float}(undef, n_clusters),          # CP
+        CVIExpandMatrix{Float}(undef, dim, n_clusters),     # v
+        CVIExpandMatrix{Float}(undef, dim, n_clusters),     # G
+        CVIExpandVector{Float}(undef, n_clusters),          # SEP
     )
 end
 
@@ -144,9 +150,9 @@ end
 Returns an updated mean vector with a new vector and adjusted count of samples.
 
 # Arguments
-- `old_mean::RealVector`:
-- `sample::RealVector`:
-- `n_new::Integer`:
+- `old_mean::RealVector`: the old mean to update incrementally.
+- `sample::RealVector`: the sample to use for updating the mean.
+- `n_new::Integer`: the new sample count to use for the updated average.
 """
 function update_mean(old_mean::RealVector, sample::RealVector, n_new::Integer)
     new_mean = (
@@ -264,6 +270,9 @@ function expand_params!(
     # Update 2-D parameters with appending and reassignment
     expand_strategy_2d!(params.v, v)
     expand_strategy_2d!(params.G, G)
+
+    # Update the size of the separation
+    expand_strategy_1d!(params.SEP, 0)
 
     return
 end
