@@ -47,7 +47,6 @@ mutable struct WB <: CVI
     dim::Int
     n_samples::Int
     mu::Vector{Float}                   # dim
-    SEP::Vector{Float}                  # dim
     params::CVIElasticParams
     n_clusters::Int
     criterion_value::Float
@@ -73,7 +72,6 @@ function WB()
         0,                                      # dim
         0,                                      # n_samples
         Vector{Float}(undef, 0),                # mu
-        CVIExpandVector{Float}(undef, 0),       # SEP
         CVIElasticParams(),                     # params
         0,                                      # n_clusters
         0.0                                     # criterion_value
@@ -108,7 +106,6 @@ function param_inc!(cvi::WB, sample::RealVector, label::Integer)
         update_params!(cvi.params, i_label, n_new, CP_new, v_new, G_new)
     end
     # Compute the new separation
-    # cvi.SEP = zeros(cvi.n_clusters)
     for ix = 1:cvi.n_clusters
         cvi.params.SEP[ix] = cvi.params.n[ix] * sum((cvi.params.v[:, ix] - cvi.mu) .^ 2)
     end
@@ -118,7 +115,6 @@ end
 function param_batch!(cvi::WB, data::RealMatrix, labels::IntegerVector)
     # Initialize the batch update
     u = init_cvi_update!(cvi, data, labels)
-    # cvi.SEP = zeros(cvi.n_clusters)
     for ix = 1:cvi.n_clusters
         subset = data[:, findall(x->x==u[ix], labels)]
         cvi.params.n[ix] = size(subset, 2)

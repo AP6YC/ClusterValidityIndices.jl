@@ -41,8 +41,6 @@ mutable struct XB <: CVI
     mu::Vector{Float}                       # dim
     D::Matrix{Float}                        # n_clusters x n_clusters
     params::CVIElasticParams
-    SEP::Float
-    WGSS::Float
     n_clusters::Int
     criterion_value::Float
 end
@@ -68,9 +66,7 @@ function XB()
         0,                                      # n_samples
         Vector{Float}(undef, 0),                # mu
         Matrix{Float}(undef, 0, 0),             # D
-        CVIElasticParams(0),                    # params
-        0.0,                                    # SEP
-        0.0,                                    # WGSS
+        CVIElasticParams(),                     # params
         0,                                      # n_clusters
         0.0                                     # criterion_value
     )
@@ -174,18 +170,18 @@ end
 # Criterion value evaluation function
 function evaluate!(cvi::XB)
     if cvi.n_clusters > 1
-        cvi.WGSS = sum(cvi.params.CP)
+        WGSS = sum(cvi.params.CP)
         # Assume a symmetric dimension
         dim = size(cvi.D)[1]
         # Get the values from D as the upper triangular offset from the diagonal
         # values = zeros[cvi.D[i, j] for i = 1:dim, j=1:dim if j > i]
         values = [cvi.D[i, j] for i = 1:dim, j=1:dim if j > i]
         # SEP is the minimum of these unique D values
-        cvi.SEP = minimum(values)
+        SEP = minimum(values)
         # Criterion value is
-        cvi.criterion_value = cvi.WGSS / (cvi.n_samples * cvi.SEP)
+        cvi.criterion_value = WGSS / (cvi.n_samples * SEP)
     else
-        cvi.SEP = 0.0
+        # SEP = 0.0
         cvi.criterion_value = 0.0
     end
 end

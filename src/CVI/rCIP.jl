@@ -51,8 +51,6 @@ mutable struct rCIP <: CVI
     mu::Vector{Float}
     D::Matrix{Float}                        # n_clusters x n_clusters
     delta_term::Matrix{Float}               # dim x dim
-    # n::CVIExpandVector{Int}                 # dim
-    # v::CVIExpandMatrix{Float}               # dim x n_clusters
     params::CVIElasticParams
     sigma::CVIExpandTensor{Float}           # dim x dim x n_clusters
     constant::Float
