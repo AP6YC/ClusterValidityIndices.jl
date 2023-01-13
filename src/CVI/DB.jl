@@ -70,7 +70,7 @@ function DB()
         CVIExpandVector{Float}(undef, 0),       # S
         CVIElasticParams(),                     # params
         0,                                      # n_clusters
-        0.0                                     # criterion_value
+        0.0,                                    # criterion_value
     )
 end
 

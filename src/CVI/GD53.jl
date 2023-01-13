@@ -130,13 +130,8 @@ end
 
 # Batch parameter update function
 function param_batch!(cvi::GD53, data::RealMatrix, labels::IntegerVector)
-    cvi.dim, cvi.n_samples = size(data)
-    # Take the average across all samples, but cast to 1-D vector
-    cvi.mu = mean(data, dims=2)[:]
-    u = unique(labels)
-    cvi.n_clusters = length(u)
-    # Initialize the parameters with both correct dimensions
-    cvi.params = CVIElasticParams(cvi.dim, cvi.n_clusters)
+    # Initialize the batch update
+    u = init_cvi_update!(cvi, data, labels)
     cvi.D = zeros(cvi.n_clusters, cvi.n_clusters)
     for ix = 1:cvi.n_clusters
         subset = data[:, findall(x->x==u[ix], labels)]

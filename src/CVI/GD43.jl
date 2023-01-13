@@ -47,8 +47,6 @@ mutable struct GD43 <: CVI
     mu::Vector{Float}                   # dim
     D::Matrix{Float}                    # n_clusters x n_clusters
     params::CVIElasticParams
-    inter::Float
-    intra::Float
     n_clusters::Int
     criterion_value::Float
 end
@@ -75,8 +73,6 @@ function GD43()
         Vector{Float}(undef, 0),                # mu
         Matrix{Float}(undef, 0, 0),             # D
         CVIElasticParams(),                     # params
-        0.0,                                    # inter
-        0.0,                                    # intra
         0,                                      # n_clusters
         0.0                                     # criterion_value
     )
@@ -144,13 +140,8 @@ end
 
 # Batch parameter update function
 function param_batch!(cvi::GD43, data::RealMatrix, labels::IntegerVector)
-    cvi.dim, cvi.n_samples = size(data)
-    # Take the average across all samples, but cast to 1-D vector
-    cvi.mu = mean(data, dims=2)[:]
-    u = unique(labels)
-    cvi.n_clusters = length(u)
-    # Initialize the parameters with both correct dimensions
-    cvi.params = CVIElasticParams(cvi.dim, cvi.n_clusters)
+    # Initialize the batch update
+    u = init_cvi_update!(cvi, data, labels)
     cvi.D = zeros(cvi.n_clusters, cvi.n_clusters)
     for ix = 1:cvi.n_clusters
         subset = data[:, findall(x->x==u[ix], labels)]
@@ -172,14 +163,14 @@ end
 # Criterion value evaluation function
 function evaluate!(cvi::GD43)
     if cvi.n_clusters > 1
-        cvi.intra = 2 * maximum(cvi.params.CP ./ cvi.params.n)
+        intra = 2 * maximum(cvi.params.CP ./ cvi.params.n)
         # Between-group measure of separation/isolation
-        cvi.inter = (
+        inter = (
             minimum(cvi.D[triu(ones(Bool, cvi.n_clusters, cvi.n_clusters), 1)])
             # minimum(triu(cvi.D, 1))
         )
         # GD43 index value
-        cvi.criterion_value = cvi.inter / cvi.intra
+        cvi.criterion_value = inter / intra
     else
         cvi.criterion_value = 0.0
     end
