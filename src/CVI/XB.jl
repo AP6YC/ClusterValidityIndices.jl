@@ -78,37 +78,27 @@ function param_inc!(cvi::XB, sample::RealVector, label::Integer)
     i_label = init_cvi_update!(cvi, sample, label)
 
     if i_label > cvi.n_clusters
-        n_new = 1
-        v_new = sample
-        CP_new = 0.0
-        G_new = zeros(cvi.dim)
-        if cvi.n_clusters == 0
+        # Add a new cluster to the CVI
+        add_cluster!(cvi, sample)
+
+        if cvi.n_clusters == 1
             D_new = zeros(1, 1)
         else
-            D_new = zeros(cvi.n_clusters + 1, cvi.n_clusters + 1)
-            D_new[1:cvi.n_clusters, 1:cvi.n_clusters] = cvi.D
-            d_column_new = zeros(cvi.n_clusters + 1)
+            D_new = zeros(cvi.n_clusters, cvi.n_clusters)
+            D_new[1:cvi.n_clusters - 1, 1:cvi.n_clusters - 1] = cvi.D
+            d_column_new = zeros(cvi.n_clusters)
             # println(d_column_new)
-            for jx = 1:cvi.n_clusters
-                d_column_new[jx] = sum((v_new - cvi.params.v[:, jx]) .^ 2)
+            for jx = 1:cvi.n_clusters - 1
+                # d_column_new[jx] = sum((v_new - cvi.params.v[:, jx]) .^ 2)
+                d_column_new[jx] = sum((sample - cvi.params.v[:, jx]) .^ 2)
             end
             D_new[:, i_label] = d_column_new
             D_new[i_label, :] = transpose(d_column_new)
         end
-        # Update 1-D parameters with a push
-        cvi.n_clusters += 1
-        expand_strategy_1d!(cvi.params.CP, CP_new)
-        expand_strategy_1d!(cvi.params.n, n_new)
-        # Update 2-D parameters with appending and reassignment
-        expand_strategy_2d!(cvi.params.v, v_new)
-        expand_strategy_2d!(cvi.params.G, G_new)
         cvi.D = D_new
     else
         n_new = cvi.params.n[i_label] + 1
-        v_new = (
-            (1 - 1/n_new) .* cvi.params.v[:, i_label]
-            + (1/n_new) .* sample
-        )
+        v_new = update_mean(cvi.params.v[:, i_label], sample, n_new)
         delta_v = cvi.params.v[:, i_label] - v_new
         diff_x_v = sample - v_new
         CP_new = (
@@ -120,7 +110,7 @@ function param_inc!(cvi::XB, sample::RealVector, label::Integer)
         G_new = (
             cvi.params.G[:, i_label]
             + diff_x_v
-            + cvi.params.n[i_label] .* delta_v
+            + cvi.params.n[i_label] * delta_v
         )
         d_column_new = zeros(cvi.n_clusters)
         for jx = 1:cvi.n_clusters
