@@ -193,14 +193,14 @@ Initializes batch CVI updates.
 - `labels::IntegerVector`: the labels corresponding to the provided data.
 """
 function init_cvi_update!(cvi::CVI, data::RealMatrix, labels::IntegerVector)
-    # Setup the cvi
-    setup!(cvi, data)
     # Take the average across all samples, but cast to 1-D vector
     cvi.mu = mean(data, dims=2)[:]
     # Get a vector of all of the unique labels
     u = unique(labels)
     # Set the number of clusters as the number of unique labels
     cvi.n_clusters = length(u)
+    # Setup the cvi after updating cvi.n_clusters
+    setup!(cvi, data)
     # Return the unique labels
     return u
 end
