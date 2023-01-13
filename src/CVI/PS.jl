@@ -6,8 +6,8 @@ This is a Julia port of a MATLAB implementation of batch and incremental
 Partition Separation (PS) Cluster Validity Index.
 
 # Authors
-MATLAB implementation: Leonardo Enzo Brito da Silva
-Julia port: Sasha Petrenko <sap625@mst.edu>
+- MATLAB implementation: Leonardo Enzo Brito da Silva
+- Julia port: Sasha Petrenko <sap625@mst.edu>
 
 # References
 [1] Miin-Shen Yang and Kuo-Lung Wu, "A new validity index for fuzzy clustering,"
@@ -33,12 +33,9 @@ mutable struct PS <: CVI
     label_map::LabelMap
     dim::Int
     n_samples::Int
-    n::Vector{Int}              # dim
-    v::Matrix{Float}            # dim x n_clusters
-    D::Matrix{Float}            # n_clusters x n_clusters
-    v_bar::Vector{Float}        # dim
-    beta_t::Float
-    PS_i::Vector{Float}         # n_clusters
+    mu::Vector{Float}
+    params::CVIElasticParams
+    D::Matrix{Float}                    # n_clusters x n_clusters
     n_clusters::Int
     criterion_value::Float
 end
@@ -59,98 +56,70 @@ $(local_references)
 """
 function PS()
     PS(
-        LabelMap(),                     # label_map
-        0,                              # dim
-        0,                              # n_samples
-        Vector{Int}(undef, 0),          # n
-        Matrix{Float}(undef, 0, 0),     # v
-        Matrix{Float}(undef, 0, 0),     # D
-        Vector{Float}(undef, 0),        # v_bar
-        0.0,                            # beta_t
-        Vector{Float}(undef, 0),        # PS_i
-        0,                              # n_clusters
-        0.0                             # criterion_value
+        LabelMap(),                             # label_map
+        0,                                      # dim
+        0,                                      # n_samples
+        Vector{Float}(undef, 0),                # mu
+        CVIElasticParams(),                     # params
+        Matrix{Float}(undef, 0, 0),             # D
+        0,                                      # n_clusters
+        0.0                                     # criterion_value
     )
-end
-
-# Setup function
-function setup!(cvi::PS, sample::RealVector)
-    # Get the feature dimension
-    cvi.dim = length(sample)
-    # Initialize the 2-D arrays with the correct feature dimension
-    cvi.v = Matrix{Float}(undef, cvi.dim, 0)
 end
 
 # Incremental parameter update function
 function param_inc!(cvi::PS, sample::RealVector, label::Integer)
-    # Get the internal label
-    i_label = get_internal_label!(cvi.label_map, label)
-
-    n_samples_new = cvi.n_samples + 1
-    if isempty(cvi.v)
-        setup!(cvi, sample)
-    end
+    # Initialize the incremental update
+    i_label = init_cvi_update!(cvi, sample, label)
 
     if i_label > cvi.n_clusters
-        n_new = 1
-        v_new = sample
-        if cvi.n_clusters == 0
+        # Add a new cluster to the CVI
+        add_cluster!(cvi, sample)
+        if cvi.n_clusters == 1
             D_new = zeros(1, 1)
         else
-            D_new = zeros(cvi.n_clusters + 1, cvi.n_clusters + 1)
-            D_new[1:cvi.n_clusters, 1:cvi.n_clusters] = cvi.D
-            d_column_new = zeros(cvi.n_clusters + 1)
-            for jx = 1:cvi.n_clusters
-                d_column_new[jx] = sum((v_new - cvi.v[:, jx]) .^ 2)
+            D_new = zeros(cvi.n_clusters, cvi.n_clusters)
+            D_new[1:cvi.n_clusters - 1, 1:cvi.n_clusters - 1] = cvi.D
+            d_column_new = zeros(cvi.n_clusters)
+            for jx = 1:cvi.n_clusters - 1
+                # d_column_new[jx] = sum((v_new - cvi.params.v[:, jx]) .^ 2)
+                d_column_new[jx] = sum((sample - cvi.params.v[:, jx]) .^ 2)
             end
             D_new[:, i_label] = d_column_new
             D_new[i_label, :] = transpose(d_column_new)
         end
-        # Update 1-D parameters with a push
-        cvi.n_clusters += 1
-        push!(cvi.n, n_new)
-        # Update 2-D parameters with appending and reassignment
-        cvi.v = [cvi.v v_new]
         cvi.D = D_new
     else
-        n_new = cvi.n[i_label] + 1
-        v_new = (
-            (1 - 1 / n_new) .* cvi.v[:, i_label]
-            + (1 / n_new) .* sample
-        )
+        n_new = cvi.params.n[i_label] + 1
+        v_new = update_mean(cvi.params.v[:, i_label], sample, n_new)
         d_column_new = zeros(cvi.n_clusters)
         for jx = 1:cvi.n_clusters
             if jx == i_label
                 continue
             end
-            d_column_new[jx] = sum((v_new - cvi.v[:, jx]) .^ 2)
+            d_column_new[jx] = sum((v_new - cvi.params.v[:, jx]) .^ 2)
         end
         # Update parameters
-        cvi.n[i_label] = n_new
-        cvi.v[:, i_label] = v_new
+        cvi.params.n[i_label] = n_new
+        cvi.params.v[:, i_label] = v_new
         cvi.D[:, i_label] = d_column_new
         cvi.D[i_label, :] = transpose(d_column_new)
     end
-    cvi.n_samples = n_samples_new
 end
 
 # Batch parameter update function
 function param_batch!(cvi::PS, data::RealMatrix, labels::IntegerVector)
-    cvi.dim, cvi.n_samples = size(data)
-    # Take the average across all samples, but cast to 1-D vector
-    u = unique(labels)
-    cvi.n_clusters = length(u)
-    cvi.n = zeros(Integer, cvi.n_clusters)
-    cvi.v = zeros(cvi.dim, cvi.n_clusters)
+    # Initialize the batch update
+    u = init_cvi_update!(cvi, data, labels)
     cvi.D = zeros(cvi.n_clusters, cvi.n_clusters)
     for ix = 1:cvi.n_clusters
         subset = data[:, findall(x->x==u[ix], labels)]
-        cvi.n[ix] = size(subset, 2)
-        cvi.v[1:cvi.dim, ix] = mean(subset, dims=2)
+        cvi.params.n[ix] = size(subset, 2)
+        cvi.params.v[1:cvi.dim, ix] = mean(subset, dims=2)
     end
     for ix = 1 : (cvi.n_clusters - 1)
         for jx = ix + 1 : cvi.n_clusters
-            cvi.D[jx, ix] = sum((cvi.v[:, ix] - cvi.v[:, jx]) .^ 2)
+            cvi.D[jx, ix] = sum((cvi.params.v[:, ix] - cvi.params.v[:, jx]) .^ 2)
         end
     end
     cvi.D = cvi.D + transpose(cvi.D)
@@ -159,23 +128,24 @@ end
 # Criterion value evaluation function
 function evaluate!(cvi::PS)
     if cvi.n_clusters > 1
-        cvi.v_bar = vec(mean(cvi.v, dims=2))
-        cvi.beta_t = 0.0
-        cvi.PS_i = zeros(cvi.n_clusters)
+        v_bar = vec(mean(cvi.params.v, dims=2))
+        beta_t = 0.0
+        PS_i = zeros(cvi.n_clusters)
         for ix = 1:cvi.n_clusters
-            delta_v = cvi.v[:, ix] - cvi.v_bar
-            cvi.beta_t = cvi.beta_t + dot(delta_v, delta_v)
+            delta_v = cvi.params.v[:, ix] - v_bar
+            beta_t += dot(delta_v, delta_v)
         end
-        cvi.beta_t /= cvi.n_clusters
-        n_max = maximum(cvi.n)
+        beta_t /= cvi.n_clusters
+        n_max = maximum(cvi.params.n)
         for ix = 1:cvi.n_clusters
             d = cvi.D[:, ix]
-            deleteat!(d, ix)
-            cvi.PS_i[ix] = (
-                (cvi.n[ix] / n_max)
-                - exp(-minimum(d) / cvi.beta_t)
+            # Exclude the category itself in the minimum calculation
+            d[ix] = Inf
+            PS_i[ix] = (
+                (cvi.params.n[ix] / n_max)
+                - exp(-minimum(d) / beta_t)
             )
         end
-        cvi.criterion_value = sum(cvi.PS_i)
+        cvi.criterion_value = sum(PS_i)
     end
 end
