@@ -47,8 +47,6 @@ mutable struct GD53 <: CVI
     mu::Vector{Float}                   # dim
     D::Matrix{Float}                    # n_clusters x n_clusters
     params::CVIElasticParams
-    inter::Float
-    intra::Float
     n_clusters::Int
     criterion_value::Float
 end
@@ -75,8 +73,6 @@ function GD53()
         Vector{Float}(undef, 0),                # mu
         Matrix{Float}(undef, 0, 0),             # D
         CVIElasticParams(),                     # params
-        0.0,                                    # inter
-        0.0,                                    # intra
         0,                                      # n_clusters
         0.0                                     # criterion_value
     )
@@ -162,13 +158,13 @@ end
 # Criterion value evaluation function
 function evaluate!(cvi::GD53)
     if cvi.n_clusters > 1
-        cvi.intra = 2 * maximum(cvi.params.CP ./ cvi.params.n)
+        intra = 2 * maximum(cvi.params.CP ./ cvi.params.n)
         # Between-group measure of separation/isolation
-        cvi.inter = (
+        inter = (
             minimum(cvi.D[triu(ones(Bool, cvi.n_clusters, cvi.n_clusters), 1)])
         )
         # GD53 index value
-        cvi.criterion_value = cvi.inter/cvi.intra
+        cvi.criterion_value = inter/intra
     else
         cvi.criterion_value = 0.0
     end

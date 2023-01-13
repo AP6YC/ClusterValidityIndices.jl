@@ -80,9 +80,7 @@ function rCIP()
         Vector{Float}(undef, 0),                    # mu
         Matrix{Float}(undef, 0, 0),                 # D
         Matrix{Float}(undef, 0, 0),                 # delta_term
-        CVIElasticParams(0),                        # params
-        # CVIExpandVector{Int}(undef, 0),             # n
-        # CVIExpandMatrix{Float}(undef, 0, 0),        # v
+        CVIElasticParams(),                         # params
         CVIExpandTensor{Float}(undef, 0, 0, 0),     # sigma
         0.0,                                        # constant
         0,                                          # n_clusters
@@ -91,12 +89,9 @@ function rCIP()
 end
 
 # Setup function
-function setup_rCIP!(cvi::rCIP)
-    # Get the feature dimension
-    # cvi.dim = length(sample)
-    # Initialize the 2-D and 3-D arrays with the correct feature dimension
-    # cvi.params.v = CVIExpandMatrix{Float}(undef, cvi.dim, 0)
-    cvi.sigma = CVIExpandTensor{Float}(undef, cvi.dim, cvi.dim, 0)
+function setup_rCIP!(cvi::rCIP, n_clusters::Integer=0)
+    # Initialize the 3-D arrays with the correct feature dimension
+    cvi.sigma = CVIExpandTensor{Float}(undef, cvi.dim, cvi.dim, n_clusters)
     # Calculate the delta term
     epsilon = 12
     delta = 10 ^ (-epsilon / cvi.dim)
@@ -108,20 +103,22 @@ end
 function param_inc!(cvi::rCIP, sample::RealVector, label::Integer)
     # Initialize the incremental update
     i_label = init_cvi_update!(cvi, sample, label)
+    # rCIP-specific initialization
     isempty(cvi.sigma) && setup_rCIP!(cvi)
 
     if i_label > cvi.n_clusters
-        n_new = 1
-        v_new = sample
+        # Add a new cluster to the CVI
+        add_cluster!(cvi, sample)
         sigma_new = cvi.delta_term
-        if cvi.n_clusters == 0
+        if cvi.n_clusters == 1
             D_new = zeros(1, 1)
         else
-            D_new = zeros(cvi.n_clusters + 1, cvi.n_clusters + 1)
-            D_new[1:cvi.n_clusters, 1:cvi.n_clusters] = cvi.D
-            d_column_new = zeros(cvi.n_clusters + 1)
-            for jx = 1:cvi.n_clusters
-                diff_m = v_new - cvi.params.v[:, jx]
+            D_new = zeros(cvi.n_clusters, cvi.n_clusters)
+            D_new[1:cvi.n_clusters - 1, 1:cvi.n_clusters - 1] = cvi.D
+            d_column_new = zeros(cvi.n_clusters)
+            for jx = 1:cvi.n_clusters - 1
+                # diff_m = v_new - cvi.params.v[:, jx]
+                diff_m = sample - cvi.params.v[:, jx]
                 sigma_q = sigma_new + cvi.sigma[:, :, jx]
                 d_column_new[jx] = (
                     cvi.constant
@@ -132,20 +129,11 @@ function param_inc!(cvi::rCIP, sample::RealVector, label::Integer)
             D_new[:, i_label] = d_column_new
             D_new[i_label, :] = transpose(d_column_new)
         end
-        # Update 1-D parameters with a push
-        cvi.n_clusters += 1
-        expand_strategy_1d!(cvi.params.n, n_new)
-        # Update 2-D parameters with appending and reassignment
-        expand_strategy_2d!(cvi.params.v, v_new)
-        # cvi.sigma = cat(cvi.sigma, sigma_new, dims=3)
         expand_strategy_3d!(cvi.sigma, sigma_new)
         cvi.D = D_new
     else
         n_new = cvi.params.n[i_label] + 1
-        v_new = (
-            (1 - 1/n_new) .* cvi.params.v[:, i_label]
-            + (1 / n_new) .* sample
-        )
+        v_new = update_mean(cvi.params.v[:, i_label], sample, n_new)
         diff_x_v = sample - cvi.params.v[:, i_label]
         sigma_new = (
             ((n_new - 2) / (n_new - 1))
@@ -178,21 +166,11 @@ end
 
 # Incremental parameter update function
 function param_batch!(cvi::rCIP, data::RealMatrix, labels::IntegerVector)
-    cvi.dim, cvi.n_samples = size(data)
-    cvi.constant = 1 / sqrt((2 * pi) ^ cvi.dim)
-    # Calculate the delta term
-    epsilon = 12
-    delta = 10 ^ (-epsilon / cvi.dim)
-    cvi.delta_term = Matrix{Float64}(LinearAlgebra.I, cvi.dim, cvi.dim) .* delta
-
-    # Take the average across all samples, but cast to 1-D vector
-    u = unique(labels)
-    cvi.n_clusters = length(u)
-    # Initialize the parameters with both correct dimensions
-    cvi.params = CVIElasticParams(cvi.dim, cvi.n_clusters)
-    cvi.sigma = zeros(cvi.dim, cvi.dim, cvi.n_clusters)
+    # Initialize the batch update
+    u = init_cvi_update!(cvi, data, labels)
+    # rCIP-specific batch setup
+    setup_rCIP!(cvi, cvi.n_clusters)
     cvi.D = zeros(cvi.n_clusters, cvi.n_clusters)
-
     for ix = 1:cvi.n_clusters
         subset = data[:, findall(x->x==u[ix], labels)]
         cvi.params.n[ix] = size(subset, 2)
@@ -227,7 +205,7 @@ function evaluate!(cvi::rCIP)
     # Assume a symmetric dimension
     dim = size(cvi.D)[1]
     if dim > 1
-        values = [cvi.D[i,j] for i = 1:dim, j = 1:dim if j > i]
+        values = [cvi.D[i, j] for i = 1:dim, j = 1:dim if j > i]
         cvi.criterion_value = sum(values)
     else
         cvi.criterion_value = 0.0
