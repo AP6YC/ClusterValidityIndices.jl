@@ -160,11 +160,11 @@ end
 Initializes incremental CVI updates.
 
 # Arguments
-- `cvi::CVI`:
-- `sample::RealVector`:
-- `label::Integer`:
+- `cvi::CVI`: the CVI to initialize incremental evaluation for.
+- `sample::RealVector`: the sample used for the incremental update.
+- `label::Integer`: the label provided with the sample for the incremental update.
 """
-function init_cvi_inc!(cvi::CVI, sample::RealVector, label::Integer)
+function init_cvi_update!(cvi::CVI, sample::RealVector, label::Integer)
     # Get the internal label
     i_label = get_internal_label!(cvi.label_map, label)
 
@@ -182,6 +182,27 @@ function init_cvi_inc!(cvi::CVI, sample::RealVector, label::Integer)
 
     # Return the internal label
     return i_label
+end
+
+"""
+Initializes batch CVI updates.
+
+# Arguments
+- `cvi::CVI`: the CVI to prime for batch update.
+- `data::RealMatrix`: the data to use for batch initialization.
+- `labels::IntegerVector`: the labels corresponding to the provided data.
+"""
+function init_cvi_update!(cvi::CVI, data::RealMatrix, labels::IntegerVector)
+    # Setup the cvi
+    setup!(cvi, data)
+    # Take the average across all samples, but cast to 1-D vector
+    cvi.mu = mean(data, dims=2)[:]
+    # Get a vector of all of the unique labels
+    u = unique(labels)
+    # Set the number of clusters as the number of unique labels
+    cvi.n_clusters = length(u)
+    # Return the unique labels
+    return u
 end
 
 """
@@ -311,6 +332,19 @@ function setup!(cvi::CVI, sample::RealVector)
     cvi.params = CVIElasticParams(cvi.dim)
 end
 
+"""
+Internal method, sets up the CVI based upon a batch of data.
+
+# Arguments
+- `cvi::CVI`: the CVI to setup in batch mode.
+- `data::RealMatrix': the data used for batch setup.
+"""
+function setup!(cvi::CVI, data::RealMatrix)
+    # Get the feature dimension and number of samples
+    cvi.dim, cvi.n_samples = size(data)
+    # Initialize the elastic parameters with the data dimension and number of clusters
+    cvi.params = CVIElasticParams(cvi.dim, cvi.n_clusters)
+end
 
 """
 Compute and return the criterion value incrementally.

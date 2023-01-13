@@ -78,7 +78,7 @@ end
 # Incremental parameter update function
 function param_inc!(cvi::CH, sample::RealVector, label::Integer)
     # Initialize the incremental update
-    i_label = init_cvi_inc!(cvi, sample, label)
+    i_label = init_cvi_update!(cvi, sample, label)
 
     if i_label > cvi.n_clusters
         # Add a new cluster to the CVI
@@ -111,13 +111,8 @@ end
 
 # Batch parameter update function
 function param_batch!(cvi::CH, data::RealMatrix, labels::IntegerVector)
-    cvi.dim, cvi.n_samples = size(data)
-    # Take the average across all samples, but cast to 1-D vector
-    cvi.mu = mean(data, dims=2)[:]
-    u = unique(labels)
-    cvi.n_clusters = length(u)
-    # Initialize the parameters with both correct dimensions
-    cvi.params = CVIElasticParams(cvi.dim, cvi.n_clusters)
+    # Initialize the batch update
+    u = init_cvi_update!(cvi, data, labels)
     cvi.SEP = zeros(cvi.n_clusters)
     for ix = 1:cvi.n_clusters
         subset = data[:, findall(x->x==u[ix], labels)]

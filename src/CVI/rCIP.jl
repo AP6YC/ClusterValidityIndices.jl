@@ -109,7 +109,7 @@ end
 # Incremental parameter update function
 function param_inc!(cvi::rCIP, sample::RealVector, label::Integer)
     # Initialize the incremental update
-    i_label = init_cvi_inc!(cvi, sample, label)
+    i_label = init_cvi_update!(cvi, sample, label)
     isempty(cvi.sigma) && setup_rCIP!(cvi)
 
     if i_label > cvi.n_clusters
