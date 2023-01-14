@@ -118,6 +118,17 @@ struct CVIElasticParams
     SEP::CVIExpandVector{Float}
 end
 
+mutable struct CVIBaseParams
+    label_map::LabelMap
+    dim::Int
+    n_samples::Int
+    mu::Vector{Float}               # dim
+    n_clusters::Int
+    criterion_value::Float
+end
+
+# mutable struct
+
 # -----------------------------------------------------------------------------
 # CONSTRUCTORS
 # -----------------------------------------------------------------------------
