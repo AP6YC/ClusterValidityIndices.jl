@@ -127,7 +127,64 @@ mutable struct CVIBaseParams
     criterion_value::Float
 end
 
-# mutable struct
+function CVIBaseParams()
+    CVIBaseParams(
+        LabelMap(),                 # label_map
+        0,                          # dim
+        0,                          # n_samples
+        Vector{Float}(undef, 0),    # mu
+        0,                          # n_clusters
+        0.0,                        # criterion_value
+    )
+end
+
+mutable struct CVICacheParams
+    delta_v::Vector{Float}
+    diff_x_v::Vector{Float}
+end
+
+function CVICacheParams()
+    CVICacheParams(
+        Vector{Float}(undef, 0),    # delta_v
+        Vector{Float}(undef, 0),    # diff_x_v
+    )
+end
+
+mutable struct BaseCVI
+    base::CVIBaseParams
+    cache::CVICacheParams
+    params::CVIElasticParams
+end
+
+function BaseCVI()
+    BaseCVI(
+        CVIBaseParams(),
+        CVICacheParams(),
+        CVIElasticParams(),
+    )
+end
+
+function update_cluster!(cvi, sample, i_label)
+    n_new = cvi.params.n[i_label] + 1
+    v_new = update_mean(cvi.params.v[:, i_label], sample, n_new)
+    delta_v = cvi.params.v[:, i_label] - v_new
+    diff_x_v = sample - v_new
+    CP_new = (
+        cvi.params.CP[i_label]
+        + dot(diff_x_v, diff_x_v)
+        + cvi.params.n[i_label] * dot(delta_v, delta_v)
+        + 2 * dot(delta_v, cvi.params.G[:, i_label])
+    )
+    G_new = (
+        cvi.params.G[:, i_label]
+        + diff_x_v
+        + cvi.params.n[i_label] * delta_v
+    )
+    # Update parameters
+    update_params!(cvi.params, i_label, n_new, CP_new, v_new, G_new)
+end
+
+
 
 # -----------------------------------------------------------------------------
 # CONSTRUCTORS
