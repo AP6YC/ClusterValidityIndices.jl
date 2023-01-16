@@ -118,36 +118,6 @@ struct CVIElasticParams
     SEP::CVIExpandVector{Float}
 end
 
-mutable struct CVIBaseParams
-    label_map::LabelMap
-    dim::Int
-    n_samples::Int
-    mu::Vector{Float}               # dim
-    n_clusters::Int
-    criterion_value::Float
-end
-
-function CVIBaseParams(dim::Integer=0)
-    CVIBaseParams(
-        LabelMap(),                 # label_map
-        dim,                        # dim
-        0,                          # n_samples
-        Vector{Float}(undef, dim),  # mu
-        0,                          # n_clusters
-        0.0,                        # criterion_value
-    )
-end
-
-mutable struct CVICacheParams
-    delta_v::Vector{Float}
-    diff_x_v::Vector{Float}
-end
-
-mutable struct BaseCVI
-    base::CVIBaseParams
-    cache::CVICacheParams
-    params::CVIElasticParams
-end
 
 # -----------------------------------------------------------------------------
 # CONSTRUCTORS
@@ -173,74 +143,9 @@ function CVIElasticParams(dim::Integer=0, n_clusters::Integer=0)
     )
 end
 
-function CVICacheParams(dim::Integer=0)
-    CVICacheParams(
-        Vector{Float}(undef, dim),    # delta_v
-        Vector{Float}(undef, dim),    # diff_x_v
-    )
-end
-
-function BaseCVI(dim)
-    BaseCVI(
-        CVIBaseParams(dim),
-        CVICacheParams(dim),
-        CVIElasticParams(dim),
-    )
-end
-
 # -----------------------------------------------------------------------------
 # FUNCTIONS
 # -----------------------------------------------------------------------------
-
-
-function unsafe_replace_vector!(v_old::RealVector, v_new::RealVector)
-    for ix in eachindex(v_old)
-        @inbounds v_old[ix] = v_new[ix]
-    end
-end
-
-function replace_vector!(v_old::RealVector, v_new::RealVector)
-    unsafe_replace_vector!(v_old, v_new)
-end
-
-function compute_cache!(cvi::CVI, sample::RealVector, i_label::Integer)
-    replace_vector!(cvi.delta_v, cvi.params.v[:, i_label] - v_new)
-    replace_vector!(cvi.diff_x_v, sample - v_new)
-end
-
-function CP_update(cvi::CVI, i_label::Integer)
-    CP_new = (
-        cvi.params.CP[i_label]
-        + dot(cvi.cache.diff_x_v, cvi.cache.diff_x_v)
-        + cvi.params.n[i_label] * dot(cvi.cache.delta_v, cvi.cache.delta_v)
-        + 2 * dot(cvi.cache.delta_v, cvi.params.G[:, i_label])
-    )
-    return CP_new
-end
-
-function G_update(cvi::CVI, i_label::Integer)
-    G_new = (
-        cvi.params.G[:, i_label]
-        + cvi.cache.diff_x_v
-        + cvi.params.n[i_label] * cvi.cache.delta_v
-    )
-    return G_new
-end
-
-function update_cluster!(cvi::CVI, sample::RealVector, i_label::Integer)
-    # Update the number of samples in the cluster
-    cvi.params.n[i_label] + 1
-    # Compute the new prototype vector
-    v_new = update_mean(cvi.params.v[:, i_label], sample, n_new)
-    # Compute delta_v and diff_x_v
-    compute_cache!(cvi, sample, i_label)
-    # Compute the CP_new
-    CP_new = CP_update(cvi, i_label)
-    # Compute the G_new
-    G_new = G_update(cvi, i_label)
-    # Update parameters
-    update_params!(cvi.params, i_label, n_new, CP_new, v_new, G_new)
-end
 
 """
 Returns an updated mean vector with a new vector and adjusted count of samples.
