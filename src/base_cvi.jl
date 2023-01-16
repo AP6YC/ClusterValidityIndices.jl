@@ -24,6 +24,8 @@ const ALLOWED_CVIPARAM_TYPES = Union{
 
 const CVIParams = Dict{String, ALLOWED_CVIPARAM_TYPES}
 
+const CVIRecursionCache = Dict{String, AbstractArray}
+
 @with_kw struct CVIOpts
     CP_alt::Bool = false
 end
@@ -31,17 +33,17 @@ end
 mutable struct BaseCVI
     opts::CVIOpts
     base::CVIBaseParams
-    cache::CVICacheParams
+    # cache::CVICacheParams
     params::CVIParams
+    cache::CVIRecursionCache
 end
 
-
-function CVICacheParams(dim::Integer=0)
-    CVICacheParams(
-        Vector{Float}(undef, dim),    # delta_v
-        Vector{Float}(undef, dim),    # diff_x_v
-    )
-end
+# function CVICacheParams(dim::Integer=0)
+#     CVICacheParams(
+#         Vector{Float}(undef, dim),    # delta_v
+#         Vector{Float}(undef, dim),    # diff_x_v
+#     )
+# end
 
 function CVIBaseParams(dim::Integer=0)
     CVIBaseParams(
@@ -58,29 +60,50 @@ function BaseCVI(dim)
     BaseCVI(
         CVIOpts(),
         CVIBaseParams(dim),
-        CVICacheParams(dim),
+        # CVICacheParams(dim),
         CVIParams(),
+        CVIRecursionCache(),
         # CVIElasticParams(dim),
     )
 end
 
 const CVI_CONFIG = Dict(
     "params" => Dict(
-        "n" => Dict("dim" => 1),
-        "v" => Dict("dim" => 1),
-        "CP" => Dict("dim" => 2),
-        "G" => Dict("dim" => 2),
+        "n" => Dict(
+            "dim" => 1,
+            "type" => Int,
+        ),
+        "v" => Dict(
+            "dim" => 2,
+            "type" => Float,
+        ),
+        "CP" => Dict(
+            "dim" => 1,
+            "type" => Float,
+        ),
+        "G" => Dict(
+            "dim" => 2,
+            "type" => Float,
+        ),
     ),
-    "expand" => Dict(
-        1 => :expand_strategy_1d!,
-        2 => :expand_strategy_2d!,
-        3 => :expand_strategy_3d!,
+    "container" => Dict(
+        1 => Dict(
+            "expand" => :expand_strategy_1d!,
+            "type" => CVIExpandVector,
+        ),
+        2 => Dict(
+            "expand" => :expand_strategy_2d!,
+            "type" => CVIExpandMatrix
+        ),
+        3 => Dict(
+            "expand" => :expand_strategy_3d!,
+            "type" => CVIExpandTensor,
+        ),
     ),
     "funcs" => [
-        "init",
         "add",
         "update",
-    ]
+    ],
 )
 
 function get_cvi_strategy(config::AbstractDict)
@@ -93,27 +116,27 @@ function get_cvi_strategy(config::AbstractDict)
     )
     # Add the expansion strategies
     for (name, subconfig) in config["params"]
-        strategy[name]["expand"] = config["expand"][subconfig["dim"]]
+        strategy[name]["expand"] = config["container"]["expand"][subconfig["dim"]]
     end
     return strategy
 end
 
 const CVI_STRATEGY = get_cvi_strategy(CVI_CONFIG)
 
-function unsafe_replace_vector!(v_old::RealVector, v_new::RealVector)
-    for ix in eachindex(v_old)
-        @inbounds v_old[ix] = v_new[ix]
-    end
-end
+# function unsafe_replace_vector!(v_old::RealVector, v_new::RealVector)
+#     for ix in eachindex(v_old)
+#         @inbounds v_old[ix] = v_new[ix]
+#     end
+# end
 
-function replace_vector!(v_old::RealVector, v_new::RealVector)
-    unsafe_replace_vector!(v_old, v_new)
-end
+# function replace_vector!(v_old::RealVector, v_new::RealVector)
+#     unsafe_replace_vector!(v_old, v_new)
+# end
 
-function compute_cache!(cvi::CVI, sample::RealVector, i_label::Integer)
-    replace_vector!(cvi.delta_v, cvi.params.v[:, i_label] - v_new)
-    replace_vector!(cvi.diff_x_v, sample - v_new)
-end
+# function compute_cache!(cvi::CVI, sample::RealVector, i_label::Integer)
+#     replace_vector!(cvi.delta_v, cvi.params.v[:, i_label] - v_new)
+#     replace_vector!(cvi.diff_x_v, sample - v_new)
+# end
 
 function base_add_cluster!(cvi::CVI, sample::RealVector)
     for (name, param) in cvi.params
@@ -121,26 +144,44 @@ function base_add_cluster!(cvi::CVI, sample::RealVector)
     end
 end
 
-function CP_init(dim::Integer=0, n_clusters::Integer=0)
-    return CVIExpandVector{Int}(undef, n_clusters)
+# function n_init(dim::Integer=0, n_clusters::Integer=0)
+#     return CVIExpandVector{Int}(undef, n_clusters)
+# end
+
+# function v_init(dim::Integer=0, n_clusters::Integer=0)
+#     return CVIExpandMatrix{Float}(undef, dim, n_clusters)
+# end
+
+# function CP_init(dim::Integer=0, n_clusters::Integer=0)
+#     return CVIExpandVector{Int}(undef, n_clusters)
+# end
+
+# function G_init()
+#     return CVIExpandMatrix{Float}(undef, dim, n_clusters)
+# end
+
+function init_param(cvi::CVI, name::AbstractString)
+    cvi.params[name]
 end
 
 function CP_add!(cvi::CVI, sample::RealVector)
     # Create the new CP
-    CP_new = alt_CP ? dot(sample, sample) : 0.0
-    # Expand the CP list
-    expand_strategy_1d!(cvi.params["CP"], CP_new)
-    # Empty
-    return
+    # CP_new = alt_CP ? dot(sample, sample) : 0.0
+    # # Expand the CP list
+    # expand_strategy_1d!(cvi.params["CP"], CP_new)
+    # # Empty
+    # return
+    return alt_CP ? dot(sample, sample) : 0.0
 end
 
 function CP_update(cvi::CVI, i_label::Integer)
     CP_new = (
-        cvi.params.CP[i_label]
-        + dot(cvi.cache.diff_x_v, cvi.cache.diff_x_v)
-        + cvi.params.n[i_label] * dot(cvi.cache.delta_v, cvi.cache.delta_v)
-        + 2 * dot(cvi.cache.delta_v, cvi.params.G[:, i_label])
+        cvi.params["CP"][i_label]
+        + dot(cvi.cache["diff_x_v"], cvi.cache["diff_x_v"])
+        + cvi.params["n"][i_label] * dot(cvi.cache["delta_v"], cvi.cache["delta_v"])
+        + 2 * dot(cvi.cache["delta_v"], cvi.params["G"][:, i_label])
     )
+
     return CP_new
 end
 
