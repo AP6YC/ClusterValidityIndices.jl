@@ -1,4 +1,6 @@
-using Parameters
+using
+    Parameters,
+    DataStructures
 
 mutable struct CVIBaseParams
     label_map::LabelMap
@@ -11,22 +13,23 @@ mutable struct CVIBaseParams
     criterion_value::Float
 end
 
-struct CVICacheParams
-    delta_v::Vector{Float}          # dim
-    diff_x_v::Vector{Float}         # dim
-end
+# struct CVICacheParams
+#     delta_v::Vector{Float}          # dim
+#     diff_x_v::Vector{Float}         # dim
+# end
 
-const ALLOWED_CVIPARAM_TYPES = Union{
+const ALLOWED_CVI_PARAM_TYPES = Union{
     CVIExpandVector,
     CVIExpandMatrix,
     CVIExpandTensor,
 }
 
-const CVIParams = Dict{String, ALLOWED_CVIPARAM_TYPES}
+const CVIParams = OrderedDict{String, ALLOWED_CVI_PARAM_TYPES}
 
-const CVIRecursionCache = Dict{String, AbstractArray}
+const CVIRecursionCache = Dict{String, Any}
 
 @with_kw struct CVIOpts
+    params::Vector{String}
     CP_alt::Bool = false
 end
 
@@ -100,78 +103,84 @@ const CVI_CONFIG = Dict(
             "type" => CVIExpandTensor,
         ),
     ),
-    "funcs" => [
-        "add",
-        "update",
-    ],
+    # "funcs" => [
+    #     "add",
+    #     "update",
+    # ],
 )
 
+struct CVIParamConfig
+    update::Symbol
+    add::Symbol
+    expand::Symbol
+    type::Type
+end
+
+const CVIStrategy = Dict{String, CVIParamConfig}
+
 function get_cvi_strategy(config::AbstractDict)
-    # Add the function strategies
-    strategy = Dict(
-        name => Dict(
-            func => Symbol(name * "_" * func) for func in config["funcs"]
-        )
-        for name in keys(config["params"])
-    )
-    # Add the expansion strategies
+    # Initialize the strategy
+    strategy = CVIStrategy()
     for (name, subconfig) in config["params"]
-        strategy[name]["expand"] = config["container"]["expand"][subconfig["dim"]]
+        strategy[name] = CVIParamConfig(
+            Symbol(name * "_update"),
+            Symbol(name * "_add"),
+            config["container"][subconfig["dim"]]["expand"],
+            config["container"][subconfig["dim"]]["type"]{subconfig["type"]},
+        )
     end
     return strategy
 end
 
-const CVI_STRATEGY = get_cvi_strategy(CVI_CONFIG)
+const CVI_STRATEGY::CVIStrategy = get_cvi_strategy(CVI_CONFIG)
 
-# function unsafe_replace_vector!(v_old::RealVector, v_new::RealVector)
-#     for ix in eachindex(v_old)
-#         @inbounds v_old[ix] = v_new[ix]
-#     end
-# end
+function build_cvi_param(type::Type, dim::Integer=0, n_clusters::Integer=0)
+    if type <: CVIExpandVector
+        constructed = type(undef, n_clusters)
+    elseif type <: CVIExpandMatrix
+        constructed = type(undef, dim, n_clusters)
+    elseif type <: CVIExpandTensor
+        constructed = type(undef, dim, dim, n_clusters)
+    else
+        error("Unsupported CVI parameter type being requested for construction.")
+    end
+    return constructed
+end
 
-# function replace_vector!(v_old::RealVector, v_new::RealVector)
-#     unsafe_replace_vector!(v_old, v_new)
-# end
+function init_param!(cvi::CVI, name::AbstractString, dim::Integer=0, n_clusters::Integer=0)
+    cvi.params[name] = build_cvi_param(CVI_STRATEGY[name].type, dim, n_clusters)
+end
 
-# function compute_cache!(cvi::CVI, sample::RealVector, i_label::Integer)
-#     replace_vector!(cvi.delta_v, cvi.params.v[:, i_label] - v_new)
-#     replace_vector!(cvi.diff_x_v, sample - v_new)
+function init_params!(cvi::CVI, dim::Integer=0, n_clusters::Integer=0)
+    for name in cvi.opts.params
+        init_param!(cvi, name, dim, n_clusters)
+    end
+end
+
+# function BaseCVI(dim::Integer=0, n_cluster::Integer=0)
+
 # end
 
 function base_add_cluster!(cvi::CVI, sample::RealVector)
     for (name, param) in cvi.params
-        eval(CVI_STRATEGY[name]["add"])(cvi, sample)
+        eval(CVI_STRATEGY[name].add)(cvi, sample)
     end
 end
 
-# function n_init(dim::Integer=0, n_clusters::Integer=0)
-#     return CVIExpandVector{Int}(undef, n_clusters)
-# end
+function n_add!(_::CVI, _::RealVector)
+    return 1
+end
 
-# function v_init(dim::Integer=0, n_clusters::Integer=0)
-#     return CVIExpandMatrix{Float}(undef, dim, n_clusters)
-# end
-
-# function CP_init(dim::Integer=0, n_clusters::Integer=0)
-#     return CVIExpandVector{Int}(undef, n_clusters)
-# end
-
-# function G_init()
-#     return CVIExpandMatrix{Float}(undef, dim, n_clusters)
-# end
-
-function init_param(cvi::CVI, name::AbstractString)
-    cvi.params[name]
+function v_add!(_::CVI, sample::RealVector)
+    return sample
 end
 
 function CP_add!(cvi::CVI, sample::RealVector)
-    # Create the new CP
-    # CP_new = alt_CP ? dot(sample, sample) : 0.0
-    # # Expand the CP list
-    # expand_strategy_1d!(cvi.params["CP"], CP_new)
-    # # Empty
-    # return
-    return alt_CP ? dot(sample, sample) : 0.0
+    return cvi.opts.CP_alt ? dot(sample, sample) : 0.0
+end
+
+function G_add!(cvi::CVI, sample::RealVector)
+    return cvi.opts.CP_alt ? sample : zeros(cvi.dim)
 end
 
 function CP_update(cvi::CVI, i_label::Integer)
@@ -181,15 +190,14 @@ function CP_update(cvi::CVI, i_label::Integer)
         + cvi.params["n"][i_label] * dot(cvi.cache["delta_v"], cvi.cache["delta_v"])
         + 2 * dot(cvi.cache["delta_v"], cvi.params["G"][:, i_label])
     )
-
     return CP_new
 end
 
 function G_update(cvi::CVI, i_label::Integer)
     G_new = (
-        cvi.params.G[:, i_label]
-        + cvi.cache.diff_x_v
-        + cvi.params.n[i_label] * cvi.cache.delta_v
+        cvi.params["G"][:, i_label]
+        + cvi.cache["diff_x_v"]
+        + cvi.params["n"][i_label] * cvi.cache["delta_v"]
     )
     return G_new
 end
@@ -208,3 +216,51 @@ function update_cluster!(cvi::CVI, sample::RealVector, i_label::Integer)
     # Update parameters
     update_params!(cvi.params, i_label, n_new, CP_new, v_new, G_new)
 end
+
+
+# function unsafe_replace_vector!(v_old::RealVector, v_new::RealVector)
+#     for ix in eachindex(v_old)
+#         @inbounds v_old[ix] = v_new[ix]
+#     end
+# end
+
+# function replace_vector!(v_old::RealVector, v_new::RealVector)
+#     unsafe_replace_vector!(v_old, v_new)
+# end
+
+# function compute_cache!(cvi::CVI, sample::RealVector, i_label::Integer)
+#     replace_vector!(cvi.delta_v, cvi.params.v[:, i_label] - v_new)
+#     replace_vector!(cvi.diff_x_v, sample - v_new)
+# end
+
+
+# function n_init(dim::Integer=0, n_clusters::Integer=0)
+#     return CVIExpandVector{Int}(undef, n_clusters)
+# end
+
+# function v_init(dim::Integer=0, n_clusters::Integer=0)
+#     return CVIExpandMatrix{Float}(undef, dim, n_clusters)
+# end
+
+# function CP_init(dim::Integer=0, n_clusters::Integer=0)
+#     return CVIExpandVector{Int}(undef, n_clusters)
+# end
+
+# function G_init()
+#     return CVIExpandMatrix{Float}(undef, dim, n_clusters)
+# end
+
+# function get_cvi_strategy(config::AbstractDict)
+    # # Add the function strategies
+    # strategy = Dict(
+    #     name => Dict(
+    #         func => Symbol(name * "_" * func) for func in config["funcs"]
+    #     )
+    #     for name in keys(config["params"])
+    # )
+    # # Add the type and expansion strategies
+    # for (name, subconfig) in config["params"]
+    #     strategy[name]["expand"] = config["container"][subconfig["dim"]]["expand"]
+    #     strategy[name]["type"] = config["container"][subconfig["dim"]]["type"]
+    # end
+# end
