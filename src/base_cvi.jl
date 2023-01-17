@@ -42,17 +42,9 @@ end
 mutable struct BaseCVI <: CVI
     opts::CVIOpts
     base::CVIBaseParams
-    # cache::CVICacheParams
     params::CVIParams
     cache::CVIRecursionCache
 end
-
-# function CVICacheParams(dim::Integer=0)
-#     CVICacheParams(
-#         Vector{Float}(undef, dim),    # delta_v
-#         Vector{Float}(undef, dim),    # diff_x_v
-#     )
-# end
 
 function CVIBaseParams(dim::Integer=0)
     CVIBaseParams(
@@ -86,19 +78,19 @@ end
 const CVI_CONFIG = Dict(
     "params" => Dict(
         "n" => Dict(
-            "dim" => 1,
+            "shape" => 1,
             "type" => Int,
         ),
         "v" => Dict(
-            "dim" => 2,
+            "shape" => 2,
             "type" => Float,
         ),
         "CP" => Dict(
-            "dim" => 1,
+            "shape" => 1,
             "type" => Float,
         ),
         "G" => Dict(
-            "dim" => 2,
+            "shape" => 2,
             "type" => Float,
         ),
     ),
@@ -106,14 +98,17 @@ const CVI_CONFIG = Dict(
         1 => Dict(
             "expand" => :expand_strategy_1d!,
             "type" => CVIExpandVector,
+            # "el_type" => Number
         ),
         2 => Dict(
             "expand" => :expand_strategy_2d!,
-            "type" => CVIExpandMatrix
+            "type" => CVIExpandMatrix,
+            # "el_type" => Vector,
         ),
         3 => Dict(
             "expand" => :expand_strategy_3d!,
             "type" => CVIExpandTensor,
+            # "el_type" => Matrix,
         ),
     ),
 )
@@ -126,9 +121,20 @@ struct CVIParamConfig
     add::Symbol
     expand::Symbol
     type::Type
+    shape::Int
+    # el_type::Type
 end
 
 const CVIStrategy = Dict{String, CVIParamConfig}
+
+# function get_el_type(shape::Integer, type::Type)
+#     if shape == 1
+#         el_type = type
+#     else
+#         el_type = Array{type, shape - 1}
+#     end
+#     return el_type
+# end
 
 function get_cvi_strategy(config::AbstractDict)
     # Initialize the strategy
@@ -137,8 +143,10 @@ function get_cvi_strategy(config::AbstractDict)
         strategy[name] = CVIParamConfig(
             Symbol(name * "_update!"),
             Symbol(name * "_add!"),
-            config["container"][subconfig["dim"]]["expand"],
-            config["container"][subconfig["dim"]]["type"]{subconfig["type"]},
+            config["container"][subconfig["shape"]]["expand"],
+            config["container"][subconfig["shape"]]["type"]{subconfig["type"]},
+            subconfig["shape"]
+            # get_el_type(subconfig["shape"], subconfig["type"])
         )
     end
     return strategy
@@ -146,21 +154,44 @@ end
 
 const CVI_STRATEGY::CVIStrategy = get_cvi_strategy(CVI_CONFIG)
 
-function build_cvi_param(type::Type, dim::Integer=0, n_clusters::Integer=0)
-    if type <: CVIExpandVector
-        constructed = type(undef, n_clusters)
-    elseif type <: CVIExpandMatrix
-        constructed = type(undef, dim, n_clusters)
-    elseif type <: CVIExpandTensor
-        constructed = type(undef, dim, dim, n_clusters)
-    else
-        error("Unsupported CVI parameter type being requested for construction.")
-    end
-    return constructed
+
+function build_cvi_param(type::T, dim::Integer=0, n_clusters::integeger=0) where T <:CVIExpandVector
+    return type(undef, n_clusters)
+end
+
+function build_cvi_param(type::T, dim::Integer=0, n_clusters::integeger=0) where T <:CVIExpandMatrix
+    return type(undef, dim, n_clusters)
+end
+
+function build_cvi_param(type::T, dim::Integer=0, n_clusters::integeger=0) where T <:CVIExpandTensor
+    return type(undef, dim, dim, n_clusters)
+end
+
+# function build_cvi_param(type::Type, dim::Integer=0, n_clusters::Integer=0)
+#     if type <: CVIExpandVector
+#         constructed = type(undef, n_clusters)
+#     elseif type <: CVIExpandMatrix
+#         constructed = type(undef, dim, n_clusters)
+#     elseif type <: CVIExpandTensor
+#         constructed = type(undef, dim, dim, n_clusters)
+#     else
+#         error("Unsupported CVI parameter type being requested for construction.")
+#     end
+#     return constructed
+# end
+
+function build_cvi_cache(type::Type, shape::Integer, dim::Integer=0)
+
+    # return
+    # if type <: Number
+    #     constructed = type(0)
+    # else
+    #     constructed = zeros(type, dim)
 end
 
 function init_param!(cvi::CVI, name::AbstractString, dim::Integer=0, n_clusters::Integer=0)
     cvi.params[name] = build_cvi_param(CVI_STRATEGY[name].type, dim, n_clusters)
+    # cvi.cache[name] = CVI_STRATEGY[name].el_type()
 end
 
 function init_params!(cvi::CVI, dim::Integer=0, n_clusters::Integer=0)
@@ -175,14 +206,13 @@ end
 
 function add_strategy!(cvi::CVI, sample::RealVector, name::AbstractString)
     return eval(CVI_STRATEGY[name].add)(cvi, sample)
-    # cvi.params[name]
 end
 
 function base_add_cluster!(cvi::CVI, sample::RealVector)
     for name in keys(cvi.params)
         # eval(CVI_STRATEGY[name].add)(cvi, sample)
-        value = add_strategy!(cvi, sample, name)
-        extend_strategy!(cvi, name, value)
+        cvi.cache[name] = add_strategy!(cvi, sample, name)
+        extend_strategy!(cvi, name, cvi.cache[name])
     end
 end
 
