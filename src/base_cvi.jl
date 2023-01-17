@@ -155,15 +155,15 @@ end
 const CVI_STRATEGY::CVIStrategy = get_cvi_strategy(CVI_CONFIG)
 
 
-function build_cvi_param(type::T, dim::Integer=0, n_clusters::integeger=0) where T <:CVIExpandVector
+function build_cvi_param(type::Type{<:CVIExpandVector}, dim::Integer=0, n_clusters::Integer=0)
     return type(undef, n_clusters)
 end
 
-function build_cvi_param(type::T, dim::Integer=0, n_clusters::integeger=0) where T <:CVIExpandMatrix
+function build_cvi_param(type::Type{<:CVIExpandMatrix}, dim::Integer=0, n_clusters::Integer=0)
     return type(undef, dim, n_clusters)
 end
 
-function build_cvi_param(type::T, dim::Integer=0, n_clusters::integeger=0) where T <:CVIExpandTensor
+function build_cvi_param(type::Type{<:CVIExpandTensor}, dim::Integer=0, n_clusters::Integer=0)
     return type(undef, dim, dim, n_clusters)
 end
 
