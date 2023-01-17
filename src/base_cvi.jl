@@ -49,7 +49,8 @@ function CVIBaseParams(dim::Integer=0)
         LabelMap(),                 # label_map
         dim,                        # dim
         0,                          # n_samples
-        Vector{Float}(undef, dim),  # mu
+        # Vector{Float}(undef, dim),  # mu
+        zeros(Float, dim),
         0,                          # n_clusters
         0.0,                        # criterion_value
     )
@@ -151,7 +152,7 @@ end
 
 const CVI_STRATEGY::CVIStrategy = get_cvi_strategy(CVI_CONFIG)
 
-function build_0d_strategy(type::Type{<:Number})
+function build_0d_strategy(type::Type{<:Real})
     return zero(type)
 end
 
@@ -167,10 +168,9 @@ function build_3d_strategy(type::Type{<:AbstractArray{T, 3}}, param_a::Integer, 
     return type(undef, param_a, param_a, param_b)
 end
 
-
-function build_cvi_param(type::Type{<:CVIExpandVector}, dim::Integer, ::Integer)
+function build_cvi_param(type::Type{<:CVIExpandVector}, ::Integer, n_clusters::Integer)
     # return type(undef, n_clusters)
-    return build_1d_strategy(type, dim)
+    return build_1d_strategy(type, n_clusters)
 end
 
 function build_cvi_param(type::Type{<:CVIExpandMatrix}, dim::Integer, n_clusters::Integer)
@@ -209,19 +209,27 @@ function init_params!(cvi::CVI, dim::Integer=0, n_clusters::Integer=0)
     end
 end
 
-function extend_strategy!(cvi::CVI, name::AbstractString, value::Any)
-    eval(CVI_STRATEGY[name].expand)(cvi.params[name], value)
+function extend_strategy!(cvi::CVI, name::AbstractString)
+    eval(CVI_STRATEGY[name].expand)(cvi.params[name], cvi.cache[name])
 end
 
-function add_strategy(cvi::CVI, sample::RealVector, name::AbstractString)
-    return eval(CVI_STRATEGY[name].add)(cvi, sample)
+function add_strategy!(cvi::CVI, sample::RealVector, name::AbstractString)
+    cvi.cache[name] = eval(CVI_STRATEGY[name].add)(cvi, sample)
+    return
 end
 
 function base_add_cluster!(cvi::CVI, sample::RealVector)
+    # Increment the number of clusters
+    cvi.base.n_clusters += 1
+
+    # Compute the new variables in order
     for name in keys(cvi.params)
-        # eval(CVI_STRATEGY[name].add)(cvi, sample)
-        cvi.cache[name] = add_strategy(cvi, sample, name)
-        extend_strategy!(cvi, name, cvi.cache[name])
+        add_strategy!(cvi, sample, name)
+    end
+
+    # After computing the recursion cache, assign each
+    for name in keys(cvi.params)
+        extend_strategy!(cvi, name)
     end
 end
 
@@ -241,47 +249,190 @@ function G_add(cvi::CVI, sample::RealVector)
     return cvi.opts.CP_alt ? sample : zeros(cvi.base.dim)
 end
 
+# function SEP_add(cvi::CVI, sample::realVector)
+#     for ix = 1:cvi.base.n_clusters
+#         cvi.params[SEP[ix] = cvi.params.n[ix] * sum((cvi.params.v[:, ix] - cvi.mu) .^ 2)
+#     end
+# end
+
+
 function n_update(cvi::CVI, ::RealVector, i_label::Integer)
     return cvi.params["n"][i_label] + 1
 end
 
 function v_update(cvi::CVI, sample::RealVector, i_label::Integer)
-    return update_mean(cvi.params.["v"][:, i_label], sample, n_new)
+    # Use the cache version of n_new that was just computed
+    return update_mean(cvi.params["v"][:, i_label], sample, cvi.cache["n"])
+    # return update_mean(cvi.params["v"][:, i_label], sample, n_new)
 end
 
-function CP_update(cvi::CVI, ::RealVector, i_label::Integer)
+function delta_v_update(cvi::CVI, ::RealVector, i_label::Integer)
+    # Use the cache version of v_new that was just computed
+    return cvi.params["v"][:, i_label] - cvi.cache["v"]
+    # return cvi.params["v"][:, i_label] - v_new
+end
+
+function CP_update(cvi::CVI, sample::RealVector, i_label::Integer)
+    # TEMP: intermediate variables recomputed here.
+    # Find a way to cache them separately from recursion cache.
+    delta_v = cvi.params["v"][:, i_label] - cvi.cache["v"]
+    diff_x_v = sample - cvi.cache["v"]
+    # Compute the new compactness of the cluster i_label
     CP_new = (
         cvi.params["CP"][i_label]
-        + dot(cvi.cache["diff_x_v"], cvi.cache["diff_x_v"])
-        + cvi.params["n"][i_label] * dot(cvi.cache["delta_v"], cvi.cache["delta_v"])
-        + 2 * dot(cvi.cache["delta_v"], cvi.params["G"][:, i_label])
+        + dot(diff_x_v, diff_x_v)
+        + cvi.params["n"][i_label] * dot(delta_v, delta_v)
+        + 2 * dot(delta_v, cvi.params["G"][:, i_label])
     )
+    # CP_new = (
+    #     cvi.params["CP"][i_label]
+    #     + dot(cvi.cache["diff_x_v"], cvi.cache["diff_x_v"])
+    #     + cvi.params["n"][i_label] * dot(cvi.cache["delta_v"], cvi.cache["delta_v"])
+    #     + 2 * dot(cvi.cache["delta_v"], cvi.params["G"][:, i_label])
+    # )
     return CP_new
 end
 
-function G_update(cvi::CVI, ::RealVector, i_label::Integer)
+function G_update(cvi::CVI, sample::RealVector, i_label::Integer)
+    # TEMP: intermediate variables recomputed here.
+    # Find a way to cache them separately from recursion cache.
+    delta_v = cvi.params["v"][:, i_label] - cvi.cache["v"]
+    diff_x_v = sample - cvi.cache["v"]
+    # Compute the new G of cluster i_label
     G_new = (
         cvi.params["G"][:, i_label]
-        + cvi.cache["diff_x_v"]
-        + cvi.params["n"][i_label] * cvi.cache["delta_v"]
+        + diff_x_v
+        + cvi.params["n"][i_label] * delta_v
     )
+    # G_new = (
+    #     cvi.params["G"][:, i_label]
+    #     + cvi.cache["diff_x_v"]
+    #     + cvi.params["n"][i_label] * cvi.cache["delta_v"]
+    # )
     return G_new
 end
 
-function update_cluster!(cvi::CVI, sample::RealVector, i_label::Integer)
-    # Update the number of samples in the cluster
-    cvi.params.n[i_label] + 1
-    # Compute the new prototype vector
-    v_new = update_mean(cvi.params.v[:, i_label], sample, n_new)
-    # Compute delta_v and diff_x_v
-    compute_cache!(cvi, sample, i_label)
-    # Compute the CP_new
-    CP_new = CP_update(cvi, sample, i_label)
-    # Compute the G_new
-    G_new = G_update(cvi, sample, i_label)
-    # Update parameters
-    update_params!(cvi.params, i_label, n_new, CP_new, v_new, G_new)
+# function add_strategy!(cvi::CVI, sample::RealVector, name::AbstractString)
+#     cvi.cache[name] = eval(CVI_STRATEGY[name].add)(cvi, sample)
+#     return
+# end
+
+function update_strategy!(cvi::CVI, sample::RealVector, i_label::Integer, name::AbstractString)
+    cvi.cache[name] = eval(CVI_STRATEGY[name].update)(cvi, sample, i_label)
+    return
 end
+
+function reassign_param!(param::CVIExpandVector, value::Real, i_label::Integer)
+    @inbounds param[i_label] = value
+end
+
+function reassign_param!(param::CVIExpandMatrix, value::RealVector, i_label::Integer)
+    @inbounds param[:, i_label] = value
+end
+
+function reassign_param!(param::CVIExpandTensor, value::RealMatrix, i_label::Integer)
+    @inbounds param[:, :, i_label] = value
+end
+
+function reassign_strategy!(cvi::CVI, i_label::Integer, name::AbstractString)
+    reassign_param!(cvi.params[name], cvi.cache[name], i_label)
+end
+
+function base_update_cluster!(cvi::CVI, sample::RealVector, i_label::Integer)
+    # Compute the new variables in order
+    for name in keys(cvi.params)
+        # add_strategy!(cvi, sample, name)
+        update_strategy!(cvi, sample, i_label, name)
+    end
+
+    for name in keys(cvi.params)
+        reassign_strategy!(cvi, i_label, name)
+    end
+    # # After computing the recursion cache, assign each
+    # for name in keys(cvi.params)
+    #     extend_strategy!(cvi, name, cvi.cache[name])
+    # end
+end
+
+function init_cvi_update!(cvi::BaseCVI, sample::RealVector, label::Integer)
+    # Get the internal label
+    i_label = get_internal_label!(cvi.base.label_map, label)
+
+    # Increment to a new sample count
+    cvi.base.n_samples += 1
+
+    # If uninitialized, setup the CVI
+    # if isempty(cvi.base.mu)
+    if iszero(cvi.base.mu)
+        cvi.base.mu = sample
+        # setup!(cvi, sample)
+    # Otherwise, update the mean
+    else
+        cvi.base.mu = update_mean(cvi.base.mu, sample, cvi.base.n_samples)
+    end
+
+    # Return the internal label
+    return i_label
+end
+
+function param_inc!(cvi::BaseCVI, sample::RealVector, label::Integer)
+    # Initialize the batch update
+    i_label = init_cvi_update!(cvi, sample, label)
+
+    if i_label > cvi.base.n_clusters
+        base_add_cluster!(cvi, sample)
+    else
+        base_update_cluster!(cvi, sample, i_label)
+    end
+end
+
+# Criterion value evaluation function
+function evaluate!(cvi::BaseCVI)
+    SEP = zeros(cvi.base.n_clusters)
+    for ix = 1:cvi.base.n_clusters
+        SEP[ix] = cvi.params["n"][ix] * sum((cvi.params["v"][:, ix] - cvi.base.mu) .^ 2)
+    end
+    # Within group sum of squares
+    WGSS = sum(cvi.params["CP"])
+    if cvi.base.n_clusters > 1
+        # Between groups sum of squares
+        BGSS = sum(SEP)
+        # CH index value
+        cvi.base.criterion_value = (
+            (BGSS / WGSS)
+            * ((cvi.base.n_samples - cvi.base.n_clusters) / (cvi.base.n_clusters - 1))
+        )
+    else
+        cvi.base.criterion_value = 0.0
+    end
+end
+
+function get_cvi!(cvi::BaseCVI, sample::RealVector, label::Integer)
+    # Update the ICVI parameters
+    param_inc!(cvi, sample, label)
+
+    # Compute the criterion value
+    evaluate!(cvi)
+
+    # Return that value
+    return cvi.base.criterion_value
+end
+
+
+# function update_cluster!(cvi::CVI, sample::RealVector, i_label::Integer)
+#     # Update the number of samples in the cluster
+#     cvi.params.n[i_label] + 1
+#     # Compute the new prototype vector
+#     v_new = update_mean(cvi.params.v[:, i_label], sample, n_new)
+#     # Compute delta_v and diff_x_v
+#     compute_cache!(cvi, sample, i_label)
+#     # Compute the CP_new
+#     CP_new = CP_update(cvi, sample, i_label)
+#     # Compute the G_new
+#     G_new = G_update(cvi, sample, i_label)
+#     # Update parameters
+#     update_params!(cvi.params, i_label, n_new, CP_new, v_new, G_new)
+# end
 
 
 # function unsafe_replace_vector!(v_old::RealVector, v_new::RealVector)
