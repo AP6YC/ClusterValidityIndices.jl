@@ -8,7 +8,6 @@ function init_param!(cvi::CVI, name::AbstractString, dim::Integer=0, n_clusters:
     # Build the parameter itself
     cvi.params[name] = build_cvi_param(cvi.evalorder[name].type, dim, n_clusters)
     # Build the parameter's recursion cache
-    @info "Building $(name) cache, type $(cvi.evalorder[name].el_type)"
     cvi.cache[name] = build_cvi_cache(cvi.evalorder[name].el_type, cvi.evalorder[name].shape, dim)
 end
 
@@ -23,24 +22,24 @@ function base_add_cluster!(cvi::CVI, sample::RealVector)
     cvi.base.n_clusters += 1
 
     # Compute the new variables in order
-    for name in keys(cvi.params)
+    for name in keys(cvi.evalorder)
         add_strategy!(cvi, sample, name)
     end
 
     # After computing the recursion cache, extend each parameter with the cache values
-    for name in keys(cvi.params)
+    for name in keys(cvi.evalorder)
         extend_strategy!(cvi, name)
     end
 end
 
 function base_update_cluster!(cvi::CVI, sample::RealVector, i_label::Integer)
     # Compute the updated parameters in order
-    for name in keys(cvi.params)
+    for name in keys(cvi.evalorder)
         update_strategy!(cvi, sample, i_label, name)
     end
 
     # After computing the recursion cache, reassign each value in its position
-    for name in keys(cvi.params)
+    for name in keys(cvi.evalorder)
         reassign_strategy!(cvi, i_label, name)
     end
 end

@@ -33,9 +33,6 @@ end
 
 function v_update(cvi::CVI, sample::RealVector, i_label::Integer)
     # Use the cache version of n_new that was just computed
-    # @info "CVI New: v_new = $(update_mean(cvi.params["v"][:, i_label], sample, cvi.cache["n"]))"
-    @info "CVI New: using n_new = $(cvi.cache["n"])"
-    @info "CVI New: params at i_label is $(cvi.params["n"][i_label])"
     return update_mean(cvi.params["v"][:, i_label], sample, cvi.cache["n"])
     # return update_mean(cvi.params["v"][:, i_label], sample, n_new)
 end
@@ -51,7 +48,6 @@ function CP_update(cvi::CVI, sample::RealVector, i_label::Integer)
     # Find a way to cache them separately from recursion cache.
     delta_v = cvi.params["v"][:, i_label] - cvi.cache["v"]
     diff_x_v = sample - cvi.cache["v"]
-    @info "CVI New diff_x_f: $(diff_x_v)"
     # Compute the new compactness of the cluster i_label
     CP_new = (
         cvi.params["CP"][i_label]

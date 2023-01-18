@@ -43,7 +43,6 @@ function build_cvi_param(type::Type{<:CVIExpandTensor}, dim::Integer, n_clusters
 end
 
 function build_cvi_cache(type::Type, shape::Integer, dim::Integer)
-    @info "INSIDE building type $(type), shape $(shape), dim $(dim) "
     if shape == 1
         constructed = build_0d_strategy(type)
     elseif shape == 2
@@ -55,7 +54,6 @@ function build_cvi_cache(type::Type, shape::Integer, dim::Integer)
     else
         error("Unsupported cache variable shape provided.")
     end
-    @info "INSIDE created a $(typeof(constructed))"
     # return constructed
     return zero(constructed)
 end
@@ -91,9 +89,6 @@ end
 
 function update_strategy!(cvi::CVI, sample::RealVector, i_label::Integer, name::AbstractString)
     cvi.cache[name] = eval(cvi.evalorder[name].update)(cvi, sample, i_label)
-    if name == "n"
-        @info "Updated n in cache to $(cvi.cache[name])"
-    end
     return
 end
 
