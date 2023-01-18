@@ -5,23 +5,30 @@
 Contains the configuration for the CVI base implementation.
 """
 
-const CVI_CONFIG = Dict(
+const CVIConfigDict = Dict{String, Any}
+
+const CVI_CONFIG = CVIConfigDict(
     "params" => Dict(
         "n" => Dict(
             "shape" => 1,
             "type" => Int,
+            "deps" => [],
         ),
         "v" => Dict(
             "shape" => 2,
             "type" => Float,
+            "deps" => ["n"],
         ),
         "CP" => Dict(
             "shape" => 1,
             "type" => Float,
+            # "deps" => ["v", "n", "G"],
+            "deps" => ["v", "n"],
         ),
         "G" => Dict(
             "shape" => 2,
             "type" => Float,
+            "deps" => ["v", "n"],
         ),
     ),
     "container" => Dict(
@@ -39,46 +46,3 @@ const CVI_CONFIG = Dict(
         ),
     ),
 )
-
-"""
-An object containing all of the information about a single type of CVI parameter.
-
-This includes symbolic pointers to its related functions, the type of the parameter, its shape, and the subsequent element type for expansion.
-"""
-struct CVIParamConfig
-    update::Symbol
-    add::Symbol
-    expand::Symbol
-    type::Type
-    shape::Int
-    el_type::Type
-end
-
-const CVIStrategy = Dict{String, CVIParamConfig}
-
-function get_el_type(shape::Integer, type::Type)
-    if shape == 1
-        el_type = type
-    else
-        el_type = Array{type, shape - 1}
-    end
-    return el_type
-end
-
-function get_cvi_strategy(config::AbstractDict)
-    # Initialize the strategy
-    strategy = CVIStrategy()
-    for (name, subconfig) in config["params"]
-        strategy[name] = CVIParamConfig(
-            Symbol(name * "_update"),
-            Symbol(name * "_add"),
-            config["container"][subconfig["shape"]]["expand"],
-            config["container"][subconfig["shape"]]["type"]{subconfig["type"]},
-            subconfig["shape"],
-            get_el_type(subconfig["shape"], subconfig["type"]),
-        )
-    end
-    return strategy
-end
-
-const CVI_STRATEGY::CVIStrategy = get_cvi_strategy(CVI_CONFIG)

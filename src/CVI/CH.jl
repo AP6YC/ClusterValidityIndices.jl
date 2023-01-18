@@ -84,8 +84,11 @@ function param_inc!(cvi::CH, sample::RealVector, label::Integer)
     else
         n_new = cvi.params.n[i_label] + 1
         v_new = update_mean(cvi.params.v[:, i_label], sample, n_new)
+        # @info "CVI Old: v_new = $(v_new) "
+        # @info "CVI Old: using n_new = $(n_new)"
         delta_v = cvi.params.v[:, i_label] - v_new
         diff_x_v = sample - v_new
+        @info "CVI Old diff_x_v: $(diff_x_v)"
         CP_new = (
             cvi.params.CP[i_label]
             + dot(diff_x_v, diff_x_v)

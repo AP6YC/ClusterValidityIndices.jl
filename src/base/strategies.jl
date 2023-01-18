@@ -43,16 +43,21 @@ function build_cvi_param(type::Type{<:CVIExpandTensor}, dim::Integer, n_clusters
 end
 
 function build_cvi_cache(type::Type, shape::Integer, dim::Integer)
+    @info "INSIDE building type $(type), shape $(shape), dim $(dim) "
     if shape == 1
         constructed = build_0d_strategy(type)
     elseif shape == 2
         constructed = build_1d_strategy(type, dim)
+        # constructed = zeros(type, dim)
     elseif shape == 3
         constructed = build_2d_strategy(type, dim, dim)
+        # constructed = zeros(type, dim, dim)
     else
         error("Unsupported cache variable shape provided.")
     end
-    return constructed
+    @info "INSIDE created a $(typeof(constructed))"
+    # return constructed
+    return zero(constructed)
 end
 
 # -----------------------------------------------------------------------------
@@ -62,7 +67,7 @@ end
 # -----------------------------------------------------------------------------
 
 function extend_strategy!(cvi::CVI, name::AbstractString)
-    eval(CVI_STRATEGY[name].expand)(cvi.params[name], cvi.cache[name])
+    eval(cvi.evalorder[name].expand)(cvi.params[name], cvi.cache[name])
 end
 
 # -----------------------------------------------------------------------------
@@ -73,7 +78,7 @@ end
 # -----------------------------------------------------------------------------
 
 function add_strategy!(cvi::CVI, sample::RealVector, name::AbstractString)
-    cvi.cache[name] = eval(CVI_STRATEGY[name].add)(cvi, sample)
+    cvi.cache[name] = eval(cvi.evalorder[name].add)(cvi, sample)
     return
 end
 
@@ -85,7 +90,10 @@ end
 # -----------------------------------------------------------------------------
 
 function update_strategy!(cvi::CVI, sample::RealVector, i_label::Integer, name::AbstractString)
-    cvi.cache[name] = eval(CVI_STRATEGY[name].update)(cvi, sample, i_label)
+    cvi.cache[name] = eval(cvi.evalorder[name].update)(cvi, sample, i_label)
+    if name == "n"
+        @info "Updated n in cache to $(cvi.cache[name])"
+    end
     return
 end
 
