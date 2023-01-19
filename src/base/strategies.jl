@@ -67,8 +67,8 @@ end
 # -----------------------------------------------------------------------------
 
 function extend_strategy!(cvi::CVI, name::AbstractString)
-    # eval(cvi.evalorder[name].expand)(cvi.params[name], cvi.cache[name])
-    handle_strategy!(cvi.evalorder[name].expand, cvi.params[name], cvi.cache[name])
+    # eval(cvi.config[name].expand)(cvi.params[name], cvi.cache[name])
+    handle_strategy!(cvi.config[name].expand, cvi.params[name], cvi.cache[name])
 end
 
 # -----------------------------------------------------------------------------
@@ -79,8 +79,8 @@ end
 # -----------------------------------------------------------------------------
 
 function add_strategy!(cvi::CVI, name::AbstractString, sample::RealVector)
-    # cvi.cache[name] = eval(cvi.evalorder[name].add)(cvi, sample)
-    cvi.cache[name] = handle_strategy!(cvi.evalorder[name].add, cvi, sample)
+    # cvi.cache[name] = eval(cvi.config[name].add)(cvi, sample)
+    cvi.cache[name] = handle_strategy!(cvi.config[name].add, cvi, sample)
     return
 end
 
@@ -93,18 +93,18 @@ end
 
 function update_strategy!(cvi::CVI, name::AbstractString, sample::RealVector, i_label::Integer)
     # If the parameter is extended via the recursion cache
-    # if cvi.evalorder[name].to_expand
-    # cvi.cache[name] = eval(cvi.evalorder[name].update)(cvi, sample, i_label)
-    cvi.cache[name] = handle_strategy!(cvi.evalorder[name].update, cvi, sample, i_label)
+    # if cvi.config[name].to_expand
+    # cvi.cache[name] = eval(cvi.config[name].update)(cvi, sample, i_label)
+    cvi.cache[name] = handle_strategy!(cvi.config[name].update, cvi, sample, i_label)
     # # Otherwise, it is updated in place
     # else
-    #     eval(cvi.evalorder[name].update)(cvi, sample, i_label)
+    #     eval(cvi.config[name].update)(cvi, sample, i_label)
     # end
     return
 end
 
 # function inplace_strategy!(cvi::CVI, name::AbstractString,  sample::RealVector, i_label::Integer)
-#     eval(cvi.evalorder[name].update)(cvi, sample, i_label)
+#     eval(cvi.config[name].update)(cvi, sample, i_label)
 # end
 
 # -----------------------------------------------------------------------------

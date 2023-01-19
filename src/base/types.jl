@@ -87,21 +87,21 @@ function CVIParamConfig(top_config::CVIConfigDict, name::String)
     return param_config
 end
 
-function recursive_evalorder!(evalorder::CVIConfig, top_config::CVIConfigDict, name::AbstractString)
+function recursive_evalorder!(config::CVIConfig, top_config::CVIConfigDict, name::AbstractString)
     # Iterate over all current dependencies
     for dep in top_config["params"][name]["deps"]
         # Get the stage where the dependency should be
         # i_dep = top_config["params"][name]["stage"]
         # If we don't have the dependency, crawl through its dependency chain
-        if !haskey(evalorder, name)
-        # if !haskey(evalorder[i_dep], name)
-            recursive_evalorder!(evalorder, top_config, dep)
+        if !haskey(config, name)
+        # if !haskey(config[i_dep], name)
+            recursive_evalorder!(config, top_config, dep)
         end
     end
     # If we have all dependencies, build this parameter name's config
     # i_name = top_config["params"][name]["stage"]
-    # evalorder[i_name][name] = CVIParamConfig(top_config, name)
-    evalorder[name] = CVIParamConfig(top_config, name)
+    # config[i_name][name] = CVIParamConfig(top_config, name)
+    config[name] = CVIParamConfig(top_config, name)
 end
 
 # function build_empty_evalorder_priority(top_config::CVIConfigDict, opts::CVIOpts)
@@ -109,25 +109,25 @@ end
 #     stages = [top_config["params"][name]["stage"] for name in keys(top_config["params"])]
 #     # Get the maximum value
 #     max_stage = maximum(stages)
-#     # Create an empty evalorder
-#     evalorder = CVIConfig()
+#     # Create an empty config
+#     config = CVIConfig()
 #     # Push a stage from 1 to max stage to guarantee that there will be a stage index for each parameter
 #     for i = 1:max_stage
-#         push!(evalorder, CVIStageOrder())
+#         push!(config, CVIStageOrder())
 #     end
-#     return evalorder
+#     return config
 # end
 
-function build_evalorder(config::CVIConfigDict, opts::CVIOpts)::CVIConfig
+function build_evalorder(top_config::CVIConfigDict, opts::CVIOpts)::CVIConfig
     # Initialize the strategy
-    evalorder = CVIConfig()
-    # evalorder = build_empty_evalorder_priority(config, opts)
+    config = CVIConfig()
+    # config = build_empty_evalorder_priority(config, opts)
     # Iterate over every option that we selected
     for param in opts.params
         # Recursively add its dependencies in deepest order
-        recursive_evalorder!(evalorder, config, param)
+        recursive_evalorder!(config, top_config, param)
     end
-    return evalorder
+    return config
 end
 
 mutable struct BaseCVI <: CVI
@@ -135,7 +135,7 @@ mutable struct BaseCVI <: CVI
     base::CVIBaseParams
     params::CVIParams
     cache::CVIRecursionCache
-    evalorder::CVIConfig
+    config::CVIConfig
 end
 
 # -----------------------------------------------------------------------------
@@ -157,14 +157,14 @@ end
 function BaseCVI(dim::Integer=0, n_clusters::Integer=0)
     opts = CVIOpts()
 
-    evalorder = build_evalorder(CVI_TOP_CONFIG, opts)
+    config = build_evalorder(CVI_TOP_CONFIG, opts)
 
     cvi = BaseCVI(
         opts,
         CVIBaseParams(dim),
         CVIParams(),
         CVIRecursionCache(),
-        evalorder,
+        config,
     )
 
     # Initialize if we know the dimension

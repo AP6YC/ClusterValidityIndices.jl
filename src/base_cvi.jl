@@ -6,9 +6,9 @@ include("base/base.jl")
 
 function init_param!(cvi::CVI, name::AbstractString, dim::Integer=0, n_clusters::Integer=0)
     # Build the parameter itself
-    cvi.params[name] = build_cvi_param(cvi.evalorder[name].type, dim, n_clusters)
+    cvi.params[name] = build_cvi_param(cvi.config[name].type, dim, n_clusters)
     # Build the parameter's recursion cache
-    cvi.cache[name] = build_cvi_cache(cvi.evalorder[name].el_type, cvi.evalorder[name].shape, dim)
+    cvi.cache[name] = build_cvi_cache(cvi.config[name].el_type, cvi.config[name].shape, dim)
 end
 
 function init_params!(cvi::CVI, dim::Integer=0, n_clusters::Integer=0)
@@ -18,7 +18,7 @@ function init_params!(cvi::CVI, dim::Integer=0, n_clusters::Integer=0)
 end
 
 function iterate_evalorder!(func::Function, cvi::CVI, args...)
-    for name in keys(cvi.evalorder)
+    for name in keys(cvi.config)
         func(cvi, name, args...)
     end
     # foreach(name -> add_strategy!(args...), )
