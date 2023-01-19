@@ -17,31 +17,30 @@ function init_params!(cvi::CVI, dim::Integer=0, n_clusters::Integer=0)
     end
 end
 
+function iterate_evalorder!(func::Function, cvi::CVI, args...)
+    for name in keys(cvi.evalorder)
+        func(cvi, name, args...)
+    end
+    # foreach(name -> add_strategy!(args...), )
+end
+
 function base_add_cluster!(cvi::CVI, sample::RealVector)
     # Increment the number of clusters
     cvi.base.n_clusters += 1
 
     # Compute the new variables in order
-    for name in keys(cvi.evalorder)
-        add_strategy!(cvi, sample, name)
-    end
+    iterate_evalorder!(add_strategy!, cvi, sample)
 
     # After computing the recursion cache, extend each parameter with the cache values
-    for name in keys(cvi.evalorder)
-        extend_strategy!(cvi, name)
-    end
+    iterate_evalorder!(extend_strategy!, cvi)
 end
 
 function base_update_cluster!(cvi::CVI, sample::RealVector, i_label::Integer)
     # Compute the updated parameters in order
-    for name in keys(cvi.evalorder)
-        update_strategy!(cvi, sample, i_label, name)
-    end
+    iterate_evalorder!(update_strategy!, cvi, sample, i_label)
 
     # After computing the recursion cache, reassign each value in its position
-    for name in keys(cvi.evalorder)
-        reassign_strategy!(cvi, i_label, name)
-    end
+    iterate_evalorder!(reassign_strategy!, cvi, i_label)
 end
 
 function init_cvi_update!(cvi::BaseCVI, sample::RealVector, label::Integer)

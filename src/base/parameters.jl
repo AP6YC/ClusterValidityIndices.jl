@@ -22,10 +22,12 @@ function G_add(cvi::CVI, sample::RealVector)
 end
 
 # function SEP_add(cvi::CVI, sample::realVector)
-#     for ix = 1:cvi.base.n_clusters
-#         cvi.params[SEP[ix] = cvi.params.n[ix] * sum((cvi.params.v[:, ix] - cvi.mu) .^ 2)
-#     end
+#     return 0
+#     # for ix = 1:cvi.base.n_clusters
+#     #     cvi.params[SEP[ix] = cvi.params.n[ix] * sum((cvi.params.v[:, ix] - cvi.mu) .^ 2)
+#     # end
 # end
+
 
 function n_update(cvi::CVI, ::RealVector, i_label::Integer)
     return cvi.params["n"][i_label] + 1
@@ -82,3 +84,10 @@ function G_update(cvi::CVI, sample::RealVector, i_label::Integer)
     # )
     return G_new
 end
+
+# function SEP_update(cvi::CVI, sample::RealVector, i_label::Integer)
+#     for ix = 1:cvi.base.n_clusters
+#         cvi.params[SEP[ix] = cvi.params.n[ix] * sum((cvi.params.v[:, ix] - cvi.mu) .^ 2)
+#     end
+#     return
+# end

@@ -46,6 +46,7 @@ struct CVIParamConfig
     type::Type
     shape::Int
     el_type::Type
+    to_expand::Bool
 end
 
 function get_el_type(shape::Integer, type::Type)
@@ -69,6 +70,8 @@ function CVIParamConfig(config::CVIConfigDict, name::String)
         config["container"][subconfig["shape"]]["type"]{subconfig["type"]},
         subconfig["shape"],
         get_el_type(subconfig["shape"], subconfig["type"]),
+        subconfig["growth"] == "extend",
+        # subconfig["to_expand"]
     )
     return param_config
 end
@@ -152,22 +155,23 @@ end
 #     CVIExpandTensor,
 # }
 
-const CVIStrategy = Dict{String, CVIParamConfig}
+# const CVIStrategy = Dict{String, CVIParamConfig}
 
-function get_cvi_strategy(config::AbstractDict)
-    # Initialize the strategy
-    strategy = CVIStrategy()
-    for (name, subconfig) in config["params"]
-        strategy[name] = CVIParamConfig(
-            Symbol(name * "_update"),
-            Symbol(name * "_add"),
-            config["container"][subconfig["shape"]]["expand"],
-            config["container"][subconfig["shape"]]["type"]{subconfig["type"]},
-            subconfig["shape"],
-            get_el_type(subconfig["shape"], subconfig["type"]),
-        )
-    end
-    return strategy
-end
+# function get_cvi_strategy(config::AbstractDict)
+#     # Initialize the strategy
+#     strategy = CVIStrategy()
+#     for (name, subconfig) in config["params"]
+#         strategy[name] = CVIParamConfig(
+#             Symbol(name * "_update"),
+#             Symbol(name * "_add"),
+#             config["container"][subconfig["shape"]]["expand"],
+#             config["container"][subconfig["shape"]]["type"]{subconfig["type"]},
+#             subconfig["shape"],
+#             get_el_type(subconfig["shape"], subconfig["type"]),
 
-const CVI_STRATEGY::CVIStrategy = get_cvi_strategy(CVI_CONFIG)
+#         )
+#     end
+#     return strategy
+# end
+
+# const CVI_STRATEGY::CVIStrategy = get_cvi_strategy(CVI_CONFIG)

@@ -47,15 +47,17 @@ function build_cvi_cache(type::Type, shape::Integer, dim::Integer)
         constructed = build_0d_strategy(type)
     elseif shape == 2
         constructed = build_1d_strategy(type, dim)
-        # constructed = zeros(type, dim)
     elseif shape == 3
         constructed = build_2d_strategy(type, dim, dim)
-        # constructed = zeros(type, dim, dim)
     else
         error("Unsupported cache variable shape provided.")
     end
     # return constructed
     return zero(constructed)
+end
+
+function handle_strategy!(func::Symbol, args...)
+    eval(func)(args...)
 end
 
 # -----------------------------------------------------------------------------
@@ -65,7 +67,8 @@ end
 # -----------------------------------------------------------------------------
 
 function extend_strategy!(cvi::CVI, name::AbstractString)
-    eval(cvi.evalorder[name].expand)(cvi.params[name], cvi.cache[name])
+    # eval(cvi.evalorder[name].expand)(cvi.params[name], cvi.cache[name])
+    handle_strategy!(cvi.evalorder[name].expand, cvi.params[name], cvi.cache[name])
 end
 
 # -----------------------------------------------------------------------------
@@ -75,8 +78,9 @@ end
 # added to the cache.
 # -----------------------------------------------------------------------------
 
-function add_strategy!(cvi::CVI, sample::RealVector, name::AbstractString)
-    cvi.cache[name] = eval(cvi.evalorder[name].add)(cvi, sample)
+function add_strategy!(cvi::CVI, name::AbstractString, sample::RealVector)
+    # cvi.cache[name] = eval(cvi.evalorder[name].add)(cvi, sample)
+    cvi.cache[name] = handle_strategy!(cvi.evalorder[name].add, cvi, sample)
     return
 end
 
@@ -87,10 +91,21 @@ end
 # added to the cache.
 # -----------------------------------------------------------------------------
 
-function update_strategy!(cvi::CVI, sample::RealVector, i_label::Integer, name::AbstractString)
-    cvi.cache[name] = eval(cvi.evalorder[name].update)(cvi, sample, i_label)
+function update_strategy!(cvi::CVI, name::AbstractString, sample::RealVector, i_label::Integer)
+    # If the parameter is extended via the recursion cache
+    # if cvi.evalorder[name].to_expand
+    # cvi.cache[name] = eval(cvi.evalorder[name].update)(cvi, sample, i_label)
+    cvi.cache[name] = handle_strategy!(cvi.evalorder[name].update, cvi, sample, i_label)
+    # # Otherwise, it is updated in place
+    # else
+    #     eval(cvi.evalorder[name].update)(cvi, sample, i_label)
+    # end
     return
 end
+
+# function inplace_strategy!(cvi::CVI, name::AbstractString,  sample::RealVector, i_label::Integer)
+#     eval(cvi.evalorder[name].update)(cvi, sample, i_label)
+# end
 
 # -----------------------------------------------------------------------------
 # REASSIGN
@@ -111,7 +126,7 @@ function reassign_param!(param::CVIExpandTensor, value::RealMatrix, i_label::Int
     @inbounds param[:, :, i_label] = value
 end
 
-function reassign_strategy!(cvi::CVI, i_label::Integer, name::AbstractString)
+function reassign_strategy!(cvi::CVI, name::AbstractString, i_label::Integer)
     reassign_param!(cvi.params[name], cvi.cache[name], i_label)
 end
 
