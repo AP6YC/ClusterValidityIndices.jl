@@ -94,8 +94,6 @@ const CVIEvalOrder = Vector{CVIStageOrder}
 function recursive_evalorder!(config::CVIConfig, evalorder::CVIEvalOrder, top_config::CVIConfigDict, name::AbstractString)
     # Iterate over all current dependencies
     for dep in top_config["params"][name]["deps"]
-        # Get the stage where the dependency should be
-        # i_dep = top_config["params"][name]["stage"]
         # If we don't have the dependency, crawl through its dependency chain
         # if !haskey(config, name)
         if !haskey(config, dep)
@@ -104,9 +102,8 @@ function recursive_evalorder!(config::CVIConfig, evalorder::CVIEvalOrder, top_co
         end
     end
     # If we have all dependencies, build this parameter name's config
-    # i_name = top_config["params"][name]["stage"]
-    # config[i_name][name] = CVIParamConfig(top_config, name)
     config[name] = CVIParamConfig(top_config, name)
+    # Append the name of the parameter to the evalorder at its correct stage
     stage = top_config["params"][name]["stage"]
     push!(evalorder[stage], name)
 
@@ -130,14 +127,14 @@ end
 function build_config(top_config::CVIConfigDict, opts::CVIOpts)
     # Initialize the strategy
     config = CVIConfig()
-    # evalorder = CVIEvalOrder()
     evalorder = build_empty_evalorder(top_config, opts)
-    # config = build_empty_evalorder_priority(config, opts)
     # Iterate over every option that we selected
     for param in opts.params
         # Recursively add its dependencies in deepest order
         recursive_evalorder!(config, evalorder, top_config, param)
     end
+    # Clean up the evalorder if we have empty stages
+    filter!(v->!isempty(v), evalorder)
 
     return config, evalorder
 end
