@@ -88,7 +88,10 @@ function recursive_evalorder!(evalorder::CVIEvalOrder, config::CVIConfigDict, na
     evalorder[name] = CVIParamConfig(config, name)
 end
 
-function get_cvi_evalorder(config::CVIConfigDict, opts::CVIOpts)::CVIEvalOrder
+# function get_priority_list()
+# end
+
+function build_evalorder(config::CVIConfigDict, opts::CVIOpts)::CVIEvalOrder
     # Initialize the strategy
     evalorder = CVIEvalOrder()
     # Iterate over every option that we selected
@@ -126,7 +129,7 @@ end
 function BaseCVI(dim::Integer=0, n_clusters::Integer=0)
     opts = CVIOpts()
 
-    evalorder = get_cvi_evalorder(CVI_CONFIG, opts)
+    evalorder = build_evalorder(CVI_CONFIG, opts)
 
     cvi = BaseCVI(
         opts,
