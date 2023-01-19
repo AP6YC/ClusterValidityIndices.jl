@@ -87,48 +87,61 @@ function CVIParamConfig(top_config::CVIConfigDict, name::String)
     return param_config
 end
 
-function recursive_evalorder!(config::CVIConfig, top_config::CVIConfigDict, name::AbstractString)
+const CVIStageOrder = Vector{String}
+
+const CVIEvalOrder = Vector{CVIStageOrder}
+
+function recursive_evalorder!(config::CVIConfig, evalorder::CVIEvalOrder, top_config::CVIConfigDict, name::AbstractString)
     # Iterate over all current dependencies
     for dep in top_config["params"][name]["deps"]
         # Get the stage where the dependency should be
         # i_dep = top_config["params"][name]["stage"]
         # If we don't have the dependency, crawl through its dependency chain
-        if !haskey(config, name)
+        # if !haskey(config, name)
+        if !haskey(config, dep)
         # if !haskey(config[i_dep], name)
-            recursive_evalorder!(config, top_config, dep)
+            recursive_evalorder!(config, evalorder, top_config, dep)
         end
     end
     # If we have all dependencies, build this parameter name's config
     # i_name = top_config["params"][name]["stage"]
     # config[i_name][name] = CVIParamConfig(top_config, name)
     config[name] = CVIParamConfig(top_config, name)
+    stage = top_config["params"][name]["stage"]
+    push!(evalorder[stage], name)
+
+    return
 end
 
-# function build_empty_evalorder_priority(top_config::CVIConfigDict, opts::CVIOpts)
-#     # Get all of the stages defined in the config
-#     stages = [top_config["params"][name]["stage"] for name in keys(top_config["params"])]
-#     # Get the maximum value
-#     max_stage = maximum(stages)
-#     # Create an empty config
-#     config = CVIConfig()
-#     # Push a stage from 1 to max stage to guarantee that there will be a stage index for each parameter
-#     for i = 1:max_stage
-#         push!(config, CVIStageOrder())
-#     end
-#     return config
-# end
+function build_empty_evalorder(top_config::CVIConfigDict, opts::CVIOpts)
+    # Get all of the stages defined in the config
+    stages = [top_config["params"][name]["stage"] for name in opts.params]
+    # Get the maximum value
+    max_stage = maximum(stages)
+    # Create an empty CVIEvalOrder
+    evalorder = CVIEvalOrder()
+    # Push a stage from 1 to max stage to guarantee that there will be a stage index for each parameter
+    for _ = 1:max_stage
+        push!(evalorder, CVIStageOrder())
+    end
+    return evalorder
+end
 
-function build_evalorder(top_config::CVIConfigDict, opts::CVIOpts)::CVIConfig
+function build_config(top_config::CVIConfigDict, opts::CVIOpts)
     # Initialize the strategy
     config = CVIConfig()
+    # evalorder = CVIEvalOrder()
+    evalorder = build_empty_evalorder(top_config, opts)
     # config = build_empty_evalorder_priority(config, opts)
     # Iterate over every option that we selected
     for param in opts.params
         # Recursively add its dependencies in deepest order
-        recursive_evalorder!(config, top_config, param)
+        recursive_evalorder!(config, evalorder, top_config, param)
     end
-    return config
+
+    return config, evalorder
 end
+
 
 mutable struct BaseCVI <: CVI
     opts::CVIOpts
@@ -136,6 +149,7 @@ mutable struct BaseCVI <: CVI
     params::CVIParams
     cache::CVIRecursionCache
     config::CVIConfig
+    evalorder::CVIEvalOrder
 end
 
 # -----------------------------------------------------------------------------
@@ -154,10 +168,16 @@ function CVIBaseParams(dim::Integer=0)
     )
 end
 
+# function build_evalorder(top_config::CVIConfigDict, opts::CVIOpts)
+#     # Get all of the stages defined in the config
+#     stages = [top_config["params"][name]["stage"] for name in keys(opts["params"])]
+#     evalorder = Vec
+# end
+
 function BaseCVI(dim::Integer=0, n_clusters::Integer=0)
     opts = CVIOpts()
 
-    config = build_evalorder(CVI_TOP_CONFIG, opts)
+    config, evalorder = build_config(CVI_TOP_CONFIG, opts)
 
     cvi = BaseCVI(
         opts,
@@ -165,6 +185,7 @@ function BaseCVI(dim::Integer=0, n_clusters::Integer=0)
         CVIParams(),
         CVIRecursionCache(),
         config,
+        evalorder,
     )
 
     # Initialize if we know the dimension
