@@ -7,7 +7,7 @@ Contains the configuration for the CVI base implementation.
 
 const CVIConfigDict = Dict{String, Any}
 
-const CVI_CONFIG = CVIConfigDict(
+const CVI_TOP_CONFIG = CVIConfigDict(
     "params" => Dict(
         "n" => Dict(
             "shape" => 1,
