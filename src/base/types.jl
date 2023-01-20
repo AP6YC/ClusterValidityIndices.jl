@@ -88,12 +88,15 @@ function recursive_evalorder!(config::CVIConfig, evalorder::CVIEvalOrder, top_co
             recursive_evalorder!(config, evalorder, top_config, dep)
         end
     end
-    # If we have all dependencies, build this parameter name's config
-    config[name] = CVIParamConfig(top_config, name)
-    # Append the name of the parameter to the evalorder at its correct stage
-    stage = top_config["params"][name]["stage"]
-    push!(evalorder[stage], name)
 
+    # Sometimes we can have already built a param as a dependency, so check first
+    if !haskey(config, name)
+        # If we have all dependencies, build this parameter name's config
+        config[name] = CVIParamConfig(top_config, name)
+        # Append the name of the parameter to the evalorder at its correct stage
+        stage = top_config["params"][name]["stage"]
+        push!(evalorder[stage], name)
+    end
     return
 end
 
