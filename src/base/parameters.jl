@@ -91,6 +91,7 @@ function mu_update(cvi::CVI, sample::RealVector, i_label::Integer)
     else
         cvi.params["mu"] = update_mean(cvi.params["mu"], sample, cvi.base.n_samples)
     end
+    @info "Updating mu at $(i_label)" cvi.params["mu"]
 end
 
 function SEP_update(cvi::CVI, _::RealVector, _::Integer)

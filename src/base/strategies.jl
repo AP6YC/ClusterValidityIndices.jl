@@ -101,6 +101,7 @@ function update_strategy!(cvi::CVI, name::AbstractString, sample::RealVector, i_
         cvi.cache[name] = handle_strategy!(cvi.config[name].update, cvi, sample, i_label)
     # Otherwise, it is updated in place
     else
+        @info "Updating $(name) in place"
         handle_strategy!(cvi.config[name].update, cvi, sample, i_label)
     end
     return

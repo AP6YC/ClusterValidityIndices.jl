@@ -10,7 +10,8 @@ using
 Random.seed!(1)
 
 dim = 5
-n_samples = 1000
+# n_samples = 1000
+n_samples = 10
 n_labels = 20
 
 features = randn(dim, n_samples)
@@ -25,13 +26,17 @@ for ix = 1:n_samples
     label = labels[ix]
     p_cvi_1[ix] = get_cvi!(cvi_1, sample, label)
     p_cvi_2[ix] = get_cvi!(cvi_2, sample, label)
-
-end
-
-for ix = 1:n_samples
     try
-        @assert p_cvi_1[ix] === p_cvi_2[ix]
+        @assert cvi_1.mu == cvi_2.params["mu"]
     catch
-        @info "Bad at $(ix):" p_cvi_1[ix] p_cvi_2[ix]
+        @info "Bad at $(ix):" cvi_1.mu cvi_2.params["mu"]
     end
 end
+
+# for ix = 1:n_samples
+#     try
+#         @assert p_cvi_1[ix] === p_cvi_2[ix]
+#     catch
+#         @info "Bad at $(ix):" p_cvi_1[ix] p_cvi_2[ix]
+#     end
+# end
