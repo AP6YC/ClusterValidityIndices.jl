@@ -33,12 +33,12 @@ function build_cvi_param(type::Type{<:CVIExpandVector}, ::Integer, n_clusters::I
 end
 
 function build_cvi_param(type::Type{<:CVIExpandMatrix}, dim::Integer, n_clusters::Integer)
-    # return type(undef, dim, n_clusters)
+    # type(undef, dim, n_clusters)
     return build_2d_strategy(type, dim, n_clusters)
 end
 
 function build_cvi_param(type::Type{<:CVIExpandTensor}, dim::Integer, n_clusters::Integer)
-    # return type(undef, dim, dim, n_clusters)
+    # type(undef, dim, dim, n_clusters)
     return build_3d_strategy(type, dim, n_clusters)
 end
 
@@ -61,17 +61,6 @@ function handle_strategy!(func::Symbol, args...)
 end
 
 # -----------------------------------------------------------------------------
-# EXTEND
-#
-# These functions identify how a parameter is grown/extended at its end.
-# -----------------------------------------------------------------------------
-
-function extend_strategy!(cvi::CVI, name::AbstractString)
-    # eval(cvi.config[name].expand)(cvi.params[name], cvi.cache[name])
-    handle_strategy!(cvi.config[name].expand, cvi.params[name], cvi.cache[name])
-end
-
-# -----------------------------------------------------------------------------
 # ADD
 #
 # These functions identify how a parameter is computed for a new cluster and
@@ -79,8 +68,23 @@ end
 # -----------------------------------------------------------------------------
 
 function add_strategy!(cvi::CVI, name::AbstractString, sample::RealVector)
-    # cvi.cache[name] = eval(cvi.config[name].add)(cvi, sample)
-    cvi.cache[name] = handle_strategy!(cvi.config[name].add, cvi, sample)
+    if cvi.config[name].to_el_update
+        cvi.cache[name] = handle_strategy!(cvi.config[name].add, cvi, sample)
+    end
+    return
+end
+
+# -----------------------------------------------------------------------------
+# EXTEND
+#
+# These functions identify how a parameter is grown/extended at its end.
+# -----------------------------------------------------------------------------
+
+function extend_strategy!(cvi::CVI, name::AbstractString)
+    # eval(cvi.config[name].expand)(cvi.params[name], cvi.cache[name])
+    if cvi.config[name].to_expand
+        handle_strategy!(cvi.config[name].expand, cvi.params[name], cvi.cache[name])
+    end
     return
 end
 
@@ -93,19 +97,14 @@ end
 
 function update_strategy!(cvi::CVI, name::AbstractString, sample::RealVector, i_label::Integer)
     # If the parameter is extended via the recursion cache
-    # if cvi.config[name].to_expand
-    # cvi.cache[name] = eval(cvi.config[name].update)(cvi, sample, i_label)
-    cvi.cache[name] = handle_strategy!(cvi.config[name].update, cvi, sample, i_label)
-    # # Otherwise, it is updated in place
-    # else
-    #     eval(cvi.config[name].update)(cvi, sample, i_label)
-    # end
+    if cvi.config[name].to_el_update
+        cvi.cache[name] = handle_strategy!(cvi.config[name].update, cvi, sample, i_label)
+    # Otherwise, it is updated in place
+    else
+        handle_strategy!(cvi.config[name].update, cvi, sample, i_label)
+    end
     return
 end
-
-# function inplace_strategy!(cvi::CVI, name::AbstractString,  sample::RealVector, i_label::Integer)
-#     eval(cvi.config[name].update)(cvi, sample, i_label)
-# end
 
 # -----------------------------------------------------------------------------
 # REASSIGN
@@ -127,6 +126,9 @@ function reassign_param!(param::CVIExpandTensor, value::RealMatrix, i_label::Int
 end
 
 function reassign_strategy!(cvi::CVI, name::AbstractString, i_label::Integer)
-    reassign_param!(cvi.params[name], cvi.cache[name], i_label)
+    # If we are element updating, run the reassignment
+    if cvi.config[name].to_el_update
+        reassign_param!(cvi.params[name], cvi.cache[name], i_label)
+    end
 end
 

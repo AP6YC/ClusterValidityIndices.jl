@@ -5,6 +5,10 @@
 Implements the functions for each CVI parameter.
 """
 
+# -----------------------------------------------------------------------------
+# ADDERS
+# -----------------------------------------------------------------------------
+
 function n_add(_::CVI, _::RealVector)
     return 1
 end
@@ -21,13 +25,9 @@ function G_add(cvi::CVI, sample::RealVector)
     return cvi.opts.CP_alt ? sample : zeros(cvi.base.dim)
 end
 
-# function SEP_add(cvi::CVI, sample::realVector)
-#     return 0
-#     # for ix = 1:cvi.base.n_clusters
-#     #     cvi.params[SEP[ix] = cvi.params.n[ix] * sum((cvi.params.v[:, ix] - cvi.mu) .^ 2)
-#     # end
-# end
-
+# -----------------------------------------------------------------------------
+# UPDATERS
+# -----------------------------------------------------------------------------
 
 function n_update(cvi::CVI, ::RealVector, i_label::Integer)
     return cvi.params["n"][i_label] + 1
@@ -85,9 +85,17 @@ function G_update(cvi::CVI, sample::RealVector, i_label::Integer)
     return G_new
 end
 
-# function SEP_update(cvi::CVI, sample::RealVector, i_label::Integer)
-#     for ix = 1:cvi.base.n_clusters
-#         cvi.params[SEP[ix] = cvi.params.n[ix] * sum((cvi.params.v[:, ix] - cvi.mu) .^ 2)
-#     end
-#     return
-# end
+function mu_update(cvi::CVI, sample::RealVector, i_label::Integer)
+    if iszero(cvi.params["mu"])
+        cvi.params["mu"] = sample
+    else
+        cvi.params["mu"] = update_mean(cvi.params["mu"], sample, cvi.base.n_samples)
+    end
+end
+
+function SEP_update(cvi::CVI, _::RealVector, _::Integer)
+    for ix = 1:cvi.base.n_clusters
+        cvi.params["SEP"][ix] = cvi.params["n"][ix] * sum((cvi.params["v"][:, ix] - cvi.params["mu"]) .^ 2)
+    end
+    return
+end

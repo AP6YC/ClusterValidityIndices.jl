@@ -9,6 +9,10 @@ Defines all types of the base CVI implementation.
 # STRUCTS
 # -----------------------------------------------------------------------------
 
+const CVIParams = Dict{String, Any}
+
+const CVIRecursionCache = Dict{String, Any}
+
 @with_kw struct CVIOpts
     params::Vector{String} = [
         "n",
@@ -29,11 +33,6 @@ mutable struct CVIBaseParams
     criterion_value::Float
 end
 
-const CVIParams = Dict{String, Any}
-
-const CVIRecursionCache = Dict{String, Any}
-
-
 """
 An object containing all of the information about a single type of CVI parameter.
 
@@ -47,7 +46,10 @@ struct CVIParamConfig
     shape::Int
     el_type::Type
     to_expand::Bool
+    to_el_update::Bool
 end
+
+const CVIConfig = OrderedDict{String, CVIParamConfig}
 
 function get_el_type(shape::Integer, type::Type)
     if shape == 1
@@ -57,19 +59,6 @@ function get_el_type(shape::Integer, type::Type)
     end
     return el_type
 end
-
-
-# """
-# A single stage, containing the config for a parameter in a stage.
-# """
-# const CVIStageOrder = OrderedDict{String, CVIParamConfig}
-
-# """
-# The collection of stages, containing ordered configs.
-# """
-# const CVIConfig = Vector{CVIStageOrder}
-
-const CVIConfig = OrderedDict{String, CVIParamConfig}
 
 function CVIParamConfig(top_config::CVIConfigDict, name::String)
     subconfig = top_config["params"][name]
@@ -81,8 +70,8 @@ function CVIParamConfig(top_config::CVIConfigDict, name::String)
         top_config["container"][subconfig["shape"]]["type"]{subconfig["type"]},
         subconfig["shape"],
         get_el_type(subconfig["shape"], subconfig["type"]),
-        subconfig["growth"] == "extend",
-        # subconfig["to_expand"]
+        subconfig["expand"],
+        subconfig["update"] == "element",
     )
     return param_config
 end
@@ -95,9 +84,7 @@ function recursive_evalorder!(config::CVIConfig, evalorder::CVIEvalOrder, top_co
     # Iterate over all current dependencies
     for dep in top_config["params"][name]["deps"]
         # If we don't have the dependency, crawl through its dependency chain
-        # if !haskey(config, name)
         if !haskey(config, dep)
-        # if !haskey(config[i_dep], name)
             recursive_evalorder!(config, evalorder, top_config, dep)
         end
     end
@@ -172,7 +159,14 @@ end
 # end
 
 function BaseCVI(dim::Integer=0, n_clusters::Integer=0)
-    opts = CVIOpts()
+    opts = CVIOpts(params=[
+        "n",
+        "v",
+        "CP",
+        "G",
+        "mu",
+        "SEP",
+    ])
 
     config, evalorder = build_config(CVI_TOP_CONFIG, opts)
 
