@@ -36,5 +36,5 @@ cvi_2 = ClusterValidityIndices.BaseCVI(dim)
 # @benchmark stress_cvi(cvi, f, l, n) setup=(cvi=CH(), f=features, l=labels, n=1)
 # @benchmark stress_cvi(cv, f, l) setup=(cv=cvi_1, f=features, l=labels)
 
-@benchmark stress_cvi(cv, features, labels) setup=(cv=cvi_1)
+# @benchmark stress_cvi(cv, features, labels) setup=(cv=cvi_1)
 @benchmark stress_cvi(cv, features, labels) setup=(cv=cvi_2)

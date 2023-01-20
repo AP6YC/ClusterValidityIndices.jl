@@ -84,15 +84,16 @@ end
 
 # Criterion value evaluation function
 function evaluate!(cvi::BaseCVI)
-    SEP = zeros(cvi.base.n_clusters)
-    for ix = 1:cvi.base.n_clusters
-        SEP[ix] = cvi.params["n"][ix] * sum((cvi.params["v"][:, ix] - cvi.base.mu) .^ 2)
-    end
+    # SEP = zeros(cvi.base.n_clusters)
+    # for ix = 1:cvi.base.n_clusters
+    #     SEP[ix] = cvi.params["n"][ix] * sum((cvi.params["v"][:, ix] - cvi.base.mu) .^ 2)
+    # end
     # Within group sum of squares
     WGSS = sum(cvi.params["CP"])
     if cvi.base.n_clusters > 1
         # Between groups sum of squares
-        BGSS = sum(SEP)
+        # BGSS = sum(SEP)
+        BGSS = sum(cvi.params["SEP"])
         # CH index value
         cvi.base.criterion_value = (
             (BGSS / WGSS)
