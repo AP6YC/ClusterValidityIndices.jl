@@ -98,7 +98,7 @@ function SEP_update(cvi::CVI, _::RealVector, _::Integer)
         push!(cvi.params["SEP"], 0.0)
     end
     for ix = 1:cvi.base.n_clusters
-        cvi.params["SEP"][ix] = cvi.params["n"][ix] * sum((cvi.params["v"][:, ix] - cvi.params["mu"]) .^ 2)
+        @inbounds cvi.params["SEP"][ix] = cvi.params["n"][ix] * sum((cvi.params["v"][:, ix] - cvi.params["mu"]) .^ 2)
     end
     return
 end

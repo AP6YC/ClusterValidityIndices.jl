@@ -82,7 +82,9 @@ end
 
 function extend_strategy!(cvi::CVI, name::AbstractString)
     # eval(cvi.config[name].expand)(cvi.params[name], cvi.cache[name])
-    handle_strategy!(cvi.config[name].expand, cvi.params[name], cvi.cache[name])
+    if cvi.config[name].to_expand
+        handle_strategy!(cvi.config[name].expand, cvi.params[name], cvi.cache[name])
+    end
     return
 end
 
@@ -126,7 +128,9 @@ end
 function reassign_strategy!(cvi::CVI, name::AbstractString, i_label::Integer)
     # If we are element updating, run the reassignment
     # if cvi.config[name].to_el_update
-    reassign_param!(cvi.params[name], cvi.cache[name], i_label)
+    if !cvi.config[name].monocyclic
+        reassign_param!(cvi.params[name], cvi.cache[name], i_label)
+    end
     # end
 end
 

@@ -9,6 +9,15 @@ const CVIConfigDict = Dict{String, Any}
 
 const CVI_TOP_CONFIG = CVIConfigDict(
     "params" => Dict(
+        # "n_samples" => Dict(
+        #     "shape" => 0,
+        #     "type" => Float,
+        #     "deps" => [],
+        #     "expand" => false,
+        #     # "update" => "whole",
+        #     "monocyclic" => true,
+        #     "stage" => 1,
+        # ),
         "mu" => Dict(
             "shape" => 1,
             "type" => Float,
@@ -16,7 +25,7 @@ const CVI_TOP_CONFIG = CVIConfigDict(
             "expand" => false,
             # "update" => "whole",
             "monocyclic" => true,
-            "stage" => 1,
+            "stage" => 2,
         ),
         "n" => Dict(
             "shape" => 1,
@@ -25,7 +34,7 @@ const CVI_TOP_CONFIG = CVIConfigDict(
             "expand" => true,
             # "update" => "element",
             "monocyclic" => false,
-            "stage" => 2,
+            "stage" => 3,
         ),
         "v" => Dict(
             "shape" => 2,
@@ -34,7 +43,7 @@ const CVI_TOP_CONFIG = CVIConfigDict(
             "expand" => true,
             # "update" => "element",
             "monocyclic" => false,
-            "stage" => 2,
+            "stage" => 3,
         ),
         "CP" => Dict(
             "shape" => 1,
@@ -43,7 +52,7 @@ const CVI_TOP_CONFIG = CVIConfigDict(
             "expand" => true,
             # "update" => "element",
             "monocyclic" => false,
-            "stage" => 2,
+            "stage" => 3,
         ),
         "G" => Dict(
             "shape" => 2,
@@ -52,7 +61,7 @@ const CVI_TOP_CONFIG = CVIConfigDict(
             "expand" => true,
             # "update" => "element",
             "monocyclic" => false,
-            "stage" => 2,
+            "stage" => 3,
         ),
         "SEP" => Dict(
             "shape" => 1,
@@ -61,7 +70,7 @@ const CVI_TOP_CONFIG = CVIConfigDict(
             "expand" => false,
             # "update" => "whole",
             "monocyclic" => true,
-            "stage" => 3,
+            "stage" => 4,
         ),
     ),
     "container" => Dict(

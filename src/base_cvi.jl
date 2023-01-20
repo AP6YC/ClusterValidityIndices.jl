@@ -94,10 +94,8 @@ function base_add_cluster!(cvi::CVI, sample::RealVector, i_label::Integer)
             end
         end
         for name in stage
-            if cvi.config[name].to_expand
-                # After computing the recursion cache, extend each parameter with the cache values
-                extend_strategy!(cvi, name)
-            end
+            # After computing the recursion cache, extend each parameter with the cache values
+            extend_strategy!(cvi, name)
         end
     end
 end
@@ -110,10 +108,8 @@ function base_update_cluster!(cvi::CVI, sample::RealVector, i_label::Integer)
             update_strategy!(cvi, name, sample, i_label)
         end
         for name in stage
-            if !cvi.config[name].monocyclic
-                # After computing the recursion cache, reassign each value in its position
-                reassign_strategy!(cvi, name, i_label)
-            end
+            # After computing the recursion cache, reassign each value in its position
+            reassign_strategy!(cvi, name, i_label)
         end
     end
 end
@@ -127,13 +123,13 @@ function init_cvi_update!(cvi::BaseCVI, sample::RealVector, label::Integer)
 
     # If uninitialized, setup the CVI
     # if isempty(cvi.base.mu)
-    if iszero(cvi.base.mu)
-        cvi.base.mu = sample
-        # setup!(cvi, sample)
-    # Otherwise, update the mean
-    else
-        cvi.base.mu = update_mean(cvi.base.mu, sample, cvi.base.n_samples)
-    end
+    # if iszero(cvi.base.mu)
+    #     cvi.base.mu = sample
+    #     # setup!(cvi, sample)
+    # # Otherwise, update the mean
+    # else
+    #     cvi.base.mu = update_mean(cvi.base.mu, sample, cvi.base.n_samples)
+    # end
 
     # Return the internal label
     return i_label
