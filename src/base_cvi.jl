@@ -40,7 +40,6 @@ function base_add_cluster!(cvi::CVI, sample::RealVector)
 end
 
 function base_update_cluster!(cvi::CVI, sample::RealVector, i_label::Integer)
-    @info "Updating cluster"
     # Iterate over all of the stages
     for stage in cvi.evalorder
         # Compute the updated parameters in order
