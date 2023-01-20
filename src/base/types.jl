@@ -46,7 +46,7 @@ struct CVIParamConfig
     shape::Int
     el_type::Type
     to_expand::Bool
-    to_el_update::Bool
+    monocyclic::Bool
 end
 
 const CVIConfig = OrderedDict{String, CVIParamConfig}
@@ -71,7 +71,8 @@ function CVIParamConfig(top_config::CVIConfigDict, name::String)
         subconfig["shape"],
         get_el_type(subconfig["shape"], subconfig["type"]),
         subconfig["expand"],
-        subconfig["update"] == "element",
+        # subconfig["update"] == "element",
+        subconfig["monocyclic"],
     )
     return param_config
 end

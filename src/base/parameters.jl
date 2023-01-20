@@ -91,10 +91,12 @@ function mu_update(cvi::CVI, sample::RealVector, i_label::Integer)
     else
         cvi.params["mu"] = update_mean(cvi.params["mu"], sample, cvi.base.n_samples)
     end
-    @info "Updating mu at $(i_label)" cvi.params["mu"]
 end
 
 function SEP_update(cvi::CVI, _::RealVector, _::Integer)
+    while(length(cvi.params["SEP"]) < cvi.base.n_clusters)
+        push!(cvi.params["SEP"], 0.0)
+    end
     for ix = 1:cvi.base.n_clusters
         cvi.params["SEP"][ix] = cvi.params["n"][ix] * sum((cvi.params["v"][:, ix] - cvi.params["mu"]) .^ 2)
     end

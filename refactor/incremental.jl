@@ -26,17 +26,18 @@ for ix = 1:n_samples
     label = labels[ix]
     p_cvi_1[ix] = get_cvi!(cvi_1, sample, label)
     p_cvi_2[ix] = get_cvi!(cvi_2, sample, label)
-    try
-        @assert cvi_1.mu == cvi_2.params["mu"]
-    catch
-        @info "Bad at $(ix):" cvi_1.mu cvi_2.params["mu"]
-    end
+    @assert p_cvi_1[ix] === p_cvi_2[ix]
+    # try
+    #     @assert cvi_1.mu == cvi_2.params["mu"]
+    # catch
+    #     @info "Bad at $(ix):" cvi_1.mu cvi_2.params["mu"]
+    # end
 end
 
-# for ix = 1:n_samples
-#     try
-#         @assert p_cvi_1[ix] === p_cvi_2[ix]
-#     catch
-#         @info "Bad at $(ix):" p_cvi_1[ix] p_cvi_2[ix]
-#     end
-# end
+for ix = 1:n_samples
+    try
+        @assert p_cvi_1[ix] === p_cvi_2[ix]
+    catch
+        @info "Bad at $(ix):" p_cvi_1[ix] p_cvi_2[ix]
+    end
+end

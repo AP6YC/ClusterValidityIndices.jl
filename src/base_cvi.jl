@@ -17,36 +17,104 @@ function init_params!(cvi::CVI, dim::Integer=0, n_clusters::Integer=0)
     end
 end
 
-function iterate_evalorder!(func::Function, cvi::CVI, stage::CVIStageOrder, args...)
-    # for name in keys(cvi.config)
-    for name in stage
-        func(cvi, name, args...)
-    end
-    # foreach(name -> add_strategy!(args...), )
-end
+# function iterate_evalorder!(func_mono::Function, funcs::Vector{Function}, cvi::CVI, args...)
+#     # for name in keys(cvi.config)
+#     for stage in cvi.evalorder
+#         for name in stage
+#             if cvi.config[name].monocyclic
+#                 func_mono(cvi, name, args...)
+#             else
+#                 for func in funcs
+#                     func(cvi, name, args...)
+#                 end
+#             end
+#         end
+#     end
+#     return
+#     # foreach(name -> add_strategy!(args...), )
+# end
 
-function base_add_cluster!(cvi::CVI, sample::RealVector)
+# function base_add_cluster!(cvi::CVI, sample::RealVector)
+#     # Increment the number of clusters
+#     cvi.base.n_clusters += 1
+
+#     iterate_evalorder!(update_strategy!, [add_strategy!, extend_strategy!], cvi, sample)
+# end
+
+# function base_update_cluster!(cvi::CVI, sample::RealVector, i_label::Integer)
+#     # Compute the updated parameters in order
+#     iterate_evalorder!(update_strategy!, [update_strategy!, reassign_strategy!], cvi, sample, i_label)
+# end
+
+# function iterate_evalorder!(func::Function, cvi::CVI, stage::CVIStageOrder, args...)
+#     # for name in keys(cvi.config)
+#     for name in stage
+#         func(cvi, name, args...)
+#     end
+#     # foreach(name -> add_strategy!(args...), )
+# end
+
+# function base_add_cluster!(cvi::CVI, sample::RealVector)
+#     # Increment the number of clusters
+#     cvi.base.n_clusters += 1
+
+#     # Iterate over all of the stages
+#     for stage in cvi.evalorder
+#         # Compute the new variables in order
+#         iterate_evalorder!(add_strategy!, cvi, stage, sample)
+
+#         # After computing the recursion cache, extend each parameter with the cache values
+#         iterate_evalorder!(extend_strategy!, cvi, stage)
+#     end
+# end
+
+# function base_update_cluster!(cvi::CVI, sample::RealVector, i_label::Integer)
+#     # Iterate over all of the stages
+#     for stage in cvi.evalorder
+#         # Compute the updated parameters in order
+#         iterate_evalorder!(update_strategy!, cvi, stage, sample, i_label)
+
+#         # After computing the recursion cache, reassign each value in its position
+#         iterate_evalorder!(reassign_strategy!, cvi, stage, i_label)
+#     end
+# end
+
+function base_add_cluster!(cvi::CVI, sample::RealVector, i_label::Integer)
     # Increment the number of clusters
     cvi.base.n_clusters += 1
 
     # Iterate over all of the stages
     for stage in cvi.evalorder
-        # Compute the new variables in order
-        iterate_evalorder!(add_strategy!, cvi, stage, sample)
-
-        # After computing the recursion cache, extend each parameter with the cache values
-        iterate_evalorder!(extend_strategy!, cvi, stage)
+        for name in stage
+            if cvi.config[name].monocyclic
+                update_strategy!(cvi, name, sample, i_label)
+            else
+                # Compute the new variables in order
+                add_strategy!(cvi, name, sample)
+            end
+        end
+        for name in stage
+            if cvi.config[name].to_expand
+                # After computing the recursion cache, extend each parameter with the cache values
+                extend_strategy!(cvi, name)
+            end
+        end
     end
 end
 
 function base_update_cluster!(cvi::CVI, sample::RealVector, i_label::Integer)
     # Iterate over all of the stages
     for stage in cvi.evalorder
-        # Compute the updated parameters in order
-        iterate_evalorder!(update_strategy!, cvi, stage, sample, i_label)
-
-        # After computing the recursion cache, reassign each value in its position
-        iterate_evalorder!(reassign_strategy!, cvi, stage, i_label)
+        for name in stage
+            # Compute the updated parameters in order
+            update_strategy!(cvi, name, sample, i_label)
+        end
+        for name in stage
+            if !cvi.config[name].monocyclic
+                # After computing the recursion cache, reassign each value in its position
+                reassign_strategy!(cvi, name, i_label)
+            end
+        end
     end
 end
 
@@ -76,7 +144,8 @@ function param_inc!(cvi::BaseCVI, sample::RealVector, label::Integer)
     i_label = init_cvi_update!(cvi, sample, label)
 
     if i_label > cvi.base.n_clusters
-        base_add_cluster!(cvi, sample)
+        # base_add_cluster!(cvi, sample)
+        base_add_cluster!(cvi, sample, i_label)
     else
         base_update_cluster!(cvi, sample, i_label)
     end

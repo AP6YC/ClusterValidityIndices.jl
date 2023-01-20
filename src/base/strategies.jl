@@ -68,9 +68,9 @@ end
 # -----------------------------------------------------------------------------
 
 function add_strategy!(cvi::CVI, name::AbstractString, sample::RealVector)
-    if cvi.config[name].to_el_update
-        cvi.cache[name] = handle_strategy!(cvi.config[name].add, cvi, sample)
-    end
+    # if cvi.config[name].to_el_update
+    cvi.cache[name] = handle_strategy!(cvi.config[name].add, cvi, sample)
+    # end
     return
 end
 
@@ -82,9 +82,7 @@ end
 
 function extend_strategy!(cvi::CVI, name::AbstractString)
     # eval(cvi.config[name].expand)(cvi.params[name], cvi.cache[name])
-    if cvi.config[name].to_expand
-        handle_strategy!(cvi.config[name].expand, cvi.params[name], cvi.cache[name])
-    end
+    handle_strategy!(cvi.config[name].expand, cvi.params[name], cvi.cache[name])
     return
 end
 
@@ -97,11 +95,10 @@ end
 
 function update_strategy!(cvi::CVI, name::AbstractString, sample::RealVector, i_label::Integer)
     # If the parameter is extended via the recursion cache
-    if cvi.config[name].to_el_update
+    if !cvi.config[name].monocyclic
         cvi.cache[name] = handle_strategy!(cvi.config[name].update, cvi, sample, i_label)
     # Otherwise, it is updated in place
     else
-        @info "Updating $(name) in place"
         handle_strategy!(cvi.config[name].update, cvi, sample, i_label)
     end
     return
@@ -128,8 +125,8 @@ end
 
 function reassign_strategy!(cvi::CVI, name::AbstractString, i_label::Integer)
     # If we are element updating, run the reassignment
-    if cvi.config[name].to_el_update
-        reassign_param!(cvi.params[name], cvi.cache[name], i_label)
-    end
+    # if cvi.config[name].to_el_update
+    reassign_param!(cvi.params[name], cvi.cache[name], i_label)
+    # end
 end
 
