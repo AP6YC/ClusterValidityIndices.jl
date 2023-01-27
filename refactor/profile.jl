@@ -7,9 +7,9 @@ function profile_test(n_iterations::Integer, n_samples::Integer)
         n_labels = 100
         features = randn(dim, n_samples)
         labels = rand(1:n_labels, n_samples)
-        # cvi = CH()
+        cvi = CH()
         # cvi = DB()
-        cvi = ClusterValidityIndices.BaseCVI(dim)
+        # cvi = ClusterValidityIndices.BaseCVI(dim)
         for jx = 1:n_samples
             sample = features[:, jx]
             label = labels[jx]

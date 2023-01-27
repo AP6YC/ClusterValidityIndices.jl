@@ -94,7 +94,7 @@ function mu_update(cvi::CVI, sample::RealVector, i_label::Integer)
 end
 
 function SEP_update(cvi::CVI, _::RealVector, _::Integer)
-    while(length(cvi.params["SEP"]) < cvi.base.n_clusters)
+    while (length(cvi.params["SEP"]) < cvi.base.n_clusters)
         push!(cvi.params["SEP"], 0.0)
     end
     for ix = 1:cvi.base.n_clusters
