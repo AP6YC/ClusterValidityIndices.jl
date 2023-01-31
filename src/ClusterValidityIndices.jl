@@ -68,6 +68,7 @@ using PrecompileSignatures: @precompile_signatures  # Precompile concrete type m
 # -----------------------------------------------------------------------------
 
 include("common.jl")    # Common types and functions
+include("base_cvi.jl")  # DEV: common CVI type development
 include("version.jl")   # Version of the package as an exported constant
 include("CVI/CVI.jl")   # All of the CVI modules
 
