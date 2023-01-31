@@ -5,7 +5,7 @@ using MLDatasets                # Iris dataset
 using DataFrames                # DataFrames, necessary for MLDatasets.Iris()
 using MLDataUtils               # Shuffling and splitting
 using Printf                    # Formatted number printing</code></pre><p>We will download the Iris dataset for its small size and benchmark use for clustering algorithms.</p><pre><code class="language-julia hljs">iris = Iris(as_df=false)
-features, labels = iris.features, iris.targets</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">([5.1 4.9 … 6.2 5.9; 3.5 3.0 … 3.4 3.0; 1.4 1.4 … 5.4 5.1; 0.2 0.2 … 2.3 1.8], InlineStrings.String15[InlineStrings.String15(&quot;Iris-setosa&quot;) InlineStrings.String15(&quot;Iris-setosa&quot;) … InlineStrings.String15(&quot;Iris-virginica&quot;) InlineStrings.String15(&quot;Iris-virginica&quot;)])</code></pre><p>Because the MLDatasets package gives us Iris labels as strings, we will use the <code>MLDataUtils.convertlabel</code> method with the <code>MLLabelUtils.LabelEnc.Indices</code> type to get a list of integers representing each class:}</p><pre><code class="language-julia hljs">labels = convertlabel(LabelEnc.Indices{Int}, vec(labels))
+features, labels = iris.features, iris.targets</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">([5.1 4.9 … 6.2 5.9; 3.5 3.0 … 3.4 3.0; 1.4 1.4 … 5.4 5.1; 0.2 0.2 … 2.3 1.8], InlineStrings.String15[&quot;Iris-setosa&quot; &quot;Iris-setosa&quot; … &quot;Iris-virginica&quot; &quot;Iris-virginica&quot;])</code></pre><p>Because the MLDatasets package gives us Iris labels as strings, we will use the <code>MLDataUtils.convertlabel</code> method with the <code>MLLabelUtils.LabelEnc.Indices</code> type to get a list of integers representing each class:}</p><pre><code class="language-julia hljs">labels = convertlabel(LabelEnc.Indices{Int}, vec(labels))
 unique(labels)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">3-element Vector{Int64}:
  1
  2
@@ -33,27 +33,27 @@ end
 
 # See the list of criterion values
 criterion_values</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">150-element Vector{Float64}:
-  0.0
-  0.0
-  0.0
-  0.0
-  0.0
-  0.0
-  0.0
-  0.0
-  0.0
-  0.0
-  ⋮
- 12.353295690914523
- 12.1509583142854
- 12.658861811198907
- 13.139126596142964
- 13.517957276687305
- 13.284575851700808
- 13.011911765129938
- 13.35323771098832
- 13.1625264757805</code></pre><h2 id="Batch-Evaluation"><a class="docs-heading-anchor" href="#Batch-Evaluation">Batch Evaluation</a><a id="Batch-Evaluation-1"></a><a class="docs-heading-anchor-permalink" href="#Batch-Evaluation" title="Permalink"></a></h2><p>In batch mode, we will use the sample features and prescribed cluster labels as before to verify that the criterion values are the same at the last iteration.</p><pre><code class="language-julia hljs"># Get the final criterion value in batch
-batch_criterion_value = get_cvi!(cvi, features, c_labels)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">13.16252647578051</code></pre><h2 id="Comparison"><a class="docs-heading-anchor" href="#Comparison">Comparison</a><a id="Comparison-1"></a><a class="docs-heading-anchor-permalink" href="#Comparison" title="Permalink"></a></h2><p>Now we check that the two produce the same results in the end.</p><pre><code class="language-julia hljs"># Print the batch result and the final result of the incremental variant
+   0.0
+   0.0
+   0.0
+   0.0
+   0.0
+   0.0
+   0.0
+   0.0
+   0.0
+   0.0
+   ⋮
+ 175.70208373876895
+ 176.98900203544565
+ 177.76973027565234
+ 178.5025580016738
+ 180.18069298390944
+ 181.89146457574347
+ 183.96910814900303
+ 185.97443145431606
+ 187.45626993623438</code></pre><h2 id="Batch-Evaluation"><a class="docs-heading-anchor" href="#Batch-Evaluation">Batch Evaluation</a><a id="Batch-Evaluation-1"></a><a class="docs-heading-anchor-permalink" href="#Batch-Evaluation" title="Permalink"></a></h2><p>In batch mode, we will use the sample features and prescribed cluster labels as before to verify that the criterion values are the same at the last iteration.</p><pre><code class="language-julia hljs"># Get the final criterion value in batch
+batch_criterion_value = get_cvi!(cvi, features, c_labels)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">187.45626993623443</code></pre><h2 id="Comparison"><a class="docs-heading-anchor" href="#Comparison">Comparison</a><a id="Comparison-1"></a><a class="docs-heading-anchor-permalink" href="#Comparison" title="Permalink"></a></h2><p>Now we check that the two produce the same results in the end.</p><pre><code class="language-julia hljs"># Print the batch result and the final result of the incremental variant
 @printf &quot;Batch criterion value: %.4f\n&quot; batch_criterion_value
-@printf &quot;Final incremental criterion value: %.4f\n&quot; criterion_values[end]</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Batch criterion value: 13.1625
-Final incremental criterion value: 13.1625</code></pre><hr/><p><em>This page was generated using <a href="https://github.com/johnnychen94/DemoCards.jl">DemoCards.jl</a> and <a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a>.</em></p></article><nav class="docs-footer"><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.23 on <span class="colophon-date" title="Sunday 15 January 2023 00:03">Sunday 15 January 2023</span>. Using Julia version 1.8.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+@printf &quot;Final incremental criterion value: %.4f\n&quot; criterion_values[end]</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Batch criterion value: 187.4563
+Final incremental criterion value: 187.4563</code></pre><hr/><p><em>This page was generated using <a href="https://github.com/johnnychen94/DemoCards.jl">DemoCards.jl</a> and <a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a>.</em></p></article><nav class="docs-footer"><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.24 on <span class="colophon-date" title="Tuesday 31 January 2023 23:55">Tuesday 31 January 2023</span>. Using Julia version 1.8.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
