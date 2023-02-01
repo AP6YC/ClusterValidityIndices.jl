@@ -1,7 +1,7 @@
 # ---
 # title: Batch CVI Simple Example
 # id: cvi_example
-# cover: ../assets/logo.png
+# cover: ../../assets/logo.png
 # date: 2022-10-12
 # author: "[Sasha Petrenko](https://github.com/AP6YC)"
 # julia: 1.8

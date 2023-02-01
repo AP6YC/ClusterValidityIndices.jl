@@ -1,7 +1,7 @@
 # ---
 # title: CVI-ICVI Comparison
 # id: cvi_icvi
-# cover: ../assets/logo.png
+# cover: ../../assets/logo.png
 # date: 2022-10-12
 # author: "[Sasha Petrenko](https://github.com/AP6YC)"
 # julia: 1.8
