@@ -44,7 +44,6 @@ All CVIs in the package are listed in the [Implemented CVI List](@ref cvi-list-p
 Instructions on how to contribute to the package are found in [Contributing](@ref), and docstrings for every element of the package is listed in the [Index](@ref main-index).
 Names internal to the package are also listed under the [Developer Index](@ref dev-main-index).
 
-
 ## Documentation Build
 
 This documentation was built using [Documenter.jl](https://github.com/JuliaDocs/Documenter.jl) with the following version and OS:
