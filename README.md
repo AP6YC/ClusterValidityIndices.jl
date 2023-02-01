@@ -1,4 +1,4 @@
-[![clustervalidityindices-header](docs/src/assets/header.png)][docs-dev-url]
+[![clustervalidityindices-header](https://media.githubusercontent.com/media/AP6YC/FileStorage/main/ClusterValidityIndices/header.png?raw=true)][docs-dev-url]
 
 A Julia package for Cluster Validity Indices (CVI) algorithms.
 
