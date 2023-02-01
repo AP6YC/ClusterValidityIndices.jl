@@ -1,10 +1,11 @@
-using ClusterValidityIndices    # CVI/ICVI
-using AdaptiveResonance         # DDVFA
-using MLDatasets                # Iris dataset
-using DataFrames                # DataFrames, necessary for MLDatasets.Iris()
-using MLDataUtils               # Shuffling and splitting
-using Printf                    # Formatted number printing
-using Plots                     # Plots frontend
+using
+    ClusterValidityIndices,     # CVI/ICVI
+    AdaptiveResonance,          # DDVFA
+    MLDatasets,                 # Iris dataset
+    DataFrames,                 # DataFrames, necessary for MLDatasets.Iris()
+    MLDataUtils,                # Shuffling and splitting
+    Printf,                     # Formatted number printing
+    Plots                       # Plots frontend
 gr()                            # Use the default GR backend explicitly
 theme(:dracula)                 # Change the theme for fun
 

@@ -1,9 +1,10 @@
-using ClusterValidityIndices    # CVI/ICVI
-using AdaptiveResonance         # DDVFA
-using MLDatasets                # Iris dataset
-using DataFrames                # DataFrames, necessary for MLDatasets.Iris()
-using MLDataUtils               # Shuffling and splitting
-using Printf                    # Formatted number printing
+using
+    ClusterValidityIndices,     # CVI/ICVI
+    AdaptiveResonance,          # DDVFA
+    MLDatasets,                 # Iris dataset
+    DataFrames,                 # DataFrames, necessary for MLDatasets.Iris()
+    MLDataUtils,                # Shuffling and splitting
+    Printf                      # Formatted number printing
 
 iris = Iris(as_df=false)
 features, labels = iris.features, iris.targets

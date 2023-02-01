@@ -1,11 +1,12 @@
 # Load all dependencies
-using ClusterValidityIndices    # This package
-using Clustering                # k-means
-using AdaptiveResonance         # DDVFA
-using PyCall                    # scikit-learn interface
-using Plots                     # Plots frontend
-using Distributions             # Random distribution sampling
-using LinearAlgebra             # UniformScaling
+using
+    ClusterValidityIndices,     # This package
+    Clustering,                 # k-means
+    AdaptiveResonance,          # DDVFA
+    PyCall,                     # scikit-learn interface
+    Plots,                      # Plots frontend
+    Distributions,              # Random distribution sampling
+    LinearAlgebra               # UniformScaling
 gr()                            # Use the default GR backend explicitly
 theme(:dracula)                 # Change the theme for fun
 
