@@ -10,6 +10,9 @@ results/*
 docs/src/democards/
 docs/src/examples/
 
+# Downloaded assets folder for docs generation
+docs/src/assets/downloads/
+
 # Julia package ignores
 *.jl.*.cov
 *.jl.cov
