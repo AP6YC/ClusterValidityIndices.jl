@@ -21,12 +21,13 @@
 
 # First, we must load all of our dependencies.
 # We will load the `ClusterValidityIndices.jl` along with some data utilities and the Julia `Clustering.jl` package to cluster that data.
-using ClusterValidityIndices    # CVI/ICVI
-using Clustering                # Fuzzy C-Means
-using MLDatasets                # Iris dataset
-using DataFrames                # DataFrames, necessary for MLDatasets.Iris()
-using MLDataUtils               # Shuffling and splitting
-using Printf                    # Formatted number printing
+using
+    ClusterValidityIndices,     # CVI/ICVI
+    Clustering,                 # Fuzzy C-Means
+    MLDatasets,                 # Iris dataset
+    DataFrames,                 # DataFrames, necessary for MLDatasets.Iris()
+    MLDataUtils,                # Shuffling and splitting
+    Printf                     # Formatted number printing
 
 # We will download the Iris dataset for its small size and benchmark use for clustering algorithms.
 iris = Iris(as_df=false)
