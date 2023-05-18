@@ -1,6 +1,7 @@
 """
     make.jl
 
+# Description
 This file builds the documentation for the ClusterValidityIndices.jl package
 using Documenter.jl and other tools.
 """

@@ -72,9 +72,7 @@ In the absense of supervisory labels (i.e., ground truth), clustering algorithms
 As a result, CVIs exist to provide metrics of partitioning stability/validity through the use of only the original data samples and the cluster labels prescribed by the clustering algorithm.
 
 This Julia package contains an outline of the conceptual usage of CVIs along with many [example scripts in the documentation](https://ap6yc.github.io/ClusterValidityIndices.jl/dev/examples/).
-This outline begins with [a list of CVIs](#implemented-cviicvis) that are implemented in the lastest version of the project.
-[Quickstart](#quickstart) provides an overview of how to use this project, while [Structure](#structure) outlines the project file structure, giving context to the locations of every component of the project.
-[Usage](#usage) outlines the general syntax and workflow of the CVIs/ICVIs.
+This outline contains a [Quickstart](#quickstart) that provides an overview of how to use this project along with [a list of CVIs](#implemented-cviicvis) that are implemented in the lastest version of the project.
 
 ### Installation
 
