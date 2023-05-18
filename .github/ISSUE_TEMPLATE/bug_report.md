@@ -31,7 +31,7 @@ If applicable, add screenshots to help explain your problem.
 ## Julia Configuration (please complete the following information):
 
 - OS: [e.g. Windows, Linux, MacOS]
-- Julia Version: [e.g. 1.6, 1.7, 1.8]
+- Julia Version: [e.g. 1.6, 1.7, 1.8, 1.9]
 - Terminal: [e.g. Windows Terminal, Powershell, iTerm]
 - Installation Method: [e.g. JuliaHub, GitHub repo clone]
 

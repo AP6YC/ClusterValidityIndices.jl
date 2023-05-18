@@ -15,7 +15,7 @@ As such, this package's usage follows the usual Julia package installation proce
 
 ```julia-repl
 julia> ]
-(@v1.8) pkg> add ClusterValidityIndices
+(@v1.9) pkg> add ClusterValidityIndices
 ```
 
 or programmatically:
@@ -29,7 +29,7 @@ You may also add the package directly from GitHub to get the latest changes betw
 
 ```julia-repl
 julia> ]
-(@v1.8) pkg> add https://github.com/AP6YC/ClusterValidityIndices.jl
+(@v1.9) pkg> add https://github.com/AP6YC/ClusterValidityIndices.jl
 ```
 
 ## [Quickstart](@id guide-quickstart)

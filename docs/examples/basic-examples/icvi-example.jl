@@ -4,7 +4,7 @@
 # cover: assets/icvi-example.png
 # date: 2022-10-13
 # author: "[Sasha Petrenko](https://github.com/AP6YC)"
-# julia: 1.8
+# julia: 1.9
 # description: How to use a CVI incrementally (i.e., ICVI).
 # ---
 

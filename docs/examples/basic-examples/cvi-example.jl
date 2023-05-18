@@ -4,7 +4,7 @@
 # cover: ../../assets/logo.png
 # date: 2022-10-12
 # author: "[Sasha Petrenko](https://github.com/AP6YC)"
-# julia: 1.8
+# julia: 1.9
 # description: How to use a CVI in batch mode.
 # ---
 
