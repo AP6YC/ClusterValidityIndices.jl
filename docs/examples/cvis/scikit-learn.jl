@@ -4,7 +4,7 @@
 # cover: assets/scikit-learn.png
 # date: 2022-11-11
 # author: "[Sasha Petrenko](https://github.com/AP6YC)"
-# julia: 1.8
+# julia: 1.9
 # description: A comparison of CVIs with their equivalent implementations in the scikit-learn Python library.
 # ---
 

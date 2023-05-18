@@ -72,9 +72,7 @@ In the absense of supervisory labels (i.e., ground truth), clustering algorithms
 As a result, CVIs exist to provide metrics of partitioning stability/validity through the use of only the original data samples and the cluster labels prescribed by the clustering algorithm.
 
 This Julia package contains an outline of the conceptual usage of CVIs along with many [example scripts in the documentation](https://ap6yc.github.io/ClusterValidityIndices.jl/dev/examples/).
-This outline begins with [a list of CVIs](#implemented-cviicvis) that are implemented in the lastest version of the project.
-[Quickstart](#quickstart) provides an overview of how to use this project, while [Structure](#structure) outlines the project file structure, giving context to the locations of every component of the project.
-[Usage](#usage) outlines the general syntax and workflow of the CVIs/ICVIs.
+This outline contains a [Quickstart](#quickstart) that provides an overview of how to use this project along with [a list of CVIs](#implemented-cviicvis) that are implemented in the lastest version of the project.
 
 ### Installation
 
@@ -83,7 +81,7 @@ As such, this package's usage follows the usual Julia package installation proce
 
 ```julia-repl
 julia> ]
-(@v1.8) pkg> add ClusterValidityIndices
+(@v1.9) pkg> add ClusterValidityIndices
 ```
 
 or programmatically:
@@ -93,17 +91,17 @@ julia> using Pkg
 julia> Pkg.add("ClusterValidityIndices")
 ```
 
-You may also add the package directly from GitHub to get the latest changes between releases:
+You may also [add the package directly](https://pkgdocs.julialang.org/v1/api/) from a GitHub branch to get the latest changes between releases:
 
 ```julia-repl
 julia> ]
-(@v1.8) pkg> add https://github.com/AP6YC/ClusterValidityIndices.jl
+(@v1.9) pkg> add https://github.com/AP6YC/ClusterValidityIndices.jl#develop
 ```
 
 ### Quickstart
 
 This section provides a quick overview of how to use the project.
-For more detailed code usage, please see the [Detailed Usage](@ref usage).
+For more detailed code usage, please see the [Detailed Usage](https://ap6yc.github.io/ClusterValidityIndices.jl/dev/man/guide/#usage).
 
 First, import the package with:
 

@@ -4,7 +4,7 @@
 # cover: assets/clustering-comparison.png
 # date: 2022-10-13
 # author: "[Sasha Petrenko](https://github.com/AP6YC)"
-# julia: 1.8
+# julia: 1.9
 # description: A comparison of two clustering processes with one ICVI.
 # ---
 

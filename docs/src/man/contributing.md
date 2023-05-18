@@ -39,7 +39,7 @@ julia --project=.
 
     ```julia-repl
     julia> ]
-    (@v1.8) pkg> activate .
+    (@v1.9) pkg> activate .
     (ClusterValidityIndices) pkg>
     ```
 
