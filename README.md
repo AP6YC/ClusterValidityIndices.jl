@@ -81,7 +81,7 @@ As such, this package's usage follows the usual Julia package installation proce
 
 ```julia-repl
 julia> ]
-(@v1.8) pkg> add ClusterValidityIndices
+(@v1.9) pkg> add ClusterValidityIndices
 ```
 
 or programmatically:
@@ -91,17 +91,17 @@ julia> using Pkg
 julia> Pkg.add("ClusterValidityIndices")
 ```
 
-You may also add the package directly from GitHub to get the latest changes between releases:
+You may also [add the package directly](https://pkgdocs.julialang.org/v1/api/) from a GitHub branch to get the latest changes between releases:
 
 ```julia-repl
 julia> ]
-(@v1.8) pkg> add https://github.com/AP6YC/ClusterValidityIndices.jl
+(@v1.9) pkg> add https://github.com/AP6YC/ClusterValidityIndices.jl#develop
 ```
 
 ### Quickstart
 
 This section provides a quick overview of how to use the project.
-For more detailed code usage, please see the [Detailed Usage](@ref usage).
+For more detailed code usage, please see the [Detailed Usage](https://ap6yc.github.io/ClusterValidityIndices.jl/dev/man/guide/#usage).
 
 First, import the package with:
 
